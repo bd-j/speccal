@@ -1,15 +1,22 @@
-% This file is part of the speccal project.
+% This file is part of the `speccal` project.
 % Copyright 2014 the authors.
+% All rights reserved.
 
 % ## style notes:
 % - all equations in `eqnarray` environments
 % - parameters are `inferred`; `measurement` is reserved for data
+% - use emulateapj or aastex, as you like, but watch for equation-wrapping in the former
 
+% ---- Hogg (aastex) mode ----
+\documentclass[12pt, letterpaper, preprint]{aastex}
+% ----
+
+% ---- Charlie (emulateapj) mode ----
 % \documentclass[iop,numberedappendix]{emulateapj}
 % \usepackage{apjfonts}
-\documentclass[12pt, letterpaper, preprint]{aastex}
-\bibliographystyle{apj}
+% ----
 
+\bibliographystyle{apj}
 \input{vc}
 \newcommand{\transpose}[1]{{#1}^{\!\mathsf T}}
 \newcommand{\given}{\,|\,}
