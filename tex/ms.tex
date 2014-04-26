@@ -1,3 +1,10 @@
+% This file is part of the speccal project.
+% Copyright 2014 the authors.
+
+% ## style notes:
+% - all equations in `eqnarray` environments
+% - parameters are `inferred`; `measurement` is reserved for data
+
 % \documentclass[iop,numberedappendix]{emulateapj}
 % \usepackage{apjfonts}
 \documentclass[12pt, letterpaper, preprint]{aastex}
@@ -7,12 +14,26 @@
 \newcommand{\transpose}[1]{{#1}^{\!\mathsf T}}
 \newcommand{\given}{\,|\,}
 
+\newcommand{\lick}{1}
+\newcommand{\ccpp}{2}
+\newcommand{\cds}{3}
+\newcommand{\mpia}{4}
+
 \begin{document}
 
 \title{Combining information from photometric and spectroscopic data:\\
   Don't waste your time in spectrophotometric calibration!}
-\author{BDJ, DRW, DFM, DWH, CC, others}
-\affil{foo}
+\author{
+  BDJ\altaffilmark{\lick},
+  DRW\altaffilmark{\lick},
+  DFM\altaffilmark{\ccpp},
+  DWH\altaffilmark{\ccpp, \cds, \mpia},
+  CC\altaffilmark{\lick},
+  others}
+\altaffiltext{\lick}{University of California Lick Observatory}
+\altaffiltext{\ccpp}{Center for Cosmology and Particle Physics, Department of Physics, New York University}
+\altaffiltext{\cds}{Center for Data Science, New York University}
+\altaffiltext{\mpia}{Max-Planck-Institut f\"ur Astronomie}
 
 \begin{abstract}
 In a typical spectral-fitting project,
@@ -32,8 +53,10 @@ We show that, in this framework, the quality of some kinds of spectral parameter
   to obtain good---or really any---spectrophotometric calibration.
 In particular, for stellar population fitting, high signal-to-noise data,
   and good photometry,
-  we show that raw counts are just as good as calibrated counts for measuring the
+  we show that raw counts are just as good as calibrated counts for making inferences about the
   parameters of interest.
+This obviation of calibration overheads will pay all yall \emph{mad cheddar},
+  at least if all yall employ full cost accounting.
 \end{abstract}
 
 \keywords{
@@ -42,7 +65,7 @@ In particular, for stellar population fitting, high signal-to-noise data,
   whole world
 }
 
-\section{Spectral calibration}
+\section{Introduction}
 
 In probabilistic inference, all information flows from the data to the
 parameters of interest by means of a likelihood function, or an
@@ -115,11 +138,25 @@ parameter estimates \emph{also} provides a spectrophotometric
 calibration of the spectral data.
 That is, the method we present has the potential to \emph{obviate
 spectrophotometric calibration}.
-We find that this potential is realized.
+
+We find that this potential---obviation of calibration---is realized.
+That is, if the procedures demonstrated below become widely adopted,
+some or perhaps most astronomical spectroscopic projects could
+potentially drop or dramatically reduce their spectrophotometric
+calibration programs.
+This would reduce telescope overheads and data-analysis time and
+complexity, delivering economic and sanity benefits to the whole
+community.
 
 \section{Model generalities}
 
 THIS SECTION NEEDS WORK; THIS IS JUST AN EQUATION DUMP.
+
+HOGG: A model is a parameterized likelihood function, with prior PDFs on the nuisance parameters (at least)...
+
+HOGG: There is a likelihood for the photometry and for the spectroscopy...
+
+HOGG: Each of these penalizes the difference between a column vector of data and a column vector of model expectation value...
 
 The standard chi-squared or log-Gaussian log-likelihood is
 \begin{eqnarray}
