@@ -39,9 +39,78 @@ In particular, for stellar population fitting, high signal-to-noise data,
   whole world
 }
 
-\section{Spectral calibration is a bitch}
+\section{Spectral calibration}
 
-Hello World.
+In probabilistic inference, all information flows from the data to the
+parameters of interest by means of a likelihood function, or an
+expression for the probability of the data conditioned on the
+parameters.
+If there are $N$ independent sources of data, for each of which there
+is a likelihood function, the full-data likelihood is the product of
+the $N$ individual likelihoods (or the log-likelihood is a sum of the
+$N$ individual log-likelihoods).
+There is no bespoke ``weighting'' of the data that is justifiable in
+this framework.
+This creates some apparent paradoxes!
+One is the following:
+
+Imagine you have three photometric bands through which you have
+observed some object (independently, say), and also a 2500-pixel
+spectrum, where the pixels are defined such that they are precisely or
+approximately independent measurements.
+For these purposes, two spectral pixels are very close to independent
+measurements if they are derived from disjoint sets of detector pixels
+in the spectrograph detector plane.
+Each photometric band and each spectroscopic pixel has a
+log-likelihood function, and these 2503 log-likelihood functions must
+be (by the Rules of Righteousness) coadded equally into one full-data
+log-likelihood.
+The log-likelihood is therefore fully dominated by the spectral
+pixels!
+This despite the fact that in almost all astronomical investigations,
+the photometry is far more reliable, per measurement, than the
+spectra.
+That is, if the spectral pixels tend to prefer one model, or one set
+of parameters, and the photometry another, the spectra will almost
+always ``win'' just by their overwhelming force.
+
+What is a Righteous Probabilistic Investigator (RPI) to do?
+One option---fully unjustified---is to ``down-weight'' the
+log-likelihoods of the spectral pixels relative to the photometric
+measurements.
+This is equivalent to taking the likelihoods to some power, which has
+no justification in inference (though it is sometimes used in
+optimization and sampling as an ``annealing'' move).
+This down-weighting is not justified, but there is even more
+ad-hockery than this, because there is no principled way to choose the
+unprincipled weights.
+
+The Right Thing To Do (RTTD) is to express the \emph{reason} that the
+RPI believes the spectroscopic data to be less reliable \emph{within}
+the likelihood function.
+That is, the RPI must add nuisance parameters to parameterize the
+unreliability of the spectroscopy, and infer those along with the
+parameters of interest.
+If this parameterization is good, the information in the spectroscopy
+data will not flow entirely to the parameters of interest; instead,
+some will flow to the nuisance parameters.
+This will reduce the importance of the spectroscopy relative to the
+photometry and the RPI will be well pleased with the dominance of the
+photometric data in the final inferences of the parameters of
+interest.
+In this what follows, we provide an example of this kind of
+parameterization and inference.
+
+Our example involves instantiating a ``calibration adjustment'' model,
+which has a polynomial component and a non-parametric component.
+The parameters of the calibration adjustment are nuisances, from a
+scientific standpoint.
+However, because the calibration adjustment is inferred along with the
+parameters of interest, the probabilistic inference that provides
+parameter estimates \emph{also} provides a spectrophotometric
+calibration of the spectral data.
+That is, the method we present has the potential to \emph{obviate
+spectrophotometric calibration}.
 
 \section{Model generalities}
 
