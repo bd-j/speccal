@@ -1,8 +1,11 @@
-\documentclass[iop,numberedappendix]{emulateapj}
-\usepackage{apjfonts}
+% \documentclass[iop,numberedappendix]{emulateapj}
+% \usepackage{apjfonts}
+\documentclass[12pt, letterpaper, preprint]{aastex}
 \bibliographystyle{apj}
 
 \input{vc}
+\newcommand{\transpose}[1]{{#1}^{\!\mathsf T}}
+\newcommand{\given}{\,|\,}
 
 \begin{document}
 
@@ -116,13 +119,73 @@ We find that this potential is realized.
 
 \section{Model generalities}
 
-Hello World.
+THIS SECTION NEEDS WORK; THIS IS JUST AN EQUATION DUMP.
+
+The standard chi-squared or log-Gaussian log-likelihood is
+\begin{eqnarray}
+\ln p(d\given\theta) &=& -\frac{1}{2}\,\sum_{n=1}^N \left[\frac{[d_n - \mu_n(\theta)]^2}{\sigma_n^2} + \ln(2\,\pi\,\sigma_n^2) \right]
+\quad ,
+\end{eqnarray}
+where $\theta$ is a blob of parameters of interest,
+$d$ is the full set (in the form of a column vector) of data,
+made up of $N$ values $d_n$,
+$\mu(\theta)$ is the the column-vector mean prediction (expectation value) of the model,
+made up of $N$ values $\mu_n(\theta)$,
+the $\sigma_n^2$ are the observational noise variances.
+We have included the $\ln(\sigma_n^2)$ term in the likelihood because
+in what follows we are going to be modifying the noise model.
+
+The calibration-vector and Gaussian-Process modified log-likelihood is
+\begin{eqnarray}
+\ln p(d\given\theta,\alpha) &=& -\frac{1}{2}\,\left[\transpose{\Delta}\,C^{-1}\,\Delta + \ln([2\,\pi]^N\,\det{C}) \right]
+\\
+\Delta &\equiv& d - f(\alpha)\ast\mu(\theta)
+\\
+C_{nn'} &\equiv& \sigma_n^2\,\delta_{nn'} + K_\alpha(\lambda_n - \lambda_n')
+\quad ,
+\end{eqnarray}
+where $\alpha$ is a blob of nuisance parameters
+(which determine the calibration vector and the kernel function),
+$\Delta$ is a residual column vector,
+$f(\alpha)$ is a calibration column vector,
+the $\ast$ operator is the pixel-wise multiplication operator,
+$C$ is the Gaussian Process covariance matrix,
+made up of $N^2$ values $C_{nn'}$,
+$K_\alpha$ is a kernel function,
+and each $\lambda_n$ is the wavelength of spectral pixel $n$.
+and $a^2$ and $\ell^2$ are parameters of the kernel function (and hence elements of $\alpha$).
+The calibration vector $f(\alpha)$ takes care of the large-scale
+calibration residual; the Gaussian process is going to pick up
+smaller-scale residuals away from \emph{that}.
+
+In detail, we are going to choose a $M$th-order polynomial form for
+the calibration vector $f(\alpha)$ and a bell-shape (Gaussian) for the
+kernel function $K_\alpha(\cdot)$:
+\begin{eqnarray}
+f(\alpha) &=& \sum_{m=1}^M c_m\,x^m
+\\
+x &\equiv& \frac{\lambda}{\lambda_0} - 1
+\\
+K_\alpha(x) &=& a^2\,\exp(-\frac{x^2}{2\,\ell^2})
+\\
+\transpose{\alpha} &\equiv& \left[ \{c_m\}_{m=0}^M, a^2, \ell^2 \right]
+\quad ,
+\end{eqnarray}
+where $\lambda$ is a column vector made up of the wavelengths $\lambda_m$
+and $x$ is a scaled and shifted version of the same,
+scaled by a fiducial wavelength $\lambda_0$.
+Nuisance parameters $a^2$ and $\ell^2$ set the variance and
+correlation length of the covariant calibration noise, respectively.
 
 \section{Experiments and results}
 
-Hello World.
+BDJ INSERT WORDS HERE.
 
 \section{Discussion}
+
+BDJ INSERT WORDS HERE.
+
+HOGG COMPUTE TOTAL ANNUAL COST OF SPECTROPHOTOMETRY (to astronomical community).
 
 All the code used in this project is available under an open-source license
   from \url{http://github.com/bd-j/something/}.
