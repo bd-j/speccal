@@ -8,28 +8,31 @@
 % - use emulateapj or aastex, as you like, but watch for equation-wrapping in the former
 
 % ---- Hogg (aastex) mode ----
-\documentclass[12pt, letterpaper, preprint]{aastex}
+% \documentclass[12pt, letterpaper, preprint]{aastex}
 % ----
 
 % ---- Charlie (emulateapj) mode ----
-% \documentclass[iop,numberedappendix]{emulateapj}
-% \usepackage{apjfonts}
+\documentclass[iop,numberedappendix]{emulateapj}
+\usepackage{apjfonts}
 % ----
 
 \bibliographystyle{apj}
 \input{vc}
+
+% math shih
 \newcommand{\transpose}[1]{{#1}^{\!\mathsf T}}
 \newcommand{\given}{\,|\,}
 
+% affiliation marks; edit with care
 \newcommand{\lick}{1}
 \newcommand{\ccpp}{2}
 \newcommand{\cds}{3}
 \newcommand{\mpia}{4}
 
-\begin{document}
-
+\begin{document}\sloppy\sloppypar
 \title{Combining information from photometric and spectroscopic data:\\
   Don't waste your time in spectrophotometric calibration!}
+\shorttitle{don't waste your time in calibration!}
 \author{
   BDJ\altaffilmark{\lick},
   DRW\altaffilmark{\lick},
@@ -37,6 +40,7 @@
   DWH\altaffilmark{\ccpp, \cds, \mpia},
   CC\altaffilmark{\lick},
   others}
+\shortauthors{bdj et al}
 \altaffiltext{\lick}{University of California Lick Observatory}
 \altaffiltext{\ccpp}{Center for Cosmology and Particle Physics, Department of Physics, New York University}
 \altaffiltext{\cds}{Center for Data Science, New York University}
@@ -62,8 +66,8 @@ In particular, for stellar population fitting, high signal-to-noise data,
   and good photometry,
   we show that raw counts are just as good as calibrated counts for making inferences about the
   parameters of interest.
-This obviation of calibration overheads will pay all yall \emph{mad cheddar},
-  at least if all yall employ full cost accounting.
+This obviation of calibration overheads will pay \emph{all yall mad cheddar},
+  at least if yall employ full cost accounting.
 \end{abstract}
 
 \keywords{
@@ -118,9 +122,9 @@ This down-weighting is not justified, but there is even more
 ad-hockery than this, because there is no principled way to choose the
 unprincipled weights.
 
-The Right Thing To Do (RTTD) is to express the \emph{reason} that the
-RPI believes the spectroscopic data to be less reliable \emph{within}
-the likelihood function.
+The Right Thing To Do is to express the \emph{reason} that the RPI
+believes the spectroscopic data to be less reliable \emph{within} the
+likelihood function.
 That is, the RPI must add nuisance parameters to parameterize the
 unreliability of the spectroscopy, and infer those along with the
 parameters of interest.
@@ -202,7 +206,7 @@ large-scale calibration residual; the Gaussian process is going to
 pick up smaller-scale residuals away from \emph{that}.
 
 In detail, we are going to choose a $M$th-order polynomial form for
-the calibration vector $f(\alpha)$ and a bell-shape (Gaussian) for the
+the calibration vector $f(\alpha)$ and a bell shape (Gaussian) for the
 kernel function $K_\alpha(\cdot)$:
 \begin{eqnarray}
 f(\alpha) &=& \sum_{m=1}^M c_m\,x^m
