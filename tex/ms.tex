@@ -227,6 +227,30 @@ length of the remaining covariant calibration noise.
 
 \section{Experiments and results}
 
+As a demonstration and test of the methodology for spectrophotometric
+calibration described above, we will apply it to an \emph{actual,
+  real} optical spectrum of a stellar cluster in M31.  Spectra of star
+clusters provide a good test case, as they are less complex than
+galaxy spectra (for which it is necessary to model the star formation
+history) but are by no means trivial. In this way the key features of the
+calibration model and methodology are not obscured, but the influence
+of the .
+
+We model the stellar cluster as a single age SSP. The physical
+parameters $\theta$ which affect the spectrum of a star
+cluster include the age, metallicity, stellar mass, attenuation by dust,
+velocity dispersion, redshift, and uncertain
+aspects of the stellar population synthesis models, including the
+intial mass function.  
+
+The model for the spectrum is then 
+\begin{eqnarray}
+F(\lambda_o, \theta) = G(\sigma_v) \ast m_* S(\lambda_e/(1+z), Z, t,
+imf [, {\rm etc}]) e^ {-k_\lambda \tau_V}
+\end{eqnarray}
+
+
+
 BDJ INSERT WORDS HERE.
 
 \section{Discussion}
