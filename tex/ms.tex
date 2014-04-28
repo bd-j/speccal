@@ -196,7 +196,7 @@ This modification shows the necessity of including the log-variance
 term.
 This---equation~(\ref{eq:photometricLF})---is in fact the log-likelihood
 function we are going to use for the photometric measurements (BDJ: IS
-THIS TRUE?) in what follows.
+THIS TRUE?  DWH, Currently I'm not using a jitter term, but I can and will) in what follows.
 In this formulation, if $\theta$ are the parameters of interest, the
 jitter variance $s^2$ is a nuisance noise-model parameter.
 The Gaussian Process will be a generalization of this modification.
@@ -249,37 +249,62 @@ length of the remaining covariant calibration noise.
 
 We are now left to demonstrate that it is possible to infer the
 parameters of interest $\theta$ while marginalizing over the
-calibration parameters $\alpha$.  
-
-As a demonstration and test of the methodology for spectrophotometric
-calibration described above, we will apply it to an \emph{actual,
-  real} optical spectrum of a stellar cluster in M31.  Spectra of star
+calibration parameters $\alpha$.  We will apply the methodology for
+spectrophotometric calibration described above to an \emph{actual,
+real} optical spectrum of a stellar cluster in M31.  Spectra of star
 clusters provide a good test case, as they are less complex than
 galaxy spectra (for which it is necessary to model the star formation
-history) but are by no means trivial. In this way the key features of the
-calibration model and methodology are not obscured, but the influence
-of the .
+history) but are by no means trivial. In this way the key features of
+the calibration model and methodology are not obscured.
 
-We model the stellar cluster as a single age SSP. The physical
-parameters $\theta$ which affect the spectrum of a star
-cluster include the age, metallicity, stellar mass, attenuation by dust,
-velocity dispersion, redshift, and uncertain
-aspects of the stellar population synthesis models, including the
-intial mass function.  
+We model the stellar cluster as a single age SSP. The spectrum of a
+star cluster under this assumption is given by
+\begin{eqnarray}\label{eq:MeanModel} 
+\mu(\theta, \lambda(1+z)) & = &
+\frac{m_*}{4\pi d_L^2(1+z)} G(\lambda,\sigma_v) \otimes 
+S(\lambda, t, Z [, \beta]) e^ {-k_\lambda\tau_V} 
+\\ 
+\theta & \equiv & [m_*, t, Z, \tau_V, \sigma_v, z, d_L, \beta]
+\quad ,
+\end{eqnarray} where the parameters $\theta$ include include the age
+$t$, metallicity $Z$, stellar mass $m_*$, dust attenuation effective
+$V$-band optical depth $\tau_V$, velocity dispersion $\sigma_v$,
+luminosity distance $d_L$ and redshift $z$.  The spectrum of one solar
+mass of stars that formed at time $t$ with metallicity $Z$ is given by
+$S(\lambda, t, Z [, \beta])$ where the additional parameters $\beta$
+may include details of the population synthesis, such as the IMF slope
+and adjustments to the stellar spectra or stellar evolutionary tracks
+\citep[e.g.][]{FSPS}. We will assume $\beta$ to be fixed for the
+purposes of this exercise, with no loss of generality (DO WE WANT TO
+VARY IMF SLOPE?).  We will also fix the shape of the attenuation
+curve, $k_\lambda \equiv \tau_\lambda/\tau_V$ and assume that $d_L$ is
+known to high accuracy from independent methods.
 
-The model for the spectrum is then 
-\begin{eqnarray}
-F(\lambda_o, \theta) = G(\sigma_v) \ast m_* S(\lambda_e/(1+z), Z, t,
-imf [, {\rm etc}]) e^ {-k_\lambda \tau_V}
-\end{eqnarray}
+To model the photometry we simply project the observed frame mean
+model spectrum $\mu(\theta, \lambda(1+z))$ onto the filters of
+interest.  Note that we do \emph{not} include the calibration vector
+$f(\alpha)$ in this projection.
+ 
+BDJ/DRW WORDS ABOUT DATA
 
+To demonstrate the effectiveness of our spectrophotometric calibration
+strategy we will infer the parameters $\theta$ from the spectrum both
+\emph{before} and \emph{after} it has been spectrophotometrically
+calibrated using typical techniques and ancillary spectrophotometric
+calibration data. (PROBABLY NEED WORDS FROM NELSON HERE, OR CITE HIS
+PAPER IF DETAILED ENOUGH)
 
-
-BDJ INSERT WORDS HERE.
 
 \section{Discussion}
 
 BDJ INSERT WORDS HERE.
+BDJ random issues, collected here in case we want to address them and
+to keep me from cluttering up the main text: effective aperture
+corrections (i.e. we're implicitly assuming photometry and
+spectroscopy sample the same population).  Sky subtraction residuals.
+Model resolution and instrument resolution.  Method only useful when
+you have a model for the mean spectrum?  How to interpret GP
+residuals, as a fn of S/N?  Photometric upper limits?
 
 HOGG COMPUTE TOTAL ANNUAL COST OF SPECTROPHOTOMETRY (to astronomical community).
 
