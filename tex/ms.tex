@@ -255,7 +255,14 @@ real} optical spectrum of a stellar cluster in M31.  Spectra of star
 clusters provide a good test case, as they are less complex than
 galaxy spectra (for which it is necessary to model the star formation
 history) but are by no means trivial. In this way the key features of
-the calibration model and methodology are not obscured.
+the calibration model and methodology are not obscured.  
+
+To demonstrate the effectiveness of our spectrophotometric calibration
+strategy we will infer the parameters $\theta$ from the spectrum both
+\emph{before} and \emph{after} it has been spectrophotometrically
+calibrated using typical techniques and ancillary spectrophotometric
+calibration data. ( CITE NC)
+
 
 We model the stellar cluster as a single age SSP. The spectrum of a
 star cluster under this assumption is given by
@@ -275,25 +282,23 @@ $S(\lambda, t, Z [, \beta])$ where the additional parameters $\beta$
 may include details of the population synthesis, such as the IMF slope
 and adjustments to the stellar spectra or stellar evolutionary tracks
 \citep[e.g.][]{FSPS}. We will assume $\beta$ to be fixed for the
-purposes of this exercise, with no loss of generality (DO WE WANT TO
-VARY IMF SLOPE?).  We will also fix the shape of the attenuation
-curve, $k_\lambda \equiv \tau_\lambda/\tau_V$ and assume that $d_L$ is
-known to high accuracy from independent methods.
+purposes of this exercise, with no loss of generality (KEEPING IMF
+SLOPE CONSTANT FOR NOW).  We will also fix the shape of the
+attenuation curve, $k_\lambda \equiv \tau_\lambda/\tau_V$ to the Milky
+way average of \citet{CCM89} and assume that $d_L$ is known to high
+accuracy from independent methods.
 
 To model the photometry we simply project the observed frame mean
 model spectrum $\mu(\theta, \lambda(1+z))$ onto the filters of
 interest.  Note that we do \emph{not} include the calibration vector
 $f(\alpha)$ in this projection.
  
+BDJ WORDS ABOUT FSPS.
+
 BDJ/DRW WORDS ABOUT DATA
 
-To demonstrate the effectiveness of our spectrophotometric calibration
-strategy we will infer the parameters $\theta$ from the spectrum both
-\emph{before} and \emph{after} it has been spectrophotometrically
-calibrated using typical techniques and ancillary spectrophotometric
-calibration data. (PROBABLY NEED WORDS FROM NELSON HERE, OR CITE HIS
-PAPER IF DETAILED ENOUGH)
-
+Our sampling of the posterior is accomplished using \texttt{emcee}
+\cite{dfm} after an intial round of minimization.
 
 \section{Discussion}
 
