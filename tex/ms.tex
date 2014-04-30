@@ -267,10 +267,11 @@ calibration data. ( CITE NC)
 We model the stellar cluster as a single age SSP. The spectrum of a
 star cluster under this assumption is given by
 \begin{eqnarray}\label{eq:MeanModel} 
-\mu(\theta, \lambda(1+z)) & = &
+\mu(\theta, \lambda_o) & = &
 \frac{m_*}{4\pi d_L^2(1+z)} G(\lambda,\sigma_v) \otimes 
 S(\lambda, t, Z [, \beta]) e^ {-k_\lambda\tau_V} 
 \\ 
+\lambda_o & = & (1+z)\lambda 
 \theta & \equiv & [m_*, t, Z, \tau_V, \sigma_v, z, d_L, \beta]
 \quad ,
 \end{eqnarray} where the parameters $\theta$ include include the age
@@ -289,7 +290,7 @@ way average of \citet{CCM89} and assume that $d_L$ is known to high
 accuracy from independent methods.
 
 To model the photometry we simply project the observed frame mean
-model spectrum $\mu(\theta, \lambda(1+z))$ onto the filters of
+model spectrum $\mu(\theta, \lambda_o)$ onto the filters of
 interest.  Note that we do \emph{not} include the calibration vector
 $f(\alpha)$ in this projection.
  
