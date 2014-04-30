@@ -58,7 +58,7 @@ Good spectroscopic calibration is both expensive and difficult,
   than the few photometric bands.
 Here we present a flexible and general spectroscopic calibration model,
   which can be fit simultaneously along with whatever spectral parameters.
-The model involves a polynommial calibration vector to capture large-scale calibration issues
+The model involves a polynomial calibration vector to capture large-scale calibration issues
   and a Gaussian Process to capture small-scale wiggles.
 We show that, in this framework, the quality of some kinds of spectral parameter fits
   is not a strong function of the quality of the spectroscopic calibration;
@@ -258,7 +258,7 @@ history) but are by no means trivial. In this way the key features of
 the calibration model and methodology are not obscured.  
 
 To demonstrate the effectiveness of our spectrophotometric calibration
-strategy we will infer the parameters $\theta$ from the spectrum both
+strategy we will infer the parameters $\theta$ from a spectrum both
 \emph{before} and \emph{after} it has been spectrophotometrically
 calibrated using typical techniques and ancillary spectrophotometric
 calibration data. ( CITE NC)
@@ -271,35 +271,64 @@ star cluster under this assumption is given by
 \frac{m_*}{4\pi d_L^2(1+z)} G(\lambda,\sigma_v) \otimes 
 S(\lambda, t, Z [, \beta]) e^ {-k_\lambda\tau_V} 
 \\ 
-\lambda_o & = & (1+z)\lambda \\
+\lambda_o & = & (1+z)\lambda 
+\\
 \theta & \equiv & [m_*, t, Z, \tau_V, \sigma_v, z, d_L, \beta]
 \quad ,
-\end{eqnarray} where the parameters $\theta$ include include the age
-$t$, metallicity $Z$, stellar mass $m_*$, dust attenuation effective
-$V$-band optical depth $\tau_V$, velocity dispersion $\sigma_v$,
-luminosity distance $d_L$ and redshift $z$.  The spectrum of one solar
-mass of stars that formed at time $t$ with metallicity $Z$ is given by
-$S(\lambda, t, Z [, \beta])$ where the additional parameters $\beta$
-may include details of the population synthesis, such as the IMF slope
-and adjustments to the stellar spectra or stellar evolutionary tracks
+\end{eqnarray} where the parameters $\theta$ include the stellar mass
+$m_*$, effective optical depth to dust in the $V$-band $\tau_V$,
+velocity dispersion $\sigma_v$, luminosity distance $d_L$ and redshift
+$z$.  The spectrum of one solar mass of stars that formed at time $t$
+with metallicity $Z$ is given by $S(\lambda, t, Z [, \beta])$ where
+the additional parameters $\beta$ may include details of the
+population synthesis model, such as the IMF slope and adjustments to
+the stellar spectra or stellar evolutionary tracks
 \citep[e.g.][]{FSPS}. We will assume $\beta$ to be fixed for the
 purposes of this exercise, with no loss of generality (KEEPING IMF
 SLOPE CONSTANT FOR NOW).  We will also fix the shape of the
 attenuation curve, $k_\lambda \equiv \tau_\lambda/\tau_V$ to the Milky
 way average of \citet{CCM89} and assume that $d_L$ is known to high
-accuracy from independent methods.
+precision from independent methods.
 
 To model the photometry we simply project the observed frame mean
-model spectrum $\mu(\theta, \lambda_o)$ onto the filters of
+model spectrum (equation \ref{eq:MeanModel}) onto the filters of
 interest.  Note that we do \emph{not} include the calibration vector
 $f(\alpha)$ in this projection.
- 
-BDJ WORDS ABOUT FSPS.
+
+We calculate $\mu$ using the Flexible Stellar Population Synthesis
+code \citep[FSPS][]{FSPS}.  We use the Padova isochrones
+\citep{Padova} and high-resolution theoretical stellar spectra
+\citep{CKC14} which allow us to probe super-solar metallicities at
+early ages.  NEBULAR EMISSION - MASK OR INFER?
 
 BDJ/DRW WORDS ABOUT DATA
 
-Our sampling of the posterior is accomplished using \texttt{emcee}
-\cite{dfm} after an intial round of minimization.
+We estimate the posterior through MCMC sampling. Our sampling of the
+posterior is accomplished using \texttt{emcee} \cite{dfm} after an
+intial round of minimization.  \texttt{emcee} is an implementation of
+the affine-invariant ensemble sampler of \citet{GW}, and unlike
+typical Metropolis-Hastings MCMC sampling does not require the
+specification of step sizes in each dimension.  Our prior
+distributions are in all cases top-hat functions, though more
+informative priors distributions may be used.  Informative priors may
+be especially appropriate for the calibration parameters $\alpha$ if
+additional information about the instrument is available or for the
+parameters of interest $\theta$, for example in the case where there
+is knowledge of the metallicity distribution of the population from
+which a given cluster is drawn.
+
+
+NEEDS MASSIVE REWORDING.
+In Figure \ref{fig:calibrated_spectrum} we show the spectrum resulting
+from draws of the parameters $[\theta,alpha]$ from the posterior
+distribution.  This figure also shows the calibrated spectrum on which
+the priors were conditioned, and individual components of the model
+constructed from each draw.   In Figure \ref{fig:calibrated_residuals}
+we show the residuals between the data and the draws from the
+posterior, for the spectra and the photometry.
+
+In Figure \ref{fig:calibrated_triangle} we show the marginalized and
+joint-pdfs for the parameters.
 
 \section{Discussion}
 
@@ -310,12 +339,13 @@ corrections (i.e. we're implicitly assuming photometry and
 spectroscopy sample the same population).  Sky subtraction residuals.
 Model resolution and instrument resolution.  Method only useful when
 you have a model for the mean spectrum?  How to interpret GP
-residuals, as a fn of S/N?  Photometric upper limits?
+residuals, as a fn of S/N?  Photometric upper limits? Infer the
+wavelength solution as well - stellar population (and telluric lines) as your arc.
 
 HOGG COMPUTE TOTAL ANNUAL COST OF SPECTROPHOTOMETRY (to astronomical community).
 
 All the code used in this project is available under an open-source license
-  from \url{http://github.com/bd-j/something/}.
+  from \url{http://github.com/bd-j/bsfh/}.
 This version of the paper was generated
   from a git repository available at \url{http://github.com/bd-j/speccal/}
   with git hash \texttt{\githash\,(\gitdate)}.
