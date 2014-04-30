@@ -263,7 +263,10 @@ strategy we will infer the parameters $\theta$ from a spectrum both
 calibrated using typical techniques and ancillary spectrophotometric
 calibration data. ( CITE NC)
 
+\subsection{Data}
+BDJ/DRW WORDS ABOUT DATA
 
+\subsection{Star Cluster Model}
 We model the stellar cluster as a single age SSP. The spectrum of a
 star cluster under this assumption is given by
 \begin{eqnarray}\displaystyle\label{eq:MeanModel} 
@@ -279,32 +282,34 @@ S(\lambda, t, Z [, \beta]) \, e^ {-k_\lambda\tau_V}
 $m_*$, effective optical depth to dust in the $V$-band $\tau_V$,
 velocity dispersion $\sigma_v$, luminosity distance $d_L$, and
 redshift $z$.  The spectrum of one solar mass of stars that formed at
-time $t$ with metallicity $Z$ is given by $S(\lambda, t, Z [, \beta])$
-where the additional parameters $\beta$ may include details of the
-population synthesis model, such as the IMF slope and adjustments to
-the stellar spectra or stellar evolutionary tracks
+lookback time $t$ with metallicity $Z$ is given by $S(\lambda, t, Z [,
+\beta])$ where the additional parameters $\beta$ may include details
+of the population synthesis model, such as the IMF slope and
+adjustments to the stellar spectra or stellar evolutionary tracks
 \citep[e.g.][]{FSPS}. We will assume $\beta$ to be fixed for the
 purposes of this exercise, with no loss of generality (KEEPING IMF
 SLOPE CONSTANT FOR NOW).  We will also fix the shape of the
 attenuation curve, $k_\lambda \equiv \tau_\lambda/\tau_V$ to the Milky
-way average of \citet{CCM89} and assume that $d_L$ is known to high
-precision from independent methods. (BDJ NOTE TO SELF - do not use $k$
-for the attenuation curve shape - will confuse people used to
-reddening curves)
+way average of \citet{CCM89} with $R_V=3.1$ and assume that $d_L$ is
+known to high precision from independent methods. (BDJ NOTE TO SELF -
+do not use $k$ for the attenuation curve shape - will confuse people
+used to reddening curves.  Even though it's super handy.)
 
 To model the photometry we simply project the observed frame mean
 model spectrum (equation \ref{eq:MeanModel}) onto the filters of
 interest.  Note that we do \emph{not} include the calibration vector
 $f(\alpha)$ in this projection.
 
-We calculate $\mu$ using the Flexible Stellar Population Synthesis
-code \citep[FSPS][]{FSPS}.  We use the Padova isochrones
+We calculate $S(\lambda, t, Z)$ using the Flexible Stellar Population
+Synthesis code \citep[FSPS][]{FSPS}.  We use the Padova isochrones
 \citep{Padova} and high-resolution theoretical stellar spectra
 \citep{CKC14} which allow us to probe super-solar metallicities at
-early ages.  NEBULAR EMISSION - MASK OR INFER?
+early ages.  NEBULAR EMISSION - MASK OR INFER?  The model spectra are
+smoothed by convolution with a Gaussian in velocity space, and are
+interpolated to the wavelength points of the of the observed spectrum
+taking into account the redshift.
 
-BDJ/DRW WORDS ABOUT DATA
-
+\subsection{Sampling and Priors}
 We estimate the posterior through MCMC sampling. Our sampling of the
 posterior is accomplished using \texttt{emcee} \cite{dfm} after an
 intial round of optimization using Powell's method.  \texttt{emcee} is
