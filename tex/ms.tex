@@ -9,12 +9,12 @@
 % - use emulateapj or aastex, as you like, but watch for equation-wrapping in the former
 
 % ---- Hogg (aastex) mode ----
-\documentclass[12pt, letterpaper, preprint]{aastex}
+%\documentclass[12pt, letterpaper, preprint]{aastex}
 % ----
 
 % ---- Charlie (emulateapj) mode ----
-% \documentclass[iop,numberedappendix]{emulateapj}
-% \usepackage{apjfonts}
+ \documentclass[iop,numberedappendix]{emulateapj}
+ \usepackage{apjfonts}
 % ----
 
 \bibliographystyle{apj}
@@ -266,21 +266,21 @@ calibration data. ( CITE NC)
 
 We model the stellar cluster as a single age SSP. The spectrum of a
 star cluster under this assumption is given by
-\begin{eqnarray}\label{eq:MeanModel} 
+\begin{eqnarray}\displaystyle\label{eq:MeanModel} 
 \mu(\theta, \lambda_o) & = &
-\frac{m_*}{4\pi d_L^2(1+z)} G(\lambda,\sigma_v) \otimes 
-S(\lambda, t, Z [, \beta]) e^ {-k_\lambda\tau_V} 
+\frac{m_*}{4\pi d_L^2(1+z)} \, G(\lambda,\sigma_v) \otimes 
+S(\lambda, t, Z [, \beta]) \, e^ {-k_\lambda\tau_V} 
 \\ 
-\lambda_o & = & (1+z)\lambda 
+\lambda_o & = & (1+z)\,\lambda 
 \\
-\theta & \equiv & [m_*, t, Z, \tau_V, \sigma_v, z, d_L, \beta]
+\theta & \equiv & \left[ m_*, t, Z, \tau_V, \sigma_v, z, d_L, \beta \right]
 \quad ,
 \end{eqnarray} where the parameters $\theta$ include the stellar mass
 $m_*$, effective optical depth to dust in the $V$-band $\tau_V$,
-velocity dispersion $\sigma_v$, luminosity distance $d_L$ and redshift
-$z$.  The spectrum of one solar mass of stars that formed at time $t$
-with metallicity $Z$ is given by $S(\lambda, t, Z [, \beta])$ where
-the additional parameters $\beta$ may include details of the
+velocity dispersion $\sigma_v$, luminosity distance $d_L$, and
+redshift $z$.  The spectrum of one solar mass of stars that formed at
+time $t$ with metallicity $Z$ is given by $S(\lambda, t, Z [, \beta])$
+where the additional parameters $\beta$ may include details of the
 population synthesis model, such as the IMF slope and adjustments to
 the stellar spectra or stellar evolutionary tracks
 \citep[e.g.][]{FSPS}. We will assume $\beta$ to be fixed for the
@@ -288,7 +288,9 @@ purposes of this exercise, with no loss of generality (KEEPING IMF
 SLOPE CONSTANT FOR NOW).  We will also fix the shape of the
 attenuation curve, $k_\lambda \equiv \tau_\lambda/\tau_V$ to the Milky
 way average of \citet{CCM89} and assume that $d_L$ is known to high
-precision from independent methods.
+precision from independent methods. (BDJ NOTE TO SELF - do not use $k$
+for the attenuation curve shape - will confuse people used to
+reddening curves)
 
 To model the photometry we simply project the observed frame mean
 model spectrum (equation \ref{eq:MeanModel}) onto the filters of
@@ -305,11 +307,11 @@ BDJ/DRW WORDS ABOUT DATA
 
 We estimate the posterior through MCMC sampling. Our sampling of the
 posterior is accomplished using \texttt{emcee} \cite{dfm} after an
-intial round of minimization.  \texttt{emcee} is an implementation of
-the affine-invariant ensemble sampler of \citet{GW}, and unlike
-typical Metropolis-Hastings MCMC sampling does not require the
-specification of step sizes in each dimension.  Our prior
-distributions are in all cases top-hat functions, though more
+intial round of optimization using Powell's method.  \texttt{emcee} is
+an implementation of the affine-invariant ensemble sampler of
+\citet{GW}, and unlike typical Metropolis-Hastings MCMC sampling does
+not require the specification of step sizes in each dimension.  Our
+prior distributions are in all cases top-hat functions, though more
 informative priors distributions may be used.  Informative priors may
 be especially appropriate for the calibration parameters $\alpha$ if
 additional information about the instrument is available or for the
@@ -320,7 +322,7 @@ which a given cluster is drawn.
 
 NEEDS MASSIVE REWORDING.
 In Figure \ref{fig:calibrated_spectrum} we show the spectrum resulting
-from draws of the parameters $[\theta,alpha]$ from the posterior
+from draws of the parameters $[\theta,\alpha]$ from the posterior
 distribution.  This figure also shows the calibrated spectrum on which
 the priors were conditioned, and individual components of the model
 constructed from each draw.   In Figure \ref{fig:calibrated_residuals}
