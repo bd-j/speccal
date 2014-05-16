@@ -275,8 +275,9 @@ of the spectra is $3700-7200 \AA$. The instrumental resolution is
 $\sim 5\AA$ across the optical range \citep{fabricant13}.  Sky
 subtraction happened.  We got data which were uncalibrated and data
 which had been approximately spectrophotometrically calibrated using
-an average for the night (MORE HERE).  Show figure of calibrated and
-uncalibrated data.  Discuss S/N, sky subtraction, calibration.
+an average for the night (MORE HERE). Figure \ref{fig:data} shows the
+calibrated and uncalibratred spectra for each cluster.  Discuss S/N,
+sky subtraction, calibration.
 
 
 \subsection{Star Cluster Model}
@@ -291,7 +292,7 @@ S(\lambda, t, Z , \beta) \, e^ {-k_\lambda\tau_V}  + \\
 \lambda_o & = & (1+z)\,\lambda 
 \\
 \theta & \equiv & \left[ m_*, t, Z, \tau_V, \sigma_v, z, d_L, \beta,
-  \{a_i\}_{i=0}^{N_l}, \sigma_n \right]
+  \{a_i\}_{i=0}^{N_l}, \sigma_e \right]
 \quad ,
 \end{eqnarray} where the parameters $\theta$ include 
 the stellar mass $m_*$, 
@@ -340,18 +341,19 @@ into account the redshift.
 
 \subsection{Sampling and Priors}
 
-We estimate the posterior through MCMC sampling. Our sampling of the
-posterior is accomplished using \texttt{emcee} \cite{dfm} after an
-intial round of optimization using Powell's method.  \texttt{emcee} is
-an implementation of the affine-invariant ensemble sampler of
-\citet{GW}, and unlike typical Metropolis-Hastings MCMC sampling does
-not require the specification of step sizes in each dimension.  
-
+We estimate the posterior through MCMC sampling after an initial round
+of optimization using Powell's method.  The specific sampling
+algorithm we use is the affine-invariant ensemble sampling scheme of
+\citet{GW}, as implemented in the \texttt{emcee} package \cite{dfm}
+Unlike typical Metropolis-Hastings MCMC sampling, the affine-invariant
+sampler does not require the specification of step sizes in each
+dimension.  ASSESSING SAMPLER CONVERGENCE
+ 
 Our prior distributions are in all cases top-hat functions, though
 more informative prior distributions may be used.  Informative priors
 may be especially appropriate for the calibration parameters $\alpha$
 if additional information about the instrument is available or for the
-parameters of interest $\theta$, for example in the case where there
+parameters of interest $\theta$, for example in the case that there
 is knowledge of the metallicity distribution of the population from
 which a given cluster is drawn.
 
@@ -370,14 +372,16 @@ and the draws from the posterior, for both the spectra and the
 photometry. In Figure \ref{fig:calibrated_triangle} we show the
 marginalized and joint PDFs for the parameters.
 
-
 Discuss degeneracies, etc.  Apparently we get really nice
 redshift/velocity constraints for free.
 
 Next, we infer the parameters of the spectrum of the same cluster
 \emph{without} spectrophotometric calibration.
 
+Then, we show select marginalized or joint PDFs for each cluster
+calibrated/uncalibrated, to assess consistency.
 
+Finally, we have fun playing with the number of photometric bands and the S/N.
 
 \section{Discussion}
 
