@@ -9,12 +9,12 @@
 % - use emulateapj or aastex, as you like, but watch for equation-wrapping in the former
 
 % ---- Hogg (aastex) mode ----
-%\documentclass[12pt, letterpaper, preprint]{aastex}
+\documentclass[12pt, letterpaper, preprint]{aastex}
 % ----
 
 % ---- Charlie (emulateapj) mode ----
- \documentclass[iop,numberedappendix]{emulateapj}
- \usepackage{apjfonts}
+% \documentclass[iop,numberedappendix]{emulateapj}
+% \usepackage{apjfonts}
 % ----
 
 \bibliographystyle{apj}
@@ -285,7 +285,7 @@ star cluster under this assumption is given by
 \begin{eqnarray}\displaystyle\label{eq:MeanModel} 
 \mu(\theta, \lambda_o) & = &
 \frac{m_*}{4\pi d_L^2(1+z)} \, G(\lambda,\sigma) \otimes 
-S(\lambda, t, Z [, \beta]) \, e^ {-k_\lambda\tau_V}  + \\
+S(\lambda, t, Z , \beta) \, e^ {-k_\lambda\tau_V}  + \\
 & & \sum_{i=0}^{N_l} \frac{a_i}{\sigma_e\sqrt(2\pi)} e^{-\frac{(\lambda - \lambda_i)^2}{2\sigma_e^2}}
 \nonumber \\ 
 \lambda_o & = & (1+z)\,\lambda 
@@ -359,22 +359,25 @@ which a given cluster is drawn.
 \subsection{Results}
 
 We first infer the parameters of interest $\theta$ for a calibrated
-spectrum of one of the clusters, using the full YY-band photometry.
-
-
-NEEDS MASSIVE REWORDING.
-In Figure \ref{fig:calibrated_spectrum} we show the spectrum resulting
+spectrum of one of the clusters, using the full YY-band photometry. In
+Figure \ref{fig:calibrated_spectrum} we show the spectrum resulting
 from draws of the parameters $[\theta,\alpha]$ from the posterior
 distribution.  This figure also shows the calibrated spectrum on which
-the priors were conditioned, and individual components of the model
-constructed from each draw.   In Figure \ref{fig:calibrated_residuals}
-we show the residuals between the data and the draws from the
-posterior, for the spectra and the photometry.
+the priors were conditioned, and several of the individual components
+of the model constructed from each draw.  In Figure
+\ref{fig:calibrated_residuals} we show the residuals between the data
+and the draws from the posterior, for both the spectra and the
+photometry. In Figure \ref{fig:calibrated_triangle} we show the
+marginalized and joint PDFs for the parameters.
 
-In Figure \ref{fig:calibrated_triangle} we show the marginalized and
-joint PDFs for the parameters.
 
-Apparently we get really nice redshift/velocity constraints for free.
+Discuss degeneracies, etc.  Apparently we get really nice
+redshift/velocity constraints for free.
+
+Next, we infer the parameters of the spectrum of the same cluster
+\emph{without} spectrophotometric calibration.
+
+
 
 \section{Discussion}
 
