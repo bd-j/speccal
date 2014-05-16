@@ -137,7 +137,7 @@ This will reduce the importance of the spectroscopy relative to the
 photometry and the RPI will be well pleased with the dominance of the
 photometric data in the final inferences of the parameters of
 interest.
-In this what follows, we provide an example of this kind of
+In what follows, we provide an example of this kind of
 parameterization and inference.
 
 Our example involves instantiating a ``calibration adjustment'' model,
@@ -261,20 +261,23 @@ To demonstrate the effectiveness of our spectrophotometric calibration
 strategy we will infer the parameters $\theta$ from a spectrum both
 \emph{before} and \emph{after} it has been spectrophotometrically
 calibrated using typical techniques and ancillary spectrophotometric
-calibration data. ( CITE NC)
+calibration data.
 
 \subsection{Test Data}
-The data we use to test our method consists of MMT Hectospec
-spectroscopy of XX stellar clusters in M31 for which YY-band HST
-photometric data exist.  The optical spectra were obtained by
-\citet{caldwell}.  The wavelength range of the spectra is $3700-7200
-\AA$. The instrumental resolution is $\sim 5\AA$ across the optical
-range \citep{fabricant13}.  Sky subtraction happened.  We got data
-which were uncalibrated and data which had been approximately
-spectrophotometrically calibrated using an average for the night (MORE
-HERE).
 
 DRW/BDJ WORDS ABOUT DATA
+
+The data we use to test our method consists of optical spectroscopy of
+XX stellar clusters in M31 for which YY-band HST photometric data
+exist.  The optical spectra were obtained using the fiber-fed
+Hectoscpec intrument on MMT by \citet{caldwell}.  The wavelength range
+of the spectra is $3700-7200 \AA$. The instrumental resolution is
+$\sim 5\AA$ across the optical range \citep{fabricant13}.  Sky
+subtraction happened.  We got data which were uncalibrated and data
+which had been approximately spectrophotometrically calibrated using
+an average for the night (MORE HERE).  Show figure of calibrated and
+uncalibrated data.  Discuss S/N, sky subtraction, calibration.
+
 
 \subsection{Star Cluster Model}
 We model the stellar cluster as a single age SSP. The spectrum of a
@@ -282,9 +285,9 @@ star cluster under this assumption is given by
 \begin{eqnarray}\displaystyle\label{eq:MeanModel} 
 \mu(\theta, \lambda_o) & = &
 \frac{m_*}{4\pi d_L^2(1+z)} \, G(\lambda,\sigma) \otimes 
-S(\lambda, t, Z [, \beta]) \, e^ {-k_\lambda\tau_V}  +
-\sum_{i=0}^{N_l} \frac{a_i}{\sigma_e\sqrt(2\pi)} e^{-(\lambda - \lambda_i)^2/(2\sigma_e^2)}
-\\ 
+S(\lambda, t, Z [, \beta]) \, e^ {-k_\lambda\tau_V}  + \\
+& & \sum_{i=0}^{N_l} \frac{a_i}{\sigma_e\sqrt(2\pi)} e^{-\frac{(\lambda - \lambda_i)^2}{2\sigma_e^2}}
+\nonumber \\ 
 \lambda_o & = & (1+z)\,\lambda 
 \\
 \theta & \equiv & \left[ m_*, t, Z, \tau_V, \sigma_v, z, d_L, \beta,
@@ -295,7 +298,10 @@ the stellar mass $m_*$,
 effective optical depth to dust in the $V$-band $\tau_V$,
 velocity dispersion or instrumental resolution $\sigma$, 
 luminosity distance $d_L$, 
-and redshift $z$.  
+and redshift $z$,
+and amplitudes of the $N_l$ nebular and interstellar emission lines
+$a_i$.
+
 The spectrum of one solar mass of stars that formed at lookback time
 $t$ with metallicity $Z$ is given by $S(\lambda, t, Z [, \beta])$
 where the additional parameters $\beta$ may include details of the
@@ -326,7 +332,7 @@ $f(\alpha)$ in this projection.
 
 We calculate $S(\lambda, t, Z)$ using the Flexible Stellar Population
 Synthesis code \citep[FSPS][]{FSPS}.  We use the Padova isochrones
-\citep{Padova} and the MILES stellar spectral library.  The model
+\citep{Padova} and the MILES stellar spectral library \citep{MILES}.  The model
 spectra are smoothed by convolution with a Gaussian in wavelength
 space (to model the MMT line-spread function) and are interpolated to
 the wavelength points of the of the observed spectrum while taking
@@ -352,6 +358,9 @@ which a given cluster is drawn.
 
 \subsection{Results}
 
+We first infer the parameters of interest $\theta$ for a calibrated
+spectrum of one of the clusters, using the full YY-band photometry.
+
 
 NEEDS MASSIVE REWORDING.
 In Figure \ref{fig:calibrated_spectrum} we show the spectrum resulting
@@ -365,7 +374,7 @@ posterior, for the spectra and the photometry.
 In Figure \ref{fig:calibrated_triangle} we show the marginalized and
 joint PDFs for the parameters.
 
-Apparently we get really nice redshift/velocity constraints.
+Apparently we get really nice redshift/velocity constraints for free.
 
 \section{Discussion}
 
