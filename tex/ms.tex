@@ -273,11 +273,11 @@ exist.  The optical spectra were obtained using the fiber-fed
 Hectoscpec intrument on MMT by \citet{caldwell}.  The wavelength range
 of the spectra is $3700-7200 \AA$. The instrumental resolution is
 $\sim 5\AA$ across the optical range \citep{fabricant13}.  Sky
-subtraction happened.  We got data which were uncalibrated and data
-which had been approximately spectrophotometrically calibrated using
-an average for the night (MORE HERE). Figure \ref{fig:data} shows the
-calibrated and uncalibratred spectra for each cluster.  Discuss S/N,
-sky subtraction, calibration.
+subtraction happened. The data were approximately
+spectrophotometrically calibrated using an average calibration vector
+the night constructed from.... (MORE HERE). Figure \ref{fig:data}
+shows the spectra before and after calibration for each cluster.
+Discuss S/N, sky subtraction.
 
 
 \subsection{Star Cluster Model}
@@ -287,7 +287,7 @@ star cluster under this assumption is given by
 \mu(\theta, \lambda_o) & = &
 \frac{m_*}{4\pi d_L^2(1+z)} \, G(\lambda,\sigma) \otimes 
 S(\lambda, t, Z , \beta) \, e^ {-k_\lambda\tau_V}  + \\
-& & \sum_{i=0}^{N_l} \frac{a_i}{\sigma_e\sqrt(2\pi)} e^{-\frac{(\lambda - \lambda_i)^2}{2\sigma_e^2}}
+& & \sum_{i=0}^{N_l} \frac{a_i}{\sigma_e\sqrt{2\pi}} \exp(-\frac{(\lambda - \lambda_i)^2}{2\sigma_e^2})
 \nonumber \\ 
 \lambda_o & = & (1+z)\,\lambda 
 \\
@@ -299,7 +299,7 @@ the stellar mass $m_*$,
 effective optical depth to dust in the $V$-band $\tau_V$,
 velocity dispersion or instrumental resolution $\sigma$, 
 luminosity distance $d_L$, 
-and redshift $z$,
+redshift $z$,
 and amplitudes of the $N_l$ nebular and interstellar emission lines
 $a_i$.
 
@@ -372,16 +372,17 @@ and the draws from the posterior, for both the spectra and the
 photometry. In Figure \ref{fig:calibrated_triangle} we show the
 marginalized and joint PDFs for the parameters.
 
-Discuss degeneracies, etc.  Apparently we get really nice
+BDJ: Discuss degeneracies, etc.  Apparently we get really nice
 redshift/velocity constraints for free.
 
-Next, we infer the parameters of the spectrum of the same cluster
+BDJ: Next, we infer the parameters of the spectrum of the same cluster
 \emph{without} spectrophotometric calibration.
 
-Then, we show select marginalized or joint PDFs for each cluster
+BDJ: Then, we show select marginalized or joint PDFs for each cluster
 calibrated/uncalibrated, to assess consistency.
 
-Finally, we have fun playing with the number of photometric bands and the S/N.
+BDJ: Finally, we have fun playing with the number of photometric bands
+and the S/N.
 
 \section{Discussion}
 
