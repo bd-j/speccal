@@ -1,6 +1,6 @@
 *~
 *.aux
 *.log
-*.pdf
+tex/*.pdf
 tex/vc.tex
 tex/msNotes.bib
