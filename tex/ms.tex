@@ -289,7 +289,7 @@ F_{\theta^\prime}(\lambda_o) & = &
 \nonumber \\ 
 \lambda_o & = & (1+z)\,\lambda 
 \\
-\theta^\prime & \equiv & \left[ m_*, t, Z, \tau_V, z, d_L, \beta, \right]
+\theta^\prime & \equiv & \left[ m_*, t, Z, \tau_V, z, d_L, \beta \right]
 \quad ,
 \end{eqnarray} where the
 parameters $\theta^\prime$ include the stellar mass $m_*$, effective optical
@@ -324,7 +324,7 @@ emission, such as allowing line dependent widths and velocities.
 
 The final mean model is then given by 
 \begin{eqnarray}\label{eq:MeanModel} 
-\mu(\theta, \lambda_o) &  = & (G_\sigma  \otimes F_{\theta^\prime})(\lambda) +
+\mu(\theta) &  = & (G_\sigma  \otimes F_{\theta^\prime})(\lambda) +
 \sum_{\ell=0}^{N_\ell} S_\ell \\
 S_\ell & = & \frac{A_\ell}{\sigma_e\sqrt{2\pi}} \exp(-\frac{(\lambda -
  \lambda_\ell)^2}{2\sigma_e^2})\\
@@ -332,11 +332,11 @@ S_\ell & = & \frac{A_\ell}{\sigma_e\sqrt{2\pi}} \exp(-\frac{(\lambda -
   \sigma_e \right]
 \quad ,
 \end{eqnarray}
-where $G$ represents a Gaussian of unit area, $\otimes$ indicates
-convolution, and the full parameter set $\theta$ now includes the
-amplitudes of the $N_l$ nebular and interstellar emission lines
-$A_\ell$.  We again implicitly include the conversion from restframe
-to observed frame spectra.
+where $G_\sigma$ represents a Gaussian of unit area and standard
+deviation $\sigma$, $\otimes$ indicates convolution, and the full
+parameter set $\theta$ now includes the dispersion $\sigma_e$ and
+amplitudes $A_\ell$ of the $N_l$ nebular and interstellar emission
+lines. 
 
 To model the photometry we simply project the observed frame mean
 model spectrum (equation \ref{eq:MeanModel}) onto the filters of
