@@ -272,59 +272,71 @@ XX stellar clusters in M31 for which YY-band HST photometric data
 exist.  The optical spectra were obtained using the fiber-fed
 Hectoscpec intrument on MMT by \citet{caldwell}.  The wavelength range
 of the spectra is $3700-7200 \AA$. The instrumental resolution is
-$\sim 5\AA$ across the optical range \citep{fabricant13}.  Sky
-subtraction happened. The data were approximately
-spectrophotometrically calibrated using an average calibration vector
-the night constructed from.... (MORE HERE). Figure \ref{fig:data}
-shows the spectra before and after calibration for each cluster.
-Discuss S/N, sky subtraction.
+$\sim 5\AA$ across the optical range \citep{fabricant13}.  Wavelength
+calibration happened. Sky subtraction happened. The data were
+approximately spectrophotometrically calibrated using an average
+calibration vector the night constructed from.... (MORE HERE). Figure
+\ref{fig:data} shows the spectra before and after calibration for each
+cluster.  Discuss S/N, sky subtraction.
 
 
 \subsection{Star Cluster Model}
 We model the stellar cluster as a single age SSP. The spectrum of a
 star cluster under this assumption is given by
-\begin{eqnarray}\displaystyle\label{eq:MeanModel} 
-\mu(\theta, \lambda_o) & = &
-\frac{m_*}{4\pi d_L^2(1+z)} \, G(\lambda,\sigma) \otimes 
-S(\lambda, t, Z , \beta) \, e^ {-k_\lambda\tau_V}  + \\
-& & \sum_{i=0}^{N_l} \frac{a_i}{\sigma_e\sqrt{2\pi}} \exp(-\frac{(\lambda - \lambda_i)^2}{2\sigma_e^2})
+\begin{eqnarray}\displaystyle
+F_{\theta^\prime}(\lambda_o) & = &
+\frac{m_*}{4\pi d_L^2(1+z)} \, S(\lambda, t, Z , \beta) \, e^ {-k_\lambda\tau_V} \\
 \nonumber \\ 
 \lambda_o & = & (1+z)\,\lambda 
 \\
-\theta & \equiv & \left[ m_*, t, Z, \tau_V, \sigma_v, z, d_L, \beta,
-  \{a_i\}_{i=0}^{N_l}, \sigma_e \right]
+\theta^\prime & \equiv & \left[ m_*, t, Z, \tau_V, z, d_L, \beta, \right]
 \quad ,
-\end{eqnarray} where the parameters $\theta$ include 
-the stellar mass $m_*$, 
-effective optical depth to dust in the $V$-band $\tau_V$,
-velocity dispersion or instrumental resolution $\sigma$, 
-luminosity distance $d_L$, 
-redshift $z$,
-and amplitudes of the $N_l$ nebular and interstellar emission lines
-$a_i$.
+\end{eqnarray} where the
+parameters $\theta^\prime$ include the stellar mass $m_*$, effective optical
+depth to dust in the $V$-band $\tau_V$, luminosity distance $d_L$,
+and redshift $z$.  The obsrved frame wavelengths $\lambda_o$ are
+related to the restframe wavelengths $\lambda$ in the usual way.
 
 The spectrum of one solar mass of stars that formed at lookback time
-$t$ with metallicity $Z$ is given by $S(\lambda, t, Z [, \beta])$
-where the additional parameters $\beta$ may include details of the
+$t$ with metallicity $Z$ is given by $S(\lambda, t, Z [, \beta])$.
+Here the additional parameters $\beta$ may include details of the
 population synthesis model, such as the IMF slope and adjustments to
 the stellar spectra or stellar evolutionary tracks
 \citep[e.g.][]{FSPS}. We will assume $\beta$ to be fixed for the
 purposes of this exercise, with no loss of generality (KEEPING IMF
 SLOPE CONSTANT FOR NOW).  We will also fix the shape of the
-attenuation curve, $k_\lambda \equiv \tau_\lambda/\tau_V$ to the Milky
+attenuation curve, $k_\lambda \equiv \tau_\lambda/\tau_V$, to the Milky
 way average of \citet{CCM89} with $R_V=3.1$ and assume that $d_L$ is
 known to high precision from independent methods.
 
+BDJ Discuss broadening here.  The instrumental resolution is given by $\sigma$,
+
 Nebular emission lines (which may arise from HII regions around the
-clusters or from a diffuse ionized gas) and interstellar absorption is
-modeled as a sum of Gaussians of unknown amplitude $a_i$, all of the
-same width $\sigma_e$ (which need not be the same as stellar
-broadening $\sigma$) and with known central wavelengths $\lambda_i$.
-For emission lines the amplitudes are constrained to be positive,
-while for interstellar absorption (e.g. Na D and Ca K) the amplitudes
-are constrained to be negative. This framework can be easily extended
-to include more complex models for the nebular emission, such as
-allowing line dependent widths.
+clusters or from diffuse ionized gas) and interstellar absorption
+lines are modeled as a sum of Gaussians of unknown amplitude $A_\ell$,
+all of the same width $\sigma_e$ (which need not be the same as
+stellar broadening $\sigma$) and with known central wavelengths
+$\lambda_\ell$.  For emission lines the amplitudes are constrained to be
+positive, while for interstellar absorption (e.g. Na D and Ca K) the
+amplitudes are constrained to be negative. This framework can be
+easily extended to include more complex models for the nebular
+emission, such as allowing line dependent widths and velocities.
+
+The final mean model is then given by 
+\begin{eqnarray}\label{eq:MeanModel} 
+\mu(\theta, \lambda_o) &  = & (G_\sigma  \otimes F_{\theta^\prime})(\lambda) +
+\sum_{\ell=0}^{N_\ell} S_\ell \\
+S_\ell & = & \frac{A_\ell}{\sigma_e\sqrt{2\pi}} \exp(-\frac{(\lambda -
+ \lambda_\ell)^2}{2\sigma_e^2})\\
+\theta & \equiv & \left[ \{\theta^\prime\}, \sigma, \{A_\ell\}_{\ell=0}^{N_l},
+  \sigma_e \right]
+\quad ,
+\end{eqnarray}
+where $G$ represents a Gaussian of unit area, $\otimes$ indicates
+convolution, and the full parameter set $\theta$ now includes the
+amplitudes of the $N_l$ nebular and interstellar emission lines
+$A_\ell$.  We again implicitly include the conversion from restframe
+to observed frame spectra.
 
 To model the photometry we simply project the observed frame mean
 model spectrum (equation \ref{eq:MeanModel}) onto the filters of
