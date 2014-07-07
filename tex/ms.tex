@@ -111,7 +111,7 @@ the photometry is far more reliable, per measurement, than the
 spectra.
 That is, if the spectral pixels tend to prefer one model, or one set
 of parameters, and the photometry another, the spectra will almost
-always ``win'' just by their overwhelming force.
+always ``win'' just by their overwhelming numbers.
 
 What is a Righteous Probabilistic Investigator (RPI) to do?
 One option---fully unjustified---is to ``down-weight'' the
@@ -251,18 +251,18 @@ length of the remaining covariant calibration noise.
 We are now left to demonstrate that it is possible to infer the
 parameters of interest $\theta$ while marginalizing over the
 calibration parameters $\alpha$.  We will apply the methodology for
-spectrophotometric calibration described above to an \emph{actual,
-real} optical spectrum of a stellar cluster in M31.  Spectra of star
+spectrophotometric calibration described above to \emph{actual,
+real} optical spectra of a stellar clusters in M31.  Spectra of star
 clusters provide a good test case, as they are less complex than
 galaxy spectra (for which it is necessary to model the star formation
 history) but are by no means trivial. In this way the key features of
 the calibration model and methodology are not obscured.  
 
-To demonstrate the effectiveness of our spectrophotometric calibration
-strategy we will infer the parameters $\theta$ from a spectrum both
-\emph{before} and \emph{after} it has been spectrophotometrically
-calibrated using typical techniques and ancillary spectrophotometric
-calibration data.
+To demonstrate the effectiveness of our strategy for combining
+spectroscopic and photometric information we will infer the parameters
+$\theta$ from a spectrum both \emph{before} and \emph{after} it has
+been spectrophotometrically calibrated using typical techniques and
+ancillary spectrophotometric calibration data.
 
 \subsection{Test Data}
 
@@ -276,10 +276,21 @@ of the spectra is $3700-7200 \AA$. The instrumental resolution is
 $\sim 5\AA$ across the optical range \citep{fabricant13}.  Wavelength
 calibration happened. Sky subtraction happened. The data were
 approximately spectrophotometrically calibrated using an average
-calibration vector for the night constructed from.... (MORE HERE). Figure
-\ref{fig:data} shows the spectra before and after calibration for each
-cluster.  Discuss S/N, sky subtraction.
+calibration vector for the night constructed from.... (MORE
+HERE). Figure \ref{fig:data} shows the spectra before and after
+calibration (SHOULD THIS SHOW ALL THE CLUSTERS OR JUST ONE?).  Discuss
+S/N, sky subtraction.
 
+\begin{figure}[h!]
+\caption{Shows the calibrated and uncalibrated spectrum for one
+  cluster, along with the uncertainty spectrum and (maybe) the
+  calibration vector. \label{fig:data}}
+\end{figure}
+
+
+\begin{table}[h!]
+\caption{List all the clusters, and individual exposures.}
+\end{table}
 
 \subsection{Star Cluster Model}
 We model the stellar cluster as a single age SSP. The spectrum of a
@@ -376,6 +387,9 @@ parameters of interest $\theta$, for example in the case that there
 is knowledge of the metallicity distribution of the population from
 which a given cluster is drawn.
 
+\begin{table}[h!]
+\caption{List the parameters and  their allowed ranges.}
+\end{table}
 
 \subsection{Results}
 
@@ -386,7 +400,7 @@ from draws of the parameters $[\theta,\alpha]$ from the posterior
 distribution.  This figure also shows the calibrated spectrum on which
 the priors were conditioned, and several of the individual components
 of the model constructed from each draw.  In Figure
-\ref{fig:calibrated_residuals} we show the residuals between the data
+\ref{fig:calibrated_spectrum} we also show the residuals between the data
 and the draws from the posterior, for both the spectra and the
 photometry. In Figure \ref{fig:calibrated_triangle} we show the
 marginalized and joint PDFs for the parameters.
@@ -398,10 +412,29 @@ BDJ: Next, we infer the parameters of the spectrum of the same cluster
 \emph{without} spectrophotometric calibration.
 
 BDJ: Then, we show select marginalized or joint PDFs for each cluster
-calibrated/uncalibrated, to assess consistency.
+calibrated/uncalibrated, to assess consistency.  They are very consistent.
 
 BDJ: Finally, we have fun playing with the number of photometric bands
 and the S/N.
+
+\begin{figure}[h!]
+\caption{Show, for one cluster, the (un)calibrated spectral data, draws from
+  the posterior for the model, and residuals}
+\end{figure}
+
+\begin{figure}[h!]
+\caption{Show the observed photometric SED and draws from the
+  posterior, for one cluster.}
+\end{figure}
+
+\begin{figure}[h!]
+\caption{Show a corner plot of selected relevant parameters, for one cluster.}
+\end{figure}
+
+\begin{figure}[h!]
+\caption{Money plot.  Show the difference between the parameters
+  inferred from the calibrated and uncalibrated spectra, for each cluster.}
+\end{figure}
 
 \section{Discussion}
 
