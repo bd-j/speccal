@@ -332,7 +332,10 @@ BDJ IMPROVE DISCUSSION OF BROADENING.  The model spectra are smoothed
 by convolution with a Gaussian in wavelength space (to model the MMT
 line-spread function) and are interpolated to the wavelength points of
 the of the observed spectrum while taking into account the
-redshift. The instrumental resolution is given by $\sigma$.
+redshift. The instrumental resolution is given by $\sigma$.  Discuss
+Intrinsic resolution of model spectra (MILES), whether instrumentasl
+resolution is larger, smaller, or comparable to intrinsic velocity
+broadening.
 
 Nebular emission lines (which may arise from HII regions around the
 clusters or from diffuse ionized gas) and interstellar absorption
@@ -358,8 +361,9 @@ S_\ell & = & \frac{A_\ell}{\sigma_e\sqrt{2\pi}} \exp(-\frac{(\lambda -
 where $G_\sigma$ represents a Gaussian of unit area 
 and standard deviation $\sigma$, 
 $\otimes$ indicates convolution, 
-and the full parameter set $\theta$ now includes 
-the dispersion $\sigma_e$ and
+and the full parameter set $\theta$ now includes
+the instrumental wavelength broadening $\sigma$, 
+and the dispersion $\sigma_e$ and
 amplitudes $A_\ell$ of the $N_l$ nebular and interstellar emission
 lines. 
 
@@ -395,14 +399,14 @@ which a given cluster is drawn.
 
 We first infer the parameters of interest $\theta$ for a calibrated
 spectrum of one of the clusters, using the full YY-band photometry. In
-Figure \ref{fig:calibrated_spectrum} we show the spectrum resulting
+Figure \ref{fig:inferred_spectrum} we show the spectrum resulting
 from draws of the parameters $[\theta,\alpha]$ from the posterior
 distribution.  This figure also shows the calibrated spectrum on which
 the priors were conditioned, and several of the individual components
 of the model constructed from each draw.  In Figure
-\ref{fig:calibrated_spectrum} we also show the residuals between the data
+\ref{fig:inferred_spectrum} we also show the residuals between the data
 and the draws from the posterior, for both the spectra and the
-photometry. In Figure \ref{fig:calibrated_triangle} we show the
+photometry. In Figure \ref{fig:inferred_params} we show the
 marginalized and joint PDFs for the parameters.
 
 BDJ: Discuss degeneracies, etc.  Apparently we get really nice
@@ -419,27 +423,39 @@ and the S/N.
 
 \begin{figure}[h!]
 \caption{Show, for one cluster, the (un)calibrated spectral data, draws from
-  the posterior for the model, and residuals}
+  the posterior for the model, and residuals \label{fig:inferred_spectrum}}
 \end{figure}
 
 \begin{figure}[h!]
 \caption{Show the observed photometric SED and draws from the
-  posterior, for one cluster.}
+  posterior, for one cluster.\label{fig:inferred_sed}}
 \end{figure}
 
 \begin{figure}[h!]
-\caption{Show a corner plot of selected relevant parameters, for one cluster.}
+\caption{Show a corner plot of selected relevant parameters, for one
+cluster. \label{fig:inferred_params}}
 \end{figure}
 
 \begin{figure}[h!]
 \caption{Money plot.  Show the difference between the parameters
-  inferred from the calibrated and uncalibrated spectra, for each cluster.}
+  inferred from the calibrated and uncalibrated spectra, for each
+  cluster.\label{fig:boom}}
 \end{figure}
 
 \section{Discussion}
 
-BDJ INSERT WORDS HERE.
-BDJ random issues, collected here in case we want to address them and
+BDJ INSERT WORDS HERE.  We have shown that we can combine photometric
+and spectroscopic data in a principled way to infer physical
+properties.  We do not resort to an arbitrary down-weighting or
+up-weighting of certain data. Instead, we explicitly model our
+uncertainty in the spectral calibration.  This combination of
+spectroscopy and photometry reduces the need for spectrophotometric
+calibration for a number of applications.  Furthermore, our strategy
+easily extensible to more complicated models, which include for
+example night sky line emission in the spectroscopy, wavelength
+calibration.
+
+BDJ misc issues, collected here in case we want to address them and
 to keep me from cluttering up the main text: effective aperture
 corrections (i.e. we're implicitly assuming photometry and
 spectroscopy sample the same population).  Sky subtraction residuals.
