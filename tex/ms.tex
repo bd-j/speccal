@@ -305,11 +305,18 @@ the stellar spectra or stellar evolutionary tracks
 \citep[e.g.][]{FSPS}. We will assume $\beta$ to be fixed for the
 purposes of this exercise, with no loss of generality (KEEPING IMF
 SLOPE CONSTANT FOR NOW).  We will also fix the shape of the
-attenuation curve, $k_\lambda \equiv \tau_\lambda/\tau_V$, to the Milky
-way average of \citet{CCM89} with $R_V=3.1$ and assume that $d_L$ is
-known to high precision from independent methods.
+attenuation curve, $k_\lambda \equiv \tau_\lambda/\tau_V$, to the
+Milky way average of \citet{CCM89} with $R_V=3.1$ and assume that
+$d_L$ is known to high precision from independent methods.  We
+calculate $S(\lambda, t, Z)$ using the Flexible Stellar Population
+Synthesis code \citep[FSPS][]{FSPS}.  We use the Padova isochrones
+\citep{Padova} and the MILES stellar spectral library \citep{MILES}.
 
-BDJ Discuss broadening here.  The instrumental resolution is given by $\sigma$,
+BDJ IMPROVE DISCUSSION OF BROADENING.  The model spectra are smoothed
+by convolution with a Gaussian in wavelength space (to model the MMT
+line-spread function) and are interpolated to the wavelength points of
+the of the observed spectrum while taking into account the
+redshift. The instrumental resolution is given by $\sigma$.
 
 Nebular emission lines (which may arise from HII regions around the
 clusters or from diffuse ionized gas) and interstellar absorption
@@ -343,13 +350,6 @@ model spectrum (equation \ref{eq:MeanModel}) onto the filters of
 interest.  Note that we do \emph{not} include the calibration vector
 $f(\alpha)$ in this projection.
 
-We calculate $S(\lambda, t, Z)$ using the Flexible Stellar Population
-Synthesis code \citep[FSPS][]{FSPS}.  We use the Padova isochrones
-\citep{Padova} and the MILES stellar spectral library \citep{MILES}.  The model
-spectra are smoothed by convolution with a Gaussian in wavelength
-space (to model the MMT line-spread function) and are interpolated to
-the wavelength points of the of the observed spectrum while taking
-into account the redshift.
 
 \subsection{Sampling and Priors}
 
