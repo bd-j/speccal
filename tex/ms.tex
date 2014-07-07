@@ -194,12 +194,13 @@ This is a trivial modification of the chi-squared log-likelihood:
 \end{eqnarray}
 This modification shows the necessity of including the log-variance
 term.
-This---equation~(\ref{eq:photometricLF})---is in fact the log-likelihood
-function we are going to use for the photometric measurements (BDJ: IS
-THIS TRUE?  DWH, Currently I'm not using a jitter term, but I can and will) in what follows.
-In this formulation, if $\theta$ are the parameters of interest, the
-jitter variance $s^2$ is a nuisance noise-model parameter.
-The Gaussian Process will be a generalization of this modification.
+This---equation~(\ref{eq:photometricLF})---is in fact the
+log-likelihood function we are going to use for the photometric
+measurements (BDJ: IS THIS TRUE?  DWH, Currently I'm not using a
+jitter term, but I can and will) in what follows.  In this
+formulation, if $\theta$ are the parameters of interest, the jitter
+variance $s^2$ is a nuisance noise-model parameter.  The Gaussian
+Process will be a generalization of this modification.
 
 The calibration-vector and Gaussian-Process modified log-likelihood is
 \begin{eqnarray}\label{eq:spectroscopicLF}
@@ -275,7 +276,7 @@ of the spectra is $3700-7200 \AA$. The instrumental resolution is
 $\sim 5\AA$ across the optical range \citep{fabricant13}.  Wavelength
 calibration happened. Sky subtraction happened. The data were
 approximately spectrophotometrically calibrated using an average
-calibration vector the night constructed from.... (MORE HERE). Figure
+calibration vector for the night constructed from.... (MORE HERE). Figure
 \ref{fig:data} shows the spectra before and after calibration for each
 cluster.  Discuss S/N, sky subtraction.
 
@@ -292,24 +293,28 @@ F_{\theta^\prime}(\lambda_o) & = &
 \theta^\prime & \equiv & \left[ m_*, t, Z, \tau_V, z, d_L, \beta \right]
 \quad ,
 \end{eqnarray} where the
-parameters $\theta^\prime$ include the stellar mass $m_*$, effective optical
-depth to dust in the $V$-band $\tau_V$, luminosity distance $d_L$,
-and redshift $z$.  The obsrved frame wavelengths $\lambda_o$ are
-related to the restframe wavelengths $\lambda$ in the usual way.
+parameters $\theta^\prime$ include 
+the stellar mass $m_*$, 
+effective optical depth to dust in the $V$-band $\tau_V$, 
+luminosity distance $d_L$,
+and redshift $z$.  
+The observed frame wavelengths $\lambda_o$ are related to the restframe
+wavelengths $\lambda$ in the usual way.
 
 The spectrum of one solar mass of stars that formed at lookback time
 $t$ with metallicity $Z$ is given by $S(\lambda, t, Z [, \beta])$.
 Here the additional parameters $\beta$ may include details of the
 population synthesis model, such as the IMF slope and adjustments to
-the stellar spectra or stellar evolutionary tracks
-\citep[e.g.][]{FSPS}. We will assume $\beta$ to be fixed for the
-purposes of this exercise, with no loss of generality (KEEPING IMF
-SLOPE CONSTANT FOR NOW).  We will also fix the shape of the
-attenuation curve, $k_\lambda \equiv \tau_\lambda/\tau_V$, to the
-Milky way average of \citet{CCM89} with $R_V=3.1$ and assume that
-$d_L$ is known to high precision from independent methods.  We
-calculate $S(\lambda, t, Z)$ using the Flexible Stellar Population
-Synthesis code \citep[FSPS][]{FSPS}.  We use the Padova isochrones
+the stellar spectra or stellar evolutionary tracks. We will assume
+$\beta$ to be fixed for the purposes of this exercise, with no loss of
+generality (KEEPING IMF SLOPE CONSTANT FOR NOW).  We will also fix the
+shape of the attenuation curve, $k_\lambda \equiv
+\tau_\lambda/\tau_V$, to the Milky way average of \citet{CCM89} with
+$R_V=3.1$ and assume that $d_L$ is known to high precision from
+independent methods and can therefore be treated as fixed.  In
+practice, $d_L$ is completely degenerate with $m_*$. We calculate
+$S(\lambda, t, Z)$ using the Flexible Stellar Population Synthesis
+code \citep[FSPS][]{FSPS}.  We use the Padova isochrones
 \citep{Padova} and the MILES stellar spectral library \citep{MILES}.
 
 BDJ IMPROVE DISCUSSION OF BROADENING.  The model spectra are smoothed
@@ -339,9 +344,11 @@ S_\ell & = & \frac{A_\ell}{\sigma_e\sqrt{2\pi}} \exp(-\frac{(\lambda -
   \sigma_e \right]
 \quad ,
 \end{eqnarray}
-where $G_\sigma$ represents a Gaussian of unit area and standard
-deviation $\sigma$, $\otimes$ indicates convolution, and the full
-parameter set $\theta$ now includes the dispersion $\sigma_e$ and
+where $G_\sigma$ represents a Gaussian of unit area 
+and standard deviation $\sigma$, 
+$\otimes$ indicates convolution, 
+and the full parameter set $\theta$ now includes 
+the dispersion $\sigma_e$ and
 amplitudes $A_\ell$ of the $N_l$ nebular and interstellar emission
 lines. 
 
