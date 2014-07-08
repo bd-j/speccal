@@ -366,6 +366,8 @@ the instrumental wavelength broadening $\sigma$,
 and the dispersion $\sigma_e$ and
 amplitudes $A_\ell$ of the $N_l$ nebular and interstellar emission
 lines. 
+This is the mean model which appears in equation
+\ref{eq:SpectroscopicLF}.
 
 To model the photometry we simply project the observed frame mean
 model spectrum (equation \ref{eq:MeanModel}) onto the filters of
@@ -437,6 +439,10 @@ cluster. \label{fig:inferred_params}}
 \end{figure}
 
 \begin{figure}[h!]
+\caption{Show the calibration vector and our inference of it? \label{fig:inferred_calib}}
+\end{figure}
+
+\begin{figure}[h!]
 \caption{Money plot.  Show the difference between the parameters
   inferred from the calibrated and uncalibrated spectra, for each
   cluster.\label{fig:boom}}
@@ -444,16 +450,27 @@ cluster. \label{fig:inferred_params}}
 
 \section{Discussion}
 
-BDJ INSERT WORDS HERE.  We have shown that we can combine photometric
-and spectroscopic data in a principled way to infer physical
-properties.  We do not resort to an arbitrary down-weighting or
-up-weighting of certain data. Instead, we explicitly model our
-uncertainty in the spectral calibration.  This combination of
-spectroscopy and photometry reduces the need for spectrophotometric
-calibration for a number of applications.  Furthermore, our strategy
+BDJ INSERT WORDS HERE.  We have demonstrated that we can combine
+photometric and spectroscopic data in a principled way to infer
+physical properties.  We do not resort to an arbitrary down-weighting
+or up-weighting of certain data. Instead, we explicitly model our
+uncertain knowledge of the spectral calibration.  For a number of
+applications this combination of spectroscopy and photometry reduces
+the need for spectrophotometric calibration.  Calibration information,
+if it exists, can be used to generate informative priors on the
+calibration parameters of our model. Furthermore, our strategy is
 easily extensible to more complicated models, which include for
 example night sky line emission in the spectroscopy, wavelength
-calibration.
+calibration.  
+
+In a heirarchical model it should be possible to use the inferred
+calibration parameters, along with additional information about the
+observations (e.g. airmass, instrument temperature), to in turn infer
+the parameters of a generative model for the calibration.
+
+Limitations.  The strategy we have outlined here has several
+limitations.  First, it requires a generative model for the spectrum of
+the object of interest, and is thus ill-suited to discovery projects.
 
 BDJ misc issues, collected here in case we want to address them and
 to keep me from cluttering up the main text: effective aperture
