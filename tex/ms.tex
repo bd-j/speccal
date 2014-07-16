@@ -333,20 +333,23 @@ by convolution with a Gaussian in wavelength space (to model the MMT
 line-spread function) and are interpolated to the wavelength points of
 the of the observed spectrum while taking into account the
 redshift. The instrumental resolution is given by $\sigma$.  Discuss
-Intrinsic resolution of model spectra (MILES), whether instrumentasl
-resolution is larger, smaller, or comparable to intrinsic velocity
-broadening.
+intrinsic resolution of model spectra (MILES), what to do in
+situations where instrumental resolution is higher, lower or
+comparable (ouch) to intrinsic velocity broadening.
 
 Nebular emission lines (which may arise from HII regions around the
 clusters or from diffuse ionized gas) and interstellar absorption
 lines are modeled as a sum of Gaussians of unknown amplitude $A_\ell$,
 all of the same width $\sigma_e$ (which need not be the same as
 stellar broadening $\sigma$) and with known central wavelengths
-$\lambda_\ell$.  For emission lines the amplitudes are constrained to be
-positive, while for interstellar absorption (e.g. Na D and Ca K) the
-amplitudes are constrained to be negative. This framework can be
+$\lambda_\ell$.  For emission lines the amplitudes are constrained to
+be positive, while for interstellar absorption (e.g. Na D and Ca K)
+the amplitudes are constrained to be negative. This framework can be
 easily extended to include more complex models for the nebular
-emission, such as allowing line dependent widths and velocities.
+emission, such as allowing line dependent widths and velocities, and
+using Voight profiles for the line shapes.  NB GAUSSIANS ARE A NOT
+GREAT APPROXIMATION FOR ABSORPTION LINE SHAPES (GAUSSIAN IN OPTICAL
+DEPTH, NOT $\Delta F$)
 
 The final mean model is then given by 
 \begin{eqnarray}\label{eq:MeanModel} 
@@ -450,27 +453,44 @@ cluster. \label{fig:inferred_params}}
 
 \section{Discussion}
 
-BDJ INSERT WORDS HERE.  We have demonstrated that we can combine
-photometric and spectroscopic data in a principled way to infer
-physical properties.  We do not resort to an arbitrary down-weighting
-or up-weighting of certain data. Instead, we explicitly model our
-uncertain knowledge of the spectral calibration.  For a number of
-applications this combination of spectroscopy and photometry reduces
-the need for spectrophotometric calibration.  Calibration information,
-if it exists, can be used to generate informative priors on the
-calibration parameters of our model. Furthermore, our strategy is
-easily extensible to more complicated models, which include for
-example night sky line emission in the spectroscopy, wavelength
-calibration.  
+BDJ INSERT WORDS HERE.  We have demonstrated, using a sample of
+stellar clusters in M31, that we can combine photometric and
+spectroscopic data in a principled way to infer physical properties.
+We do not resort to an arbitrary down-weighting or up-weighting of
+certain data. Instead, we explicitly model our uncertain knowledge of
+the spectral calibration and infer it along with the physical
+properties. For a number of applications this combination of
+spectroscopy and photometry reduces the need for spectrophotometric
+calibration.  Calibration information, if it exists, can be
+incorporated into informative priors on the calibration parameters of
+our model.
 
-In a heirarchical model it should be possible to use the inferred
-calibration parameters, along with additional information about the
-observations (e.g. airmass, instrument temperature), to in turn infer
-the parameters of a generative model for the calibration.
+Our strategy is easily extensible to more complicated models, which
+include for example night sky line emission in the spectroscopy,
+wavelength calibration.  DISCUSS MORE COMPLICATED COVARIANCE KERNELS,
+MULTIPLE KERNELS, etc.  MODEL CHECKING.
 
-Limitations.  The strategy we have outlined here has several
-limitations.  First, it requires a generative model for the spectrum of
-the object of interest, and is thus ill-suited to discovery projects.
+In a heirarchical modelling context it should be possible to use the
+inferred calibration parameters, along with additional information
+about the observations (e.g. airmass, instrument temperature), to in
+turn infer the parameters of a generative model for the
+calibration. This generative model can then be used in the
+(probabilistic) calibration of objects where the spectra are difficult
+to model explicitly.
+
+Limitations.  The strategy we have advocated has several limitations.
+First, it requires a generative model for the spectrum of the object
+of interest, and is thus ill-suited to discovery projects.  Second,
+care must be taken to avoid absorbing interesting model deficiencies
+into the calibration model.  Third, we have made the assumption that
+the spectrscopy and the photometry are sampling the same populations.
+In practice, differences between spectroscopic and photometric
+apertures mean that the photometry and the spectroscopy are sampling
+slightly different physical regions.  The correct response to this
+situation is to explicitly model the differences, incorporating prior
+information about the spatial variation of physical properties.
+Finally, this method is computationally intensive and expensive, since
+we are constantly inverting largish matrices.
 
 BDJ misc issues, collected here in case we want to address them and
 to keep me from cluttering up the main text: effective aperture
