@@ -7,28 +7,28 @@ import diagnostics
 import sps_basis
 sps = sps_basis.StellarPopBasis(smooth_velocity=False)
 
-
 def data_figure(results_list, layout = None, shaded = False, **kwargs):
-    fig = pl.figure()
+    fig = pl.figure(figsize=(10, 5))
 
     #get the panel geometry if not given
     nobj = len(results_list)
     if layout is None:
         nx = int(np.floor(np.sqrt(nobj)))
         ny = int(np.ceil(nobj*1.0/nx))
-        layout = [ny,nx]
+        layout = [nx,ny]
     print(ny, nx)
     gs = gridspec.GridSpec(layout[0], layout[1])
     for i, res in enumerate(results_list):
+        x, y = i % nx, np.floor(i*1.0 / nx)
+        #print(x,y)
         obs = res['obs']
 
         if shaded:
-            ax = pl.Subplot(fig, gs[i])
+            ax = pl.Subplot(fig, gs[x,y])
             ax = one_data_figure_shaded(obs, ax, color = 'blue', facecolor = 'grey')
             fig.add_subplot(ax)
-
         else:
-            fig, gs = one_data_figure_sep(obs, fig, subplot_spec = gs[i], **kwargs)
+            fig, sub_gs = one_data_figure_sep(obs, fig, subplot_spec = gs[i], **kwargs)
     #pl.tight_layout(fig)
     return fig
         
@@ -69,7 +69,7 @@ def one_data_figure_sep(obs, fig, subplot_spec=None, **kwargs):
     return fig, gs
     
 def spec_figure(results, alpha=0.3, samples=[-1],
-                subplot_spec=None, **kwargs):
+                subplot_spec=None, xlim=None, **kwargs):
     """
     plot stars+dust+neb, then the calibration vector, then the GP
     predicitions, then data and full model, then residuals
@@ -116,6 +116,8 @@ def spec_figure(results, alpha=0.3, samples=[-1],
         [ax.plot(mwave, v, color=c, alpha=alpha, **kwargs) for ax,v,c in zip(axes, vecs, color)]
 
     [a.axhline( int(i==0), linestyle=':', color='black') for i,a in enumerate(axes[-2:])]
+    if xlim is not None:
+        [a.set_xlim(xlim) for a in axes]
     # add axes to the figure
     [fig.add_subplot(ax) for ax in axes]
     return fig
@@ -159,11 +161,64 @@ def phot_figure(results, alpha=0.3, samples = [-1], **kwargs):
     fig.add_subplot(res)
     
     return fig
+    
 
-def calibration_figure(results_list):
-    #plot the calibration vector and the 
-    pass
+def calibration_figure(cal_result, nocal_result, samples = [-1], alpha = 0.3):
+    #plot the calibration vector and the reconstruction of it
+    # from the f(alpha) and GP, for cal and uncal.
 
+    fig = pl.figure(figsize=(10, 5))
+    
+    gs = gridspec.GridSpec(1, 2)
+    cal_plot, nocal_plot = pl.Subplot(fig, gs[0]), pl.Subplot(fig, gs[1])
+
+    # plot posterior draws
+    nw, ns, nd = cal_result['chain'].shape
+    flatchain = cal_result['chain'].reshape(nw*ns, nd)
+    label = 'modeled'
+    for s in samples:
+        theta = flatchain[s,:]
+        comps = diagnostics.model_components(theta, cal_result, cal_result['obs'],
+                                             sps, photflag=0)
+        spec, gp, cal, mask, stars = comps
+        full_cal = cal[mask] + gp/stars[mask]
+        mwave = cal_result['obs']['wavelength'][mask]
+        cal_plot.plot(mwave, 1/full_cal, label = label,
+                      color = 'cyan', alpha = alpha)
+
+        
+        label = None
+
+    # plot posterior draws
+    nw, ns, nd = nocal_result['chain'].shape
+    flatchain = nocal_result['chain'].reshape(nw*ns, nd)
+    label = 'modeled'
+    for s in samples:
+        theta = flatchain[s,:]
+        comps = diagnostics.model_components(theta, nocal_result, nocal_result['obs'],
+                                             sps, photflag=0)
+        spec, gp, cal, mask, stars = comps
+        full_cal = cal[mask] + gp/stars[mask]
+        mwave = nocal_result['obs']['wavelength'][mask]
+        nocal_plot.plot(mwave, 1/full_cal, label = label,
+                        color = 'cyan', alpha = alpha)
+
+        
+        
+        label = None
+
+    cal_plot.axhline(1.0, color='magenta', label='Caldwell')
+    cal_plot.legend(loc=0)
+    caldwell_cal = cal_result['obs']['spectrum']/nocal_result['obs']['spectrum']
+    nocal_plot.plot(cal_result['obs']['wavelength'][mask], caldwell_cal[mask]*0.75, color='magenta', label='Caldwell')
+    
+    nocal_plot.legend(loc=0)
+    
+    print(len(cal_result['obs']['spectrum']), len(nocal_result['obs']['spectrum']))
+
+    fig.add_subplot(cal_plot)
+    fig.add_subplot(nocal_plot)
+    return fig
     
 def corner_plot(results, showpars=None):
     #just wrap subtriangle
@@ -191,22 +246,23 @@ if __name__ == '__main__':
         ns = result['chain'].shape[0] * result['chain'].shape[1]
         sample = [int(s * ns) for s in samples]
     
-        sfig = spec_figure(result, samples=sample,
-                        linewidth = 0.5)
-        sfig.suptitle(name[i])
-        sfig.savefig('sfig.'+ of + figext)
-        pfig = phot_figure(result, samples=sample)
-        pfig.suptitle(name[i])
-        pfig.savefig('pfig.' + of + figext)
-
+        #sfig = spec_figure(result, samples=sample,
+        #                linewidth = 0.5)
+        #sfig.suptitle(name[i])
+        #sfig.savefig('sfig.'+ of + figext)
+        #pl.close(sfig)
+        
+        #pfig = phot_figure(result, samples=sample)
+        #pfig.suptitle(name[i])
+        #pfig.savefig('pfig.' + of + figext)
+        #pl.close(pfig)
+        
         results += [result]
-        pl.close(sfig)
-        pl.close(pfig)
         
     dfig = data_figure(results,
                        color='b', linewidth=0.5)
-    [dfig.axes[i].set_title(name[i]) for i in range(len(name))]
+    [dfig.axes[i*2].set_title(name[i]) for i in range(len(name))]
 
-    
+    cfig = calibration_figure(*results, samples =sample)
 
     #dfig.savefig(of+'.data.pdf')
