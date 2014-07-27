@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as pl
 from matplotlib import gridspec
+import triangle
 
 import diagnostics
 
@@ -69,6 +70,7 @@ def one_data_figure_sep(obs, fig, subplot_spec=None, **kwargs):
     return fig, gs
     
 def spec_figure(results, alpha=0.3, samples=[-1],
+                start=0, thin=1,
                 subplot_spec=None, xlim=None, **kwargs):
     """
     plot stars+dust+neb, then the calibration vector, then the GP
@@ -102,8 +104,9 @@ def spec_figure(results, alpha=0.3, samples=[-1],
     axes[3].plot(wave[mask], ospec[mask], color='magenta', label='Obs', **kwargs)
 
     # plot posterior draws
-    nw, ns, nd = results['chain'].shape
-    flatchain = results['chain'].reshape(nw*ns, nd)
+    flatchain = results['chain'][:,start::thin,:]
+    flatchain = flatchain.reshape(flatchain.shape[0] * flatchain.shape[1],
+                                  flatchain.shape[2])
     for s in samples:
         theta = flatchain[s,:]
         comps = diagnostics.model_components(theta, results, results['obs'],
@@ -112,7 +115,7 @@ def spec_figure(results, alpha=0.3, samples=[-1],
         full_cal = cal[mask] + gp/stars[mask]
         mwave, ospec, mod = obs['wavelength'][mask],  obs['spectrum'][mask], (spec + gp)
         vecs = [stars[mask], cal[mask], gp,
-                spec+gp, mod/ospec, (ospec-mod) / obs['unc'][mask]]
+                spec+gp, ospec/mod, (ospec-mod) / obs['unc'][mask]]
         [ax.plot(mwave, v, color=c, alpha=alpha, **kwargs) for ax,v,c in zip(axes, vecs, color)]
 
     [a.axhline( int(i==0), linestyle=':', color='black') for i,a in enumerate(axes[-2:])]
@@ -122,7 +125,10 @@ def spec_figure(results, alpha=0.3, samples=[-1],
     [fig.add_subplot(ax) for ax in axes]
     return fig
 
-def phot_figure(results, alpha=0.3, samples = [-1], **kwargs):
+
+def phot_figure(results, alpha=0.3, samples = [-1],
+                start=0, thin=1,
+                **kwargs):
     """
     Plot the photometry for the model and data (with error bars). Then
     plot residuals
@@ -136,8 +142,9 @@ def phot_figure(results, alpha=0.3, samples = [-1], **kwargs):
     phot.set_ylabel('maggies')
     
     # plot posterior draws
-    nw, ns, nd = results['chain'].shape
-    flatchain = results['chain'].reshape(nw*ns, nd)
+    flatchain = results['chain'][:,start::thin,:]
+    flatchain = flatchain.reshape(flatchain.shape[0] * flatchain.shape[1],
+                                  flatchain.shape[2])
     label = 'modeled'
     for s in samples:
         theta = flatchain[s,:]
@@ -163,7 +170,9 @@ def phot_figure(results, alpha=0.3, samples = [-1], **kwargs):
     return fig
     
 
-def calibration_figure(cal_result, nocal_result, samples = [-1], alpha = 0.3):
+def calibration_figure(cal_result, nocal_result, samples = [-1],
+                       start=0, thin=1,
+                       alpha = 0.3):
     #plot the calibration vector and the reconstruction of it
     # from the f(alpha) and GP, for cal and uncal.
 
@@ -172,40 +181,25 @@ def calibration_figure(cal_result, nocal_result, samples = [-1], alpha = 0.3):
     gs = gridspec.GridSpec(1, 2)
     cal_plot, nocal_plot = pl.Subplot(fig, gs[0]), pl.Subplot(fig, gs[1])
 
-    # plot posterior draws
-    nw, ns, nd = cal_result['chain'].shape
-    flatchain = cal_result['chain'].reshape(nw*ns, nd)
-    label = 'modeled'
-    for s in samples:
-        theta = flatchain[s,:]
-        comps = diagnostics.model_components(theta, cal_result, cal_result['obs'],
+    ra = zip([cal_result, nocal_result], [cal_plot, nocal_plot])
+    for i, (result, ax) in enumerate(ra):
+        # plot posterior draws
+        flatchain = result['chain'][:,start::thin,:]
+        flatchain = flatchain.reshape(flatchain.shape[0] * flatchain.shape[1],
+                                      flatchain.shape[2])
+
+        label = 'modeled'
+        for s in samples:
+            theta = flatchain[s,:]
+            comps = diagnostics.model_components(theta, result, result['obs'],
                                              sps, photflag=0)
-        spec, gp, cal, mask, stars = comps
-        full_cal = cal[mask] + gp/stars[mask]
-        mwave = cal_result['obs']['wavelength'][mask]
-        cal_plot.plot(mwave, 1/full_cal, label = label,
-                      color = 'cyan', alpha = alpha)
+            spec, gp, cal, mask, stars = comps
+            full_cal = cal[mask] + gp/stars[mask]
+            mwave = result['obs']['wavelength'][mask]
+            ax.plot(mwave, 1/full_cal, label = label,
+                          color = 'cyan', alpha = alpha)
+            label = None
 
-        
-        label = None
-
-    # plot posterior draws
-    nw, ns, nd = nocal_result['chain'].shape
-    flatchain = nocal_result['chain'].reshape(nw*ns, nd)
-    label = 'modeled'
-    for s in samples:
-        theta = flatchain[s,:]
-        comps = diagnostics.model_components(theta, nocal_result, nocal_result['obs'],
-                                             sps, photflag=0)
-        spec, gp, cal, mask, stars = comps
-        full_cal = cal[mask] + gp/stars[mask]
-        mwave = nocal_result['obs']['wavelength'][mask]
-        nocal_plot.plot(mwave, 1/full_cal, label = label,
-                        color = 'cyan', alpha = alpha)
-
-        
-        
-        label = None
 
     cal_plot.axhline(1.0, color='magenta', label='Caldwell')
     cal_plot.legend(loc=0)
@@ -220,9 +214,33 @@ def calibration_figure(cal_result, nocal_result, samples = [-1], alpha = 0.3):
     fig.add_subplot(nocal_plot)
     return fig
     
-def corner_plot(results, showpars=None):
+def corner_plot(results, showpars=None, start=0, thin=1):
     #just wrap subtriangle
-    pass
+    """
+    Make a triangle plot of the (thinned, latter) samples of the posterior
+    parameter space.  Optionally make the plot only for a supplied subset
+    of the parameters.
+    """
+
+    # pull out the parameter names and flatten the thinned chains
+    parnames = np.array(diagnostics.theta_labels(results['model'].theta_desc))
+    flatchain = results['chain'][:,start::thin,:]
+    flatchain = flatchain.reshape(flatchain.shape[0] * flatchain.shape[1],
+                                  flatchain.shape[2])
+    truths = results['initial_center']
+
+    # restrict to parameters you want to show
+    if showpars is not None:
+        ind_show = np.array([p in showpars for p in parnames], dtype= bool)
+        flatchain = flatchain[:,ind_show]
+        truths = truths[ind_show]
+        parnames= parnames[ind_show]
+        
+    fig = triangle.corner(flatchain, labels = parnames,
+                          quantiles=[0.16, 0.5, 0.84], verbose=False,
+                          truths = truths)
+
+    return fig
 
 def comparison_figure(results_list):
     pass
@@ -231,13 +249,16 @@ if __name__ == '__main__':
     figext = '.png'
     nsample = 5
     samples = np.random.uniform(0, 1, size=nsample)
+    showpars_phys = ['mass', 'tage', 'zmet', 'dust2', 'sigma_smooth']
+    showpars_cal = ['zmet', 'dust2', 'poly_coeffs1', 'poly_coeffs2', 'gp_length', 'gp_amplitude']
+
     
     results = []
     rdir = '/Users/bjohnson/Projects/cetus/results/'
     res = [rdir+'b192-g242.020.cal_1405648278.sampler01',
            rdir+'b192-g242.020.nocal_1405677518.sampler01']
     name = ['B192 cal.', 'B192 no cal.']
-
+    
     for i,r in enumerate(res):
         sf, mf = r+'_mcmc', r+'_model'
         result, pr, model = diagnostics.read_pickles(sf, model_file = mf)
@@ -247,7 +268,7 @@ if __name__ == '__main__':
         sample = [int(s * ns) for s in samples]
     
         #sfig = spec_figure(result, samples=sample,
-        #                linewidth = 0.5)
+        #                linewidth = 0.5, xlim = (3650, 7300))
         #sfig.suptitle(name[i])
         #sfig.savefig('sfig.'+ of + figext)
         #pl.close(sfig)
@@ -256,13 +277,28 @@ if __name__ == '__main__':
         #pfig.suptitle(name[i])
         #pfig.savefig('pfig.' + of + figext)
         #pl.close(pfig)
-        
+
+        tfig = corner_plot(result, showpars = showpars_phys)
+        tfig.suptitle(name[i])
+        tfig.savefig('ptri.' + of + figext)
+        pl.close(tfig)
+
+        tfig = corner_plot(result, showpars = showpars_cal)
+        tfig.suptitle(name[i])
+        tfig.savefig('ctri.' + of + figext)
+        pl.close(tfig)
+
+               
         results += [result]
         
     dfig = data_figure(results,
                        color='b', linewidth=0.5)
     [dfig.axes[i*2].set_title(name[i]) for i in range(len(name))]
+    dfig.savefig('data_fig.'+ '.'.join(of.split('.')[0:2]) + figext)
 
     cfig = calibration_figure(*results, samples =sample)
+    [cfig.axes[i].set_title(name[i]) for i in range(len(name))]
+    [cfig.axes[i].set_ylabel(r'$f_{{\lambda}}\,/\, f_{{\lambda, obs}}$') for i in range(len(name))]
+    cfig.savefig('calvec_fig.'+ '.'.join(of.split('.')[0:2]) + figext)
 
-    #dfig.savefig(of+'.data.pdf')
+
