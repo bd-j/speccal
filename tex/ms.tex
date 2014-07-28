@@ -9,15 +9,15 @@
 % - use emulateapj or aastex, as you like, but watch for equation-wrapping in the former
 
 % ---- Hogg (aastex) mode ----
-\documentclass[12pt, letterpaper, preprint]{aastex}
+%\documentclass[12pt, letterpaper, preprint]{aastex}
 % ----
 
 
 % ---- Charlie (emulateapj) mode ----
-% \documentclass[iop,numberedappendix]{emulateapj}
-% \usepackage{apjfonts}
+ \documentclass[iop,numberedappendix]{emulateapj}
+ \usepackage{apjfonts}
 % ----
-
+\usepackage{color}
 \bibliographystyle{apj}
 \input{vc}
 
@@ -202,8 +202,9 @@ This modification shows the necessity of including the log-variance
 term.
 This---equation~(\ref{eq:photometricLF})---is in fact the
 log-likelihood function we are going to use for the photometric
-measurements (BDJ: IS THIS TRUE?  DWH, Currently I'm not using a
-jitter term, but I can and will) in what follows.  In this
+measurements ({\color{blue} BDJ: IS THIS TRUE?} {\color{red} DWH,
+Currently I'm not using a jitter term, but I can and will.  Update:
+having difficulty with a jitter term}) in what follows.  In this
 formulation, if $\theta$ are the parameters of interest, the jitter
 variance $s^2$ is a nuisance noise-model parameter.  The Gaussian
 Process will be a generalization of this modification.
@@ -273,27 +274,28 @@ ancillary spectrophotometric calibration data.
 
 \subsection{Test Data}
 
-DRW/BDJ WORDS ABOUT DATA
 
-The data we use to test our method consists of optical spectroscopy of
+The data we use to test our method consist of optical spectroscopy of
 XX stellar clusters in M31 for which YY-band HST photometric data
 exist.  The optical spectra were obtained using the fiber-fed
 Hectoscpec intrument on MMT by \citet{caldwell}.  The wavelength range
-of the spectra is $3700-7200 \AA$. The instrumental resolution is
-$\sim 5\AA$ across the optical range \citep{fabricant13}.  Wavelength
-calibration happened. Sky subtraction happened. The data were
+of the spectra is $3700-9100 \AA$. The instrumental resolution is
+$\sim 5\AA$ across the optical range \citep{fabricant13}.  {\color{blue} Wavelength
+calibration happened. Sky subtraction happened.} The data were
 approximately spectrophotometrically calibrated using an average
-calibration vector for the night constructed from.... (MORE
-HERE). Figure \ref{fig:data} shows the spectra before and after
-calibration (SHOULD THIS SHOW ALL THE CLUSTERS OR JUST ONE?).  Discuss
-S/N, sky subtraction.
+calibration vector for the night constructed from {\color{blue} MORE
+HERE}. Figure \ref{fig:data} shows the spectra before and after
+calibration {\color{blue} SHOULD THIS SHOW ALL THE CLUSTERS OR JUST ONE?.  Discuss
+S/N, sky subtraction.}
 
-\begin{figure}[h!]
+{\color{red} Specify order of calibration polynomial here?}
+
+\begin{figure*}[h!]
 \includegraphics[width = \textwidth]{figures/dfig_b192-g242_020.png}
 \caption{The calibrated (left) and uncalibrated (right) spectrum for
   \excluster, along with the uncertainties (bottom panel). The
   spectra are not normalized. \label{fig:data}}
-\end{figure}
+\end{figure*}
 
 
 \begin{table}[h!]
@@ -326,7 +328,7 @@ Here the additional parameters $\beta$ may include details of the
 population synthesis model, such as the IMF slope and adjustments to
 the stellar spectra or stellar evolutionary tracks. We will assume
 $\beta$ to be fixed for the purposes of this exercise, with no loss of
-generality (KEEPING IMF SLOPE CONSTANT FOR NOW).  We will also fix the
+generality {\color{blue} (KEEPING IMF SLOPE CONSTANT)}.  We will also fix the
 shape of the attenuation curve, $k_\lambda \equiv
 \tau_\lambda/\tau_V$, to the Milky way average of \citet{CCM89} with
 $R_V=3.1$ and assume that $d_L$ is known to high precision from
@@ -336,14 +338,14 @@ $S(\lambda, t, Z)$ using the Flexible Stellar Population Synthesis
 code \citep[FSPS][]{FSPS}.  We use the Padova isochrones
 \citep{Padova} and the MILES stellar spectral library \citep{MILES}.
 
-BDJ IMPROVE DISCUSSION OF BROADENING.  The model spectra are smoothed
-by convolution with a Gaussian in wavelength space (to model the MMT
+The model spectra $F_{\theta^\prime}$ are smoothed by convolution
+with a Gaussian in wavelength space (in this case to model the MMT
 line-spread function) and are interpolated to the wavelength points of
 the of the observed spectrum while taking into account the
-redshift. The instrumental resolution is given by $\sigma$.  Discuss
-intrinsic resolution of model spectra (MILES), what to do in
-situations where instrumental resolution is higher, lower or
-comparable (ouch) to intrinsic velocity broadening.
+redshift. The instrumental resolution is given by the parameter
+$\sigma$.  {\color{blue}Discuss intrinsic resolution of model spectra
+(MILES), what to do in situations where instrumental resolution is
+higher, lower or comparable (ouch) to intrinsic velocity broadening.}
 
 Nebular emission lines (which may arise from HII regions around the
 clusters or from diffuse ionized gas) and interstellar absorption
@@ -392,33 +394,31 @@ algorithm we use is the affine-invariant ensemble sampling scheme of
 \citet{GW}, as implemented in the \texttt{emcee} package \cite{dfm}
 Unlike typical Metropolis-Hastings MCMC sampling, the affine-invariant
 sampler does not require the specification of step sizes in each
-dimension.  ASSESSING SAMPLER CONVERGENCE
+dimension.  {\color{blue}ASSESSING SAMPLER CONVERGENCE}
  
 Our prior distributions are in all cases top-hat functions, though
 more informative prior distributions may be used.  Informative priors
 may be especially appropriate for the calibration parameters $\alpha$
-if additional information about the instrument is available or for the
+if additional information about the instrument is available; or for the
 parameters of interest $\theta$, for example in the case that there
 is knowledge of the metallicity distribution of the population from
 which a given cluster is drawn.
 
-\begin{table}[h!]
-\caption{List the parameters and  their allowed ranges.}
-\end{table}
-
+\input{tables/priors.tbl}
 \subsection{Results}
 
 We first infer the parameters of interest $\theta$ for a calibrated
-spectrum of one of the clusters, using the full YY-band photometry. In
-Figure \ref{fig:inferred_spectrum} we show the spectrum resulting
-from draws of the parameters $[\theta,\alpha]$ from the posterior
-distribution.  This figure also shows the calibrated spectrum on which
-the priors were conditioned, and several of the individual components
-of the model constructed from each draw.  In Figure
-\ref{fig:inferred_sed} we also show the residuals between the data
-and the draws from the posterior, for both the spectra and the
-photometry. In Figure \ref{fig:inferred_params} we show the
-marginalized and joint PDFs for the parameters.
+spectrum of one of the clusters, \excluster, using the full YY-band
+photometry. In Figure \ref{fig:inferred_spectrum} we show the spectra
+that result from draws of the parameters $[\theta,\alpha]$ from the
+posterior distribution, as well as several of the individual
+components of the model constructed from each draw.  This figure also
+shows the calibrated spectrum on which the priors were conditioned,
+and residuals between the posterior models and the observed data.  In
+Figure \ref{fig:inferred_sed} we also show the residuals between the
+data and the draws from the posterior for the spectra. In Figure
+\ref{fig:inferred_params} we show the marginalized and joint PDFs for
+a subset of the full model parameters.
 
 BDJ: Discuss degeneracies, etc.  Apparently we get really nice
 redshift/velocity constraints for free.
@@ -429,27 +429,29 @@ BDJ: Next, we infer the parameters of the spectrum of the same cluster
 BDJ: Then, we show select marginalized or joint PDFs for each cluster
 calibrated/uncalibrated, to assess consistency.  They are very consistent.
 
-BDJ: Finally, we have fun playing with the number of photometric bands
-and the S/N.
 
-\begin{figure}[h!]
+\begin{figure*}[h!]
 \includegraphics[width=\textwidth]{figures/sfig_b192-g242_020_cal.png}
 \caption{Spectra resulting from draws from the posterior parameter
 space conditioned on the calibrated \excluster~ spectrum and
 photometry.  Left: For each of 5 draws from the posterior we show from
 top to bottom, three components of the model: the mean cluster
-spectrum, the calibration vector, and the mean prediction of the
-Gaussian process.  Right: From top to bottom, the full model ({\it
-cyan}) compared to the observed, calibrated spectrum ({\it magenta}),
-the ratio of the observed to the modeled spectrum, and the difference
-between the observed spectrum and the modeled spectrum normalized by
-the uncertainty.
+spectrum, the calibration vector, and the mean prediction of $\Delta$
+for the Gaussian process.  Right: From top to bottom, the full model
+({\it cyan}) compared to the observed, calibrated spectrum ({\it
+magenta}), the ratio of the observed to the modeled spectrum, and the
+difference between the observed spectrum and the modeled spectrum
+normalized by the uncertainty.
 \label{fig:inferred_spectrum}}
-\end{figure}
+\end{figure*}
 
 \begin{figure}[h!]
-\includegraphics[width=\textwidth]{figures/pfig_b192-g242_020_cal.png}
-\caption{The photometric SED resulting \label{fig:inferred_sed}}
+\includegraphics[width=0.5\textwidth]{figures/pfig_b192-g242_020_cal.png}
+\caption{Model SEDs.  Top: The model photometric SED resulting from draws from the posterior
+  parameter space conditioned ({\it cyan}) on the observed photometry
+  ({\it magenta})  and spectra.  Bottom: uncertainty normalized
+  residuals of the models from the observations. 
+ . \label{fig:inferred_sed}}
 \end{figure}
 
 \begin{figure}[h!]
@@ -457,10 +459,10 @@ the uncertainty.
 cluster. \label{fig:inferred_params}}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure*}[h!]
 \includegraphics[width=\textwidth]{figures/cfig_b192-g242_020.png}
 \caption{Show the calibration vector and our inference of it? \label{fig:inferred_calib}}
-\end{figure}
+\end{figure*}
 
 \begin{figure}[h!]
 \caption{Money plot.  Show the difference between the parameters
@@ -471,26 +473,26 @@ cluster. \label{fig:inferred_params}}
 \subsection{Dependence on Photometric Data}
 In this section we examine how the constraints on physical (and
 calibration) parameters vary as a function of the number and type of
-photometric points available.
+photometric points available. {\color{red} BDJ DO THIS TEST.}
 
 \section{Discussion}
 
-BDJ INSERT WORDS HERE.  We have demonstrated, using a sample of
-stellar clusters in M31, that we can combine photometric and
-spectroscopic data in a principled way to infer physical properties.
-We do not resort to an arbitrary down-weighting or up-weighting of
-certain data. Instead, we explicitly model our uncertain knowledge of
-the spectral calibration and infer this calibration jointly with the physical
-properties. For a number of applications this combination of
-spectroscopy and photometry reduces the need for spectrophotometric
-calibration.  Calibration information, if it exists, can be
-incorporated into informative priors on the calibration parameters of the model.
+We have demonstrated, using a sample of stellar clusters in M31, that
+we can combine photometric and spectroscopic data in a principled way
+to infer physical properties.  We do not resort to an arbitrary
+down-weighting or up-weighting of certain data. Instead, we explicitly
+model our uncertain knowledge of the spectral calibration and infer
+this calibration jointly with the physical properties. For a number of
+applications this combination of spectroscopy and photometry reduces
+the need for spectrophotometric calibration.  Calibration information,
+if it exists, can be incorporated into informative priors on the
+calibration parameters of the model.
 
 Our strategy is easily extensible to more complicated models, which
 include for example night sky-line emission in the spectroscopy (or
 residuals from an intial sky-line subtraction), and uncertainties in
-wavelength calibration.  DISCUSS MORE COMPLICATED COVARIANCE KERNELS,
-MULTIPLE KERNELS, etc.  MODEL CHECKING.
+wavelength calibration. {\color{blue} DISCUSS MORE COMPLICATED
+COVARIANCE KERNELS, MULTIPLE KERNELS, etc.  MODEL CHECKING.}
 
 In a heirarchical modelling context it should be possible to use the
 inferred calibration parameters, along with additional information
