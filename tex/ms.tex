@@ -272,8 +272,16 @@ $\theta$ from a spectrum both \emph{before} and \emph{after} it has
 been spectrophotometrically calibrated using typical techniques and
 ancillary spectrophotometric calibration data.
 
-\subsection{Test Data}
+\begin{figure}[h!]
+\includegraphics[width = 0.5 \textwidth]{figures/dfig_b192-g242_020.png}
+\caption{The calibrated (left) and uncalibrated (right) spectrum for
+\excluster, along with the uncertainties (bottom panel). The spectra
+have been renormalized to avoid floating point errors. {\color{blue}
+SHOULD THIS SHOW ALL THE CLUSTERS OR JUST ONE?.}\label{fig:data}}
+\end{figure}
 
+
+\subsection{Test Data}
 
 The data we use to test our method consist of optical spectroscopy of
 XX stellar clusters in M31 for which YY-band HST photometric data
@@ -284,18 +292,18 @@ $\sim 5\AA$ across the optical range \citep{fabricant13}.  {\color{blue} Wavelen
 calibration happened. Sky subtraction happened.} The data were
 approximately spectrophotometrically calibrated using an average
 calibration vector for the night constructed from {\color{blue} MORE
-HERE}. Figure \ref{fig:data} shows the spectra before and after
-calibration {\color{blue} SHOULD THIS SHOW ALL THE CLUSTERS OR JUST ONE?.  Discuss
-S/N, sky subtraction.}
+HERE. Discuss S/N, sky subtraction.}
 
-{\color{red} Specify order of calibration polynomial here?}
 
-\begin{figure*}[h!]
-\includegraphics[width = \textwidth]{figures/dfig_b192-g242_020.png}
-\caption{The calibrated (left) and uncalibrated (right) spectrum for
-  \excluster, along with the uncertainties (bottom panel). The
-  spectra are not normalized. \label{fig:data}}
-\end{figure*}
+An example spectrum, both after and before spectrophotometric
+calibration, is shown in Figure \ref{fig:data}.  When fitting the
+spectra we mask the region around the bright OI5577 sky line, and we
+fit only to the spectrum with $3750 < \lambda < 7200$ to avoid the low
+S/N edges and, on the red side, imperfect sky line subtraction in a
+region of the spectrum that has a paucity of informative spectral
+lines.Furthermore, the MILES empirical spectra (see
+\S\ref{sec:cluster_model}) are only available for $\lambda < 7500$\AA
+{\color{red} Specify/Justify order of calibration polynomial here?}.
 
 
 \begin{table}[h!]
@@ -396,15 +404,32 @@ Unlike typical Metropolis-Hastings MCMC sampling, the affine-invariant
 sampler does not require the specification of step sizes in each
 dimension.  {\color{blue}ASSESSING SAMPLER CONVERGENCE}
  
-Our prior distributions are in all cases top-hat functions, though
-more informative prior distributions may be used.  Informative priors
-may be especially appropriate for the calibration parameters $\alpha$
-if additional information about the instrument is available; or for the
-parameters of interest $\theta$, for example in the case that there
-is knowledge of the metallicity distribution of the population from
-which a given cluster is drawn.
+Our prior distributions are in all cases top-hat functions, described
+in Table \ref{tbl:priors}, though more informative prior distributions
+may be used.  Informative priors may be especially appropriate for the
+calibration parameters $\alpha$ if additional information about the
+instrument is available; or for the parameters of interest $\theta$,
+for example in the case that there is knowledge of the metallicity
+distribution of the population from which a given cluster is drawn.
 
 \input{tables/priors.tbl}
+
+\begin{figure*}[h!]
+\includegraphics[width=\textwidth]{figures/sfig_b192-g242_020_cal.png}
+\caption{Spectra resulting from draws from the posterior parameter
+space conditioned on the calibrated \excluster~ spectrum and
+photometry.  Left: For each of 5 draws from the posterior we show from
+top to bottom, three components of the model: the mean cluster
+spectrum, the calibration vector, and the mean prediction of $\Delta$
+for the Gaussian process.  Right: From top to bottom, the full model
+({\it cyan}) compared to the observed, calibrated spectrum ({\it
+magenta}), the ratio of the observed to the modeled spectrum, and the
+difference between the observed spectrum and the modeled spectrum
+normalized by the uncertainty.
+\label{fig:inferred_spectrum}}
+\end{figure*}
+
+
 \subsection{Results}
 
 We first infer the parameters of interest $\theta$ for a calibrated
@@ -430,20 +455,6 @@ BDJ: Then, we show select marginalized or joint PDFs for each cluster
 calibrated/uncalibrated, to assess consistency.  They are very consistent.
 
 
-\begin{figure*}[h!]
-\includegraphics[width=\textwidth]{figures/sfig_b192-g242_020_cal.png}
-\caption{Spectra resulting from draws from the posterior parameter
-space conditioned on the calibrated \excluster~ spectrum and
-photometry.  Left: For each of 5 draws from the posterior we show from
-top to bottom, three components of the model: the mean cluster
-spectrum, the calibration vector, and the mean prediction of $\Delta$
-for the Gaussian process.  Right: From top to bottom, the full model
-({\it cyan}) compared to the observed, calibrated spectrum ({\it
-magenta}), the ratio of the observed to the modeled spectrum, and the
-difference between the observed spectrum and the modeled spectrum
-normalized by the uncertainty.
-\label{fig:inferred_spectrum}}
-\end{figure*}
 
 \begin{figure}[h!]
 \includegraphics[width=0.5\textwidth]{figures/pfig_b192-g242_020_cal.png}
@@ -455,8 +466,10 @@ normalized by the uncertainty.
 \end{figure}
 
 \begin{figure}[h!]
-\caption{Show a corner plot of selected relevant parameters, for one
-cluster. \label{fig:inferred_params}}
+\includegraphics[width=0.5\textwidth]{figures/ptri_b192-g242_020_cal.png}
+\caption{ Marginalized and joint PDFs of  subset of the physical
+  parameters $\theta$ inferred from the spectophotometrically
+  calibrated spectrum of \excluster. \label{fig:inferred_params}}
 \end{figure}
 
 \begin{figure*}[h!]
@@ -534,5 +547,15 @@ This version of the paper was generated
 
 \acknowledgements
 Thanks to X. for bringing us beer.
+DRW is supported by NASA through Hubble Fellowship grant
+  HST-HF-51331.01 awarded by the Space Telescope Science Institute.
+BDJ and DRW acknowledge the hospitality of Hans-Walter Rix and the MPIA. 
+CC is supported by Packard and Sloan Foundation Fellowships. 
+This research made extensive use of NASA's Astrophysics Data System Bibliographic Services. 
+In large part, analysis and plots presented in this paper utilized
+  iPython and packages from NumPy, SciPy, and Matplotlib
+  \citep[][]{hunter2007, oliphant2007, perez2007, astropy2013} as well
+  as python-FSPS  (http:://github.com/dfm/python-fsps) .
+
 
 \end{document}

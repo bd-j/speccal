@@ -278,12 +278,12 @@ if __name__ == '__main__':
         pfig.savefig('pfig_' + of + figext)
         pl.close(pfig)
 
-        tfig = corner_plot(result, showpars = showpars_phys)
+        tfig = corner_plot(result, showpars = showpars_phys, start=-250)
         tfig.suptitle(name[i])
         tfig.savefig('ptri_' + of + figext)
         pl.close(tfig)
 
-        tfig = corner_plot(result, showpars = showpars_cal)
+        tfig = corner_plot(result, showpars = showpars_cal, start=-250)
         tfig.suptitle(name[i])
         tfig.savefig('ctri_' + of + figext)
         pl.close(tfig)
