@@ -263,29 +263,29 @@ if __name__ == '__main__':
         sf, mf = r+'_mcmc', r+'_model'
         result, pr, model = diagnostics.read_pickles(sf, model_file = mf)
         of = result['run_params']['outfile'].split('/')[-1]
-        
+        of = of.replace('.','_')
         ns = result['chain'].shape[0] * result['chain'].shape[1]
         sample = [int(s * ns) for s in samples]
     
-        #sfig = spec_figure(result, samples=sample,
-        #                linewidth = 0.5, xlim = (3650, 7300))
-        #sfig.suptitle(name[i])
-        #sfig.savefig('sfig.'+ of + figext)
-        #pl.close(sfig)
+        sfig = spec_figure(result, samples=sample,
+                        linewidth = 0.5, xlim = (3650, 7300))
+        sfig.suptitle(name[i])
+        sfig.savefig('sfig_'+ of + figext)
+        pl.close(sfig)
         
-        #pfig = phot_figure(result, samples=sample)
-        #pfig.suptitle(name[i])
-        #pfig.savefig('pfig.' + of + figext)
-        #pl.close(pfig)
+        pfig = phot_figure(result, samples=sample)
+        pfig.suptitle(name[i])
+        pfig.savefig('pfig_' + of + figext)
+        pl.close(pfig)
 
         tfig = corner_plot(result, showpars = showpars_phys)
         tfig.suptitle(name[i])
-        tfig.savefig('ptri.' + of + figext)
+        tfig.savefig('ptri_' + of + figext)
         pl.close(tfig)
 
         tfig = corner_plot(result, showpars = showpars_cal)
         tfig.suptitle(name[i])
-        tfig.savefig('ctri.' + of + figext)
+        tfig.savefig('ctri_' + of + figext)
         pl.close(tfig)
 
                
@@ -294,11 +294,11 @@ if __name__ == '__main__':
     dfig = data_figure(results,
                        color='b', linewidth=0.5)
     [dfig.axes[i*2].set_title(name[i]) for i in range(len(name))]
-    dfig.savefig('data_fig.'+ '.'.join(of.split('.')[0:2]) + figext)
+    dfig.savefig('dfig_'+ '_'.join(of.split('_')[0:2]) + figext)
 
     cfig = calibration_figure(*results, samples =sample)
     [cfig.axes[i].set_title(name[i]) for i in range(len(name))]
     [cfig.axes[i].set_ylabel(r'$f_{{\lambda}}\,/\, f_{{\lambda, obs}}$') for i in range(len(name))]
-    cfig.savefig('calvec_fig.'+ '.'.join(of.split('.')[0:2]) + figext)
+    cfig.savefig('cfig_'+ '_'.join(of.split('_')[0:2]) + figext)
 
 

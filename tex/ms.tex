@@ -12,6 +12,7 @@
 \documentclass[12pt, letterpaper, preprint]{aastex}
 % ----
 
+
 % ---- Charlie (emulateapj) mode ----
 % \documentclass[iop,numberedappendix]{emulateapj}
 % \usepackage{apjfonts}
@@ -30,6 +31,11 @@
 \newcommand{\ccpp}{2}
 \newcommand{\cds}{3}
 \newcommand{\mpia}{4}
+
+%figures
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.png,.pdf}
+\newcommand{\excluster}{B192-G242}
 
 \begin{document}\sloppy\sloppypar
 \title{Combining information from photometric and spectroscopic data:\\
@@ -248,15 +254,16 @@ length of the remaining covariant calibration noise.
 
 \section{Experiments and Results}
 
-We are now left to demonstrate that it is possible to infer the
-parameters of interest $\theta$ while marginalizing over the
-calibration parameters $\alpha$.  We will apply the methodology for
-spectrophotometric calibration described above to \emph{actual,
-real} optical spectra of a stellar clusters in M31.  Spectra of star
-clusters provide a good test case, as they are less complex than
-galaxy spectra (for which it is necessary to model the star formation
-history) but are by no means trivial. In this way the key features of
-the calibration model and methodology are not obscured.  
+We are now left to demonstrate that, by including photometry as well
+as spectroscopy, it is possible to infer the parameters of interest
+$\theta$ while marginalizing over the calibration parameters $\alpha$.
+We will apply the methodology for spectrophotometric calibration
+described above to \emph{actual, real} optical spectra of a stellar
+clusters in M31.  Spectra of star clusters provide a good test case,
+as they are less complex than galaxy spectra (for which it is
+necessary to model the star formation history) but are by no means
+trivial. In this way the key features of the calibration model and
+methodology are not obscured.
 
 To demonstrate the effectiveness of our strategy for combining
 spectroscopic and photometric information we will infer the parameters
@@ -282,14 +289,15 @@ calibration (SHOULD THIS SHOW ALL THE CLUSTERS OR JUST ONE?).  Discuss
 S/N, sky subtraction.
 
 \begin{figure}[h!]
-\caption{Shows the calibrated and uncalibrated spectrum for one
-  cluster, along with the uncertainty spectrum and (maybe) the
-  calibration vector. \label{fig:data}}
+\includegraphics[width = \textwidth]{figures/dfig_b192-g242_020.png}
+\caption{The calibrated (left) and uncalibrated (right) spectrum for
+  \excluster, along with the uncertainties (bottom panel). The
+  spectra are not normalized. \label{fig:data}}
 \end{figure}
 
 
 \begin{table}[h!]
-\caption{List all the clusters, and individual exposures.}
+\caption{List all the clusters, RA, Dec, photometry and individual exposures.}
 \end{table}
 
 \subsection{Star Cluster Model}
@@ -347,9 +355,7 @@ be positive, while for interstellar absorption (e.g. Na D and Ca K)
 the amplitudes are constrained to be negative. This framework can be
 easily extended to include more complex models for the nebular
 emission, such as allowing line dependent widths and velocities, and
-using Voight profiles for the line shapes.  NB GAUSSIANS ARE A NOT
-GREAT APPROXIMATION FOR ABSORPTION LINE SHAPES (GAUSSIAN IN OPTICAL
-DEPTH, NOT $\Delta F$)
+using Voight profiles for the line shapes.  
 
 The final mean model is then given by 
 \begin{eqnarray}\label{eq:MeanModel} 
@@ -365,10 +371,10 @@ where $G_\sigma$ represents a Gaussian of unit area
 and standard deviation $\sigma$, 
 $\otimes$ indicates convolution, 
 and the full parameter set $\theta$ now includes
-the instrumental wavelength broadening $\sigma$, 
+the instrumental wavelength broadening $\sigma$ 
 and the dispersion $\sigma_e$ and
-amplitudes $A_\ell$ of the $N_l$ nebular and interstellar emission
-lines. 
+amplitudes $A_\ell$ of the $N_l$ nebular emission and interstellar
+absorption lines.
 This is the mean model which appears in equation
 \ref{eq:SpectroscopicLF}.
 
@@ -409,7 +415,7 @@ from draws of the parameters $[\theta,\alpha]$ from the posterior
 distribution.  This figure also shows the calibrated spectrum on which
 the priors were conditioned, and several of the individual components
 of the model constructed from each draw.  In Figure
-\ref{fig:inferred_spectrum} we also show the residuals between the data
+\ref{fig:inferred_sed} we also show the residuals between the data
 and the draws from the posterior, for both the spectra and the
 photometry. In Figure \ref{fig:inferred_params} we show the
 marginalized and joint PDFs for the parameters.
@@ -427,13 +433,23 @@ BDJ: Finally, we have fun playing with the number of photometric bands
 and the S/N.
 
 \begin{figure}[h!]
-\caption{Show, for one cluster, the (un)calibrated spectral data, draws from
-  the posterior for the model, and residuals \label{fig:inferred_spectrum}}
+\includegraphics[width=\textwidth]{figures/sfig_b192-g242_020_cal.png}
+\caption{Spectra resulting from draws from the posterior parameter
+space conditioned on the calibrated \excluster~ spectrum and
+photometry.  Left: For each of 5 draws from the posterior we show from
+top to bottom, three components of the model: the mean cluster
+spectrum, the calibration vector, and the mean prediction of the
+Gaussian process.  Right: From top to bottom, the full model ({\it
+cyan}) compared to the observed, calibrated spectrum ({\it magenta}),
+the ratio of the observed to the modeled spectrum, and the difference
+between the observed spectrum and the modeled spectrum normalized by
+the uncertainty.
+\label{fig:inferred_spectrum}}
 \end{figure}
 
 \begin{figure}[h!]
-\caption{Show the observed photometric SED and draws from the
-  posterior, for one cluster.\label{fig:inferred_sed}}
+\includegraphics[width=\textwidth]{figures/pfig_b192-g242_020_cal.png}
+\caption{The photometric SED resulting \label{fig:inferred_sed}}
 \end{figure}
 
 \begin{figure}[h!]
@@ -442,6 +458,7 @@ cluster. \label{fig:inferred_params}}
 \end{figure}
 
 \begin{figure}[h!]
+\includegraphics[width=\textwidth]{figures/cfig_b192-g242_020.png}
 \caption{Show the calibration vector and our inference of it? \label{fig:inferred_calib}}
 \end{figure}
 
@@ -451,6 +468,11 @@ cluster. \label{fig:inferred_params}}
   cluster.\label{fig:boom}}
 \end{figure}
 
+\subsection{Dependence on Photometric Data}
+In this section we examine how the constraints on physical (and
+calibration) parameters vary as a function of the number and type of
+photometric points available.
+
 \section{Discussion}
 
 BDJ INSERT WORDS HERE.  We have demonstrated, using a sample of
@@ -458,15 +480,15 @@ stellar clusters in M31, that we can combine photometric and
 spectroscopic data in a principled way to infer physical properties.
 We do not resort to an arbitrary down-weighting or up-weighting of
 certain data. Instead, we explicitly model our uncertain knowledge of
-the spectral calibration and infer it along with the physical
+the spectral calibration and infer this calibration jointly with the physical
 properties. For a number of applications this combination of
 spectroscopy and photometry reduces the need for spectrophotometric
 calibration.  Calibration information, if it exists, can be
-incorporated into informative priors on the calibration parameters of
-our model.
+incorporated into informative priors on the calibration parameters of the model.
 
 Our strategy is easily extensible to more complicated models, which
-include for example night sky line emission in the spectroscopy,
+include for example night sky-line emission in the spectroscopy (or
+residuals from an intial sky-line subtraction), and uncertainties in
 wavelength calibration.  DISCUSS MORE COMPLICATED COVARIANCE KERNELS,
 MULTIPLE KERNELS, etc.  MODEL CHECKING.
 
@@ -483,7 +505,7 @@ First, it requires a generative model for the spectrum of the object
 of interest, and is thus ill-suited to discovery projects.  Second,
 care must be taken to avoid absorbing interesting model deficiencies
 into the calibration model.  Third, we have made the assumption that
-the spectrscopy and the photometry are sampling the same populations.
+the spectroscopy and the photometry are sampling the same populations.
 In practice, differences between spectroscopic and photometric
 apertures often mean that the photometry and the spectroscopy are sampling
 slightly different physical regions.  The correct response to this
@@ -492,16 +514,13 @@ information about the spatial variation of physical properties.
 Finally, this method is computationally intensive and expensive, since
 we are constantly inverting largish matrices.
 
-BDJ misc issues, collected here in case we want to address them and
-to keep me from cluttering up the main text: effective aperture
-corrections (i.e. we're implicitly assuming photometry and
-spectroscopy sample the same population).  Sky subtraction residuals.
-Model resolution and instrument resolution.  Method only useful when
-you have a model for the mean spectrum?  How to interpret GP
-residuals, as a fn of S/N?  Photometric upper limits? Infer the
-wavelength solution as well - stellar population (and telluric lines)
-as your arc. Combinations of broadening in velocity space (physical)
-and in wavelength space (instrumental)
+BDJ misc issues, collected here in case we want to address them and to
+keep me from cluttering up the main text: Model resolution and
+instrument resolution.  How to interpret GP residuals, as a fn of S/N?
+Photometric upper limits? Infer the wavelength solution as well -
+stellar population (and telluric lines) as your arc. Combinations of
+broadening in velocity space (physical) and in wavelength space
+(instrumental)
 
 HOGG COMPUTE TOTAL ANNUAL COST OF SPECTROPHOTOMETRY (to astronomical community).
 
