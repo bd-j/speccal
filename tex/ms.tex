@@ -301,10 +301,11 @@ spectra we mask the region around the bright OI5577 sky line, and we
 fit only to the spectrum with $3750 < \lambda < 7200$ to avoid the low
 S/N edges and, on the red side, imperfect sky line subtraction in a
 region of the spectrum that has a paucity of informative spectral
-lines.Furthermore, the MILES empirical spectra (see
-\S\ref{sec:cluster_model}) are only available for $\lambda < 7500$\AA
+lines. Furthermore, the MILES spectral library (see
+\S\ref{sec:cluster_model}) only extends to $\lambda < 7500$\AA.
 {\color{red} Specify/Justify order of calibration polynomial here?}.
 
+{\color{blue} DRW words about photometry}
 
 \begin{table}[h!]
 \caption{List all the clusters, RA, Dec, photometry and individual exposures.}
@@ -437,23 +438,17 @@ spectrum of one of the clusters, \excluster, using the full YY-band
 photometry. In Figure \ref{fig:inferred_spectrum} we show the spectra
 that result from draws of the parameters $[\theta,\alpha]$ from the
 posterior distribution, as well as several of the individual
-components of the model constructed from each draw.  This figure also
-shows the calibrated spectrum on which the priors were conditioned,
-and residuals between the posterior models and the observed data.  In
-Figure \ref{fig:inferred_sed} we also show the residuals between the
-data and the draws from the posterior for the spectra. In Figure
-\ref{fig:inferred_params} we show the marginalized and joint PDFs for
-a subset of the full model parameters.
+components of the model constructed from each draw. Figure
+\ref{fig:inferred_spectrum} also shows the calibrated spectrum on
+which the priors were conditioned, and residuals between the posterior
+models and the observed data.  The agreement is quite good, though
+some lines are not accurately predicted.  For example, the observed
+Mg$b$ absorption appears stronger than the modeled absorption.
 
-BDJ: Discuss degeneracies, etc.  Apparently we get really nice
-redshift/velocity constraints for free.
-
-BDJ: Next, we infer the parameters of the spectrum of the same cluster
-\emph{without} spectrophotometric calibration.
-
-BDJ: Then, we show select marginalized or joint PDFs for each cluster
-calibrated/uncalibrated, to assess consistency.  They are very consistent.
-
+In Figure \ref{fig:inferred_sed} we show the corresponding SED for the
+posterior parameter draws, compared to the observed SED. Finally, In
+Figure \ref{fig:inferred_params} we show the marginalized and joint
+PDFs for a subset of the full model parameters.
 
 
 \begin{figure}[h!]
@@ -469,18 +464,66 @@ calibrated/uncalibrated, to assess consistency.  They are very consistent.
 \includegraphics[width=0.5\textwidth]{figures/ptri_b192-g242_020_cal.png}
 \caption{ Marginalized and joint PDFs of  subset of the physical
   parameters $\theta$ inferred from the spectophotometrically
-  calibrated spectrum of \excluster. \label{fig:inferred_params}}
+  calibrated spectrum of \excluster. The blue lines indicate the
+  parameter values that resulted from the powell minimization. \label{fig:inferred_params}}
 \end{figure}
+
+The physical model parameters that we infer indicate that \excluster~
+has super-solar metallicity, an age of $\sim 225$ Myr, moderate dust
+extinction, and a stellar mass of $\sim 1e5$ M$_{sun}$ {\color{blue}
+check that this is current mass, not initial mass}.  We find a spectral
+broadening of $\sim 1.75$\AA (4.1\AA FWHM), which when combined in
+quadrature with the intrinsic resolution of the MILES library, 2.5\AA
+FWHM \citep{beifiori11}, reproduces the typical line-spread function
+of the MMT Hectospec instrument, $\sim 5.0$\AA \citep{fabricant13}.
+We obtain strong constraints on the systemic velocity.
+
+For the calibration model, we obtain a calibration vector $f(\alpha)$
+that is nearly linear in wavelength {\color{red} WHY IS IT NOT A
+CONSTANT?  Need longer burn-in?  Is this the same issue as the SED
+residuals?}.  The length scale of the Gaussian process is $\sim
+60$\AA.  It is possible to reconstruct the inferred total
+multiplicative calibration vector for each draw of the model
+parameters.  Rearranging equation \ref{eq:spectroscopicLF} yields
+\begin{eqnarray} 
+\frac{d}{\mu(\theta)} & = & f(\alpha) +
+\frac{\tilde{\Delta}}{\mu(\theta)}
+\quad ,
+\end{eqnarray}
+for the total effective multiplicative calibration, where
+$\tilde{\Delta}$ is now the Gaussian process mean prediction for the
+residual between the data and the model. The inverse of this ratio is
+shown in the left panel of Figure \ref{fig:inferred_calib} as our
+inferred total multiplicative calibration function; if the
+spectrophotometric calibration were perfect and we had correctly
+inferred it, then we would expect this vector to be constant as a
+function of wavelength.
+
 
 \begin{figure*}[h!]
 \includegraphics[width=\textwidth]{figures/cfig_b192-g242_020.png}
-\caption{Show the calibration vector and our inference of it? \label{fig:inferred_calib}}
+\caption{Left: Samples of the effective multiplicative calibration
+  vector for the spectrophotometrically calibrated spectrum of
+  \excluster~ ({\it cyan}) compared to that obtained from ancillary
+  photometric data ({\it magenta}).  Right:  The same, but for the
+  uncalibrated data. 
+ \label{fig:inferred_calib}}
 \end{figure*}
 
+BDJ: Next, we infer the parameters of the spectrum of the same cluster
+\emph{without} spectrophotometric calibration.  How many/which figures
+to show?
+
+BDJ: Then, we show select marginalized or joint PDFs for each cluster
+calibrated/uncalibrated, to assess consistency.  Or we just show
+comparisons of confidence intervals.
+
 \begin{figure}[h!]
+\includegraphics[width =0.5\textwidth]{figures/B192_020_cratio.pdf}
 \caption{Money plot.  Show the difference between the parameters
   inferred from the calibrated and uncalibrated spectra, for each
-  cluster.\label{fig:boom}}
+  cluster. Tjis is a placeholder, since it only shows B192 for fixed
+  GP parameters. \label{fig:boom}}
 \end{figure}
 
 \subsection{Dependence on Photometric Data}
