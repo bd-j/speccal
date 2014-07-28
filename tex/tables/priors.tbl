@@ -1,0 +1,20 @@
+
+\begin{deluxetable}{lccc}[!h]
+\tablecaption{Prior Parameter Ranges \label{tbl:priors}}
+\tablehead{
+\colhead{Parameter} & \colhead{Units} & \colhead{Min.} & \colhead{Max.}}
+\startdata
+$m_*$       & M$_\odot$  & $10^{2}$ & $10^{6}$ \\ 
+$Z$        & $\log (Z/Z_\odot) $    &  -1.000 &   0.190 \\ 
+$t$        & Gyr        &   0.025 &   2.50 \\ 
+$A_V$      & \nodata    &   0.0 &   2.5 \\ 
+$s$	   & $F_\lambda \,\times\, C$ &   0 &   0.1 \\
+$a$        & $F_\lambda \,\times\, C$ &   0 &   3 \\ 
+$l$        & \AA      &  20 & 200 \\ 
+$\sigma$   & \AA      &   1.0 &   6.0 \\ 
+$z$        & \nodata    &  -0.001 &   0.001 \\ 
+
+\enddata
+\tablecomments{There are more parameters...}
+\vspace{0.1cm}
+\end{deluxetable}
