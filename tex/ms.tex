@@ -17,7 +17,7 @@
  \documentclass[iop,numberedappendix]{emulateapj}
  \usepackage{apjfonts}
 % ----
-\usepackage{color}
+\usepackage{color, hyperref}
 \bibliographystyle{apj}
 \input{vc}
 
@@ -36,6 +36,11 @@
 \usepackage{graphicx}
 \DeclareGraphicsExtensions{.png,.pdf}
 \newcommand{\excluster}{B192-G242}
+
+%references
+\newcommand{\foreign}[1]{\emph{#1}}
+\newcommand{\etal}{\foreign{et\,al.}}
+
 
 \begin{document}\sloppy\sloppypar
 \title{Combining information from photometric and spectroscopic data:\\
@@ -287,8 +292,8 @@ The data we use to test our method consist of optical spectroscopy of
 XX stellar clusters in M31 for which YY-band HST photometric data
 exist.  The optical spectra were obtained using the fiber-fed
 Hectoscpec intrument on MMT by \citet{caldwell}.  The wavelength range
-of the spectra is $3700-9100 \AA$. The instrumental resolution is
-$\sim 5\AA$ across the optical range \citep{fabricant13}.  {\color{blue} Wavelength
+of the spectra is $3700-9100$\AA. The instrumental resolution is
+$\sim 5$\AA~ across the optical range \citep{fabricant13}.  {\color{blue} Wavelength
 calibration happened. Sky subtraction happened.} The data were
 approximately spectrophotometrically calibrated using an average
 calibration vector for the night constructed from {\color{blue} MORE
@@ -298,7 +303,7 @@ HERE. Discuss S/N, sky subtraction.}
 An example spectrum, both after and before spectrophotometric
 calibration, is shown in Figure \ref{fig:data}.  When fitting the
 spectra we mask the region around the bright OI5577 sky line, and we
-fit only to the spectrum with $3750 < \lambda < 7200$ to avoid the low
+fit only to the spectrum with $3750 < \lambda < 7200$\AA~ to avoid the low
 S/N edges and, on the red side, imperfect sky line subtraction in a
 region of the spectrum that has a paucity of informative spectral
 lines. Furthermore, the MILES spectral library (see
@@ -337,15 +342,16 @@ Here the additional parameters $\beta$ may include details of the
 population synthesis model, such as the IMF slope and adjustments to
 the stellar spectra or stellar evolutionary tracks. We will assume
 $\beta$ to be fixed for the purposes of this exercise, with no loss of
-generality {\color{blue} (KEEPING IMF SLOPE CONSTANT)}.  We will also fix the
-shape of the attenuation curve, $k_\lambda \equiv
+generality {\color{blue} (KEEPING IMF SLOPE CONSTANT)}.  We will also
+fix the shape of the attenuation curve, $k_\lambda \equiv
 \tau_\lambda/\tau_V$, to the Milky way average of \citet{CCM89} with
 $R_V=3.1$ and assume that $d_L$ is known to high precision from
 independent methods and can therefore be treated as fixed.  In
 practice, $d_L$ is completely degenerate with $m_*$. We calculate
 $S(\lambda, t, Z)$ using the Flexible Stellar Population Synthesis
-code \citep[FSPS][]{FSPS}.  We use the Padova isochrones
-\citep{Padova} and the MILES stellar spectral library \citep{MILES}.
+code \citep[FSPS][]{fsps}.  We use the Padova 2007 isochrones
+\citep{girardi00, bertilli94, marigo07} and the MILES stellar spectral
+library \citep{miles_I, miles_II, miles_III}.
 
 The model spectra $F_{\theta^\prime}$ are smoothed by convolution
 with a Gaussian in wavelength space (in this case to model the MMT
@@ -387,7 +393,7 @@ and the dispersion $\sigma_e$ and
 amplitudes $A_\ell$ of the $N_l$ nebular emission and interstellar
 absorption lines.
 This is the mean model which appears in equation
-\ref{eq:SpectroscopicLF}.
+\ref{eq:spectroscopicLF}.
 
 To model the photometry we simply project the observed frame mean
 model spectrum (equation \ref{eq:MeanModel}) onto the filters of
@@ -400,7 +406,7 @@ $f(\alpha)$ in this projection.
 We estimate the posterior through MCMC sampling after an initial round
 of optimization using Powell's method.  The specific sampling
 algorithm we use is the affine-invariant ensemble sampling scheme of
-\citet{GW}, as implemented in the \texttt{emcee} package \cite{dfm}
+\citet{goodman}, as implemented in the \texttt{emcee} package \citep{emcee}
 Unlike typical Metropolis-Hastings MCMC sampling, the affine-invariant
 sampler does not require the specification of step sizes in each
 dimension.  {\color{blue}ASSESSING SAMPLER CONVERGENCE}
@@ -473,10 +479,10 @@ The physical model parameters that we infer indicate that \excluster~
 has super-solar metallicity, an age of $\sim 225$ Myr, moderate dust
 extinction, and a stellar mass of $\sim 10^{4}$ M$_{sun}$ {\color{blue}
 check that this is current mass, not initial mass}.  We find a spectral
-broadening of $\sim 1.75$\AA (4.1\AA FWHM), which when combined in
-quadrature with the intrinsic resolution of the MILES library, 2.5\AA
+broadening of $\sim 1.75$\AA~ (4.1\AA~ FWHM), which when combined in
+quadrature with the intrinsic resolution of the MILES library, 2.5\AA~
 FWHM \citep{beifiori11}, reproduces the typical line-spread function
-of the MMT Hectospec instrument, $\sim 5.0$\AA \citep{fabricant13}.
+of the MMT Hectospec instrument, $\sim 5$\AA~ \citep{fabricant13}.
 We obtain strong constraints on the systemic velocity.
 
 For the calibration model, we obtain a vector $f(\alpha)$
@@ -598,8 +604,54 @@ CC is supported by Packard and Sloan Foundation Fellowships.
 This research made extensive use of NASA's Astrophysics Data System Bibliographic Services. 
 In large part, analysis and plots presented in this paper utilized
   iPython and packages from NumPy, SciPy, and Matplotlib
-  \citep[][]{hunter2007, oliphant2007, perez2007, astropy2013} as well
-  as python-FSPS  (http:://github.com/dfm/python-fsps) .
+  \citep[][]{hunter2007, oliphant2007, perez2007} as well
+  as python-FSPS  (\url{http:://github.com/dfm/python-fsps}) .
 
+\newcommand{\arxiv}[1]{\href{http://arxiv.org/abs/#1}{arXiv:#1}}
+\begin{thebibliography}{}\raggedright
+
+\bibitem[Beifiori \etal(2011)]{beifiori11} 
+Beifiori, A., Maraston, C., Thomas, D., \& Johansson, J.\ 2011, \aap, 531, A109 
+
+\bibitem[Bertelli et al.(1994)]{bertelli94} Bertelli, G., Bressan, A., Chiosi, C., Fagotto, F., \& Nasi, E.\ 1994, \aaps, 106, 275 
+
+\bibitem[Cardelli \etal(1989)]{CCM89} 
+Cardelli, J.~A., Clayton, G.~C., \& Mathis, J.~S.\ 1989, \apj, 345, 245 
+
+\bibitem[Cenarro \etal(2007)]{miles_II} 
+Cenarro, A.~J., Peletier, R.~F., S{\'a}nchez-Bl{\'a}zquez, P., et al.\ 2007, \mnras, 374, 
+664 
+
+\bibitem[Conroy \etal(2009)]{fsps} 
+Conroy, C., Gunn, J.~E., \& White, M.\ 2009, \apj, 699, 486 
+
+\bibitem[Conroy \& Gunn(2010)]{fsps_cal} 
+Conroy, C., \& Gunn, J.~E.\ 2010, \apj, 712, 833 
+
+\bibitem[Fabricant \etal(2013)]{fabricant13} 
+Fabricant, D., Chilingarian, I., Hwang, H.~S., et al.\ 2013, \pasp, 125, 1362 
+
+\bibitem[Falc{\'o}n-Barroso \etal(2011)]{miles_III} 
+Falc{\'o}n-Barroso, J., S{\'a}nchez-Bl{\'a}zquez, P., Vazdekis, A., et al.\ 2011, \aap, 532, A95 
+
+\bibitem[Foreman-Mackey \etal(2012)]{emcee}
+Foreman-Mackey, D., Hogg, D.~W., Lang, D., \& Goodman, J.\ 2013, \pasp, 125,
+306 (\arxiv{1202.3665})
+
+\bibitem[Girardi et al.(2000)]{girardi00} 
+Girardi, L., Bressan, A., Bertelli, G., \& Chiosi, C.\ 2000, \aaps, 141, 371 
+
+\bibitem[Goodman~\&\ Weare(2010)]{goodman}
+Goodman,~J. \& Weare,\ J., 2010, Comm.\ App.\ Math.\ Comp.\ Sci., 5, 65
+
+\bibitem[Marigo \& Girardi(2007)]{marigo07} 
+Marigo, P., \& Girardi, L.\ 2007, \aap, 469, 239 
+
+\bibitem[S{\'a}nchez-Bl{\'a}zquez \etal(2006)]{miles_I} 
+S{\'a}nchez-Bl{\'a}zquez, P., Peletier, R.~F., Jim{\'e}nez-Vicente,
+J., et  al.\ 2006, \mnras, 371, 703 
+
+
+\end{thebibliography}
 
 \end{document}
