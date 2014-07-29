@@ -1,12 +1,27 @@
+import sys
 import numpy as np
 import matplotlib.pyplot as pl
 from matplotlib import gridspec
 import triangle
 
 import diagnostics
-
 import sps_basis
 sps = sps_basis.StellarPopBasis(smooth_velocity=False)
+
+pardict = {}
+pardict['mass']=r'$m_*$ (M$_\odot$)'
+pardict['tage']=r'$t$ (Gyr)'
+pardict['zmet']=r'$\log Z/Z_\odot$'
+pardict['dust2']=r'$A_V$'
+pardict['sigma_smooth']=r'$\sigma \, (\AA)$'
+pardict['zred']=r'$z$'
+pardict['gp_jitter']=r'$s$'
+pardict['gp_amplitude']=r'$a$'
+pardict['gp_length']=r'$l \, (\AA)$'
+pardict['poly_coeffs1']=r'$c_1$'
+pardict['poly_coeffs2']=r'$c_2$'
+pardict['spec_norm']=r'$c_0$'
+pardict['emission_disp']= r'$\sigma_e \, (\AA)$'
 
 def data_figure(results_list, layout = None, shaded = False, **kwargs):
     fig = pl.figure(figsize=(10, 5))
@@ -235,8 +250,8 @@ def corner_plot(results, showpars=None, start=0, thin=1):
         flatchain = flatchain[:,ind_show]
         truths = truths[ind_show]
         parnames= parnames[ind_show]
-        
-    fig = triangle.corner(flatchain, labels = parnames,
+        parlabels = [pardict[p] for p in parnames]
+    fig = triangle.corner(flatchain, labels = parlabels,
                           quantiles=[0.16, 0.5, 0.84], verbose=False,
                           truths = truths)
 
@@ -290,7 +305,8 @@ if __name__ == '__main__':
 
                
         results += [result]
-        
+
+    sys.exit()
     dfig = data_figure(results,
                        color='b', linewidth=0.5)
     [dfig.axes[i*2].set_title(name[i]) for i in range(len(name))]
