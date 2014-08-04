@@ -141,6 +141,78 @@ def spec_figure(results, alpha=0.3, samples=[-1],
     return fig
 
 
+def zoom_spec_figure(results, zoom_region_list,
+                     alpha=0.3, samples=[-1],
+                     start=0, thin=1, layout=None,
+                     subplot_spec=None, xlim=None, **kwargs):
+
+    fig = pl.figure(figsize=(10, 5))
+    obs = results['obs']
+
+    #get the observd and the model draws
+    specvecs = []
+
+    # posterior draws
+    flatchain = results['chain'][:,start::thin,:]
+    flatchain = flatchain.reshape(flatchain.shape[0] * flatchain.shape[1],
+                                  flatchain.shape[2])
+    for s in samples:
+        theta = flatchain[s,:]
+        comps = diagnostics.model_components(theta, results, results['obs'],
+                                             sps, photflag=0)
+        spec, gp, cal, mask, stars = comps
+        full_cal = cal[mask] + gp/stars[mask]
+        mwave, ospec, mod = obs['wavelength'][mask],  obs['spectrum'][mask], (spec + gp)
+        specvecs += [ [stars[mask], cal[mask], gp,
+                       spec+gp, ospec/mod, (ospec-mod) / obs['unc'][mask]] ]
+
+    
+    #get the panel geometry if not given
+    nobj = len(zoom_region_list)
+    if layout is None:
+        nx = int(np.floor(np.sqrt(nobj)))
+        ny = int(np.ceil(nobj*1.0/nx))
+        layout = [nx,ny]
+    
+    gs = gridspec.GridSpec(layout[0], layout[1])
+    for i, reg in enumerate(zoom_region_list):
+        x, y = i % nx, np.floor(i*1.0 / nx)
+        fig, subgs = one_specregion_figure(mwave, ospec, specvecs,
+                                           reg, fig, subplot_spec = gs[i])
+
+    return fig
+        
+def one_specregion_figure(wave, obs, specs, reg,
+                          fig, subplot_spec=None, **kwargs):
+
+    if subplot_spec is None:
+        gs = gridspec.GridSpec(2,1,height_ratios = [3,1], hspace=0)
+    else:
+        gs = gridspec.GridSpecFromSubplotSpec(2, 1, hspace=0,
+                                              subplot_spec=subplot_spec,
+                                              height_ratios = [3,1])
+    sfig = pl.Subplot(fig, gs[0,0])
+    sfig.set_ylabel(r'$f_\lambda \times \, C$')
+    
+    pl.setp(sfig.get_xticklabels(), visible = False)
+
+    rfig = pl.Subplot(fig, gs[1,0])
+    rfig.set_ylabel(r'(o-m)$/\sigma$')
+    rfig.set_xlabel(r'$\lambda (\AA)$')
+    inreg = (wave > reg[0]) & (wave < reg[1])
+    print(inreg.sum())
+    #[f.set_xlim(reg[0], reg[1]) for f in [sfig, rfig]]
+    print(len(specs))
+    for s in specs:
+        sfig.plot(wave[inreg], s[3][inreg], alpha=0.3, color = 'green')
+        rfig.plot(wave[inreg], s[5][inreg], alpha=0.3, color='green')
+    sfig.plot(wave[inreg], obs[inreg], **kwargs)
+    rfig.set_ylim(-3,3)
+    fig.add_subplot(sfig)
+    fig.add_subplot(rfig)
+    return fig, gs
+
+
 def phot_figure(results, alpha=0.3, samples = [-1],
                 start=0, thin=1,
                 **kwargs):
@@ -198,6 +270,8 @@ def calibration_figure(cal_result, nocal_result, samples = [-1],
 
     ra = zip([cal_result, nocal_result], [cal_plot, nocal_plot])
     for i, (result, ax) in enumerate(ra):
+        if result is None:
+            continue
         # plot posterior draws
         flatchain = result['chain'][:,start::thin,:]
         flatchain = flatchain.reshape(flatchain.shape[0] * flatchain.shape[1],
@@ -218,15 +292,15 @@ def calibration_figure(cal_result, nocal_result, samples = [-1],
 
     cal_plot.axhline(1.0, color='magenta', label='Caldwell')
     cal_plot.legend(loc=0)
-    caldwell_cal = cal_result['obs']['spectrum']/nocal_result['obs']['spectrum']
-    nocal_plot.plot(cal_result['obs']['wavelength'][mask], caldwell_cal[mask]*0.75, color='magenta', label='Caldwell')
+    if nocal_result is not None:
+        caldwell_cal = cal_result['obs']['spectrum']/nocal_result['obs']['spectrum']
+        nocal_plot.plot(cal_result['obs']['wavelength'][mask], caldwell_cal[mask]*0.75, color='magenta', label='Caldwell')
     
-    nocal_plot.legend(loc=0)
-    
-    print(len(cal_result['obs']['spectrum']), len(nocal_result['obs']['spectrum']))
+        nocal_plot.legend(loc=0)
 
     fig.add_subplot(cal_plot)
     fig.add_subplot(nocal_plot)
+        
     return fig
     
 def corner_plot(results, showpars=None, start=0, thin=1):
@@ -266,12 +340,14 @@ if __name__ == '__main__':
     samples = np.random.uniform(0, 1, size=nsample)
     showpars_phys = ['mass', 'tage', 'zmet', 'dust2', 'sigma_smooth']
     showpars_cal = ['zmet', 'dust2', 'poly_coeffs1', 'poly_coeffs2', 'gp_length', 'gp_amplitude']
-
+    zoom_regions = [[3920,4150.], [6500, 6600.], [5850, 5950], [5000, 5400]]
     
     results = []
     rdir = '/Users/bjohnson/Projects/cetus/results/'
-    res = [rdir+'b192-g242.020.cal_1405648278.sampler01',
-           rdir+'b192-g242.020.nocal_1405677518.sampler01']
+    #res = [rdir+'b192-g242.020.cal_1405648278.sampler01',
+    #       rdir+'b192-g242.020.nocal_1405677518.sampler01']
+    res = [rdir+'b192-g242.225.cal_1406930609.sampler01']
+
     name = ['B192 cal.', 'B192 no cal.']
     
     for i,r in enumerate(res):
@@ -282,39 +358,43 @@ if __name__ == '__main__':
         ns = result['chain'].shape[0] * result['chain'].shape[1]
         sample = [int(s * ns) for s in samples]
     
-        sfig = spec_figure(result, samples=sample,
-                        linewidth = 0.5, xlim = (3650, 7300))
-        sfig.suptitle(name[i])
-        sfig.savefig('sfig_'+ of + figext)
-        pl.close(sfig)
+        #sfig = spec_figure(result, samples=sample,
+        #                linewidth = 0.5, xlim = (3650, 7300))
+        #sfig.suptitle(name[i])
+        #sfig.savefig('sfig_'+ of + figext)
+        #pl.close(sfig)
         
-        pfig = phot_figure(result, samples=sample)
-        pfig.suptitle(name[i])
-        pfig.savefig('pfig_' + of + figext)
-        pl.close(pfig)
+        #pfig = phot_figure(result, samples=sample)
+        #pfig.suptitle(name[i])
+        #pfig.savefig('pfig_' + of + figext)
+        #pl.close(pfig)
 
-        tfig = corner_plot(result, showpars = showpars_phys, start=-250)
-        tfig.suptitle(name[i])
-        tfig.savefig('ptri_' + of + figext)
-        pl.close(tfig)
+        #tfig = corner_plot(result, showpars = showpars_phys, start=-1250)
+        #tfig.suptitle(name[i])
+        #tfig.savefig('ptri_' + of + figext)
+        #pl.close(tfig)
 
-        tfig = corner_plot(result, showpars = showpars_cal, start=-250)
-        tfig.suptitle(name[i])
-        tfig.savefig('ctri_' + of + figext)
-        pl.close(tfig)
+        #tfig = corner_plot(result, showpars = showpars_cal, start=-1250)
+        #tfig.suptitle(name[i])
+        #tfig.savefig('ctri_' + of + figext)
+        #pl.close(tfig)
 
                
         results += [result]
 
-    sys.exit()
-    dfig = data_figure(results,
-                       color='b', linewidth=0.5)
-    [dfig.axes[i*2].set_title(name[i]) for i in range(len(name))]
-    dfig.savefig('dfig_'+ '_'.join(of.split('_')[0:2]) + figext)
+    results += [None]
+    #sys.exit()
+    #dfig = data_figure(results,
+    #                   color='b', linewidth=0.5)
+    #[dfig.axes[i*2].set_title(name[i]) for i in range(len(name))]
+    #dfig.savefig('dfig_'+ '_'.join(of.split('_')[0:2]) + figext)
 
-    cfig = calibration_figure(*results, samples =sample)
-    [cfig.axes[i].set_title(name[i]) for i in range(len(name))]
-    [cfig.axes[i].set_ylabel(r'$f_{{\lambda}}\,/\, f_{{\lambda, obs}}$') for i in range(len(name))]
-    cfig.savefig('cfig_'+ '_'.join(of.split('_')[0:2]) + figext)
+    #cfig = calibration_figure(*results, samples =sample)
+    #[cfig.axes[i].set_title(name[i]) for i in range(len(name))]
+    #[cfig.axes[i].set_ylabel(r'$f_{{\lambda}}\,/\, f_{{\lambda, obs}}$') for i in range(len(name))]
+    #cfig.savefig('cfig_'+ '_'.join(of.split('_')[0:2]) + figext)
 
 
+    zfig = zoom_spec_figure(results[0], zoom_regions,
+                            samples =sample, color='magenta')
+    zfig.savefig('zfig_'+ '_'.join(of.split('_')[0:2]) + figext)
