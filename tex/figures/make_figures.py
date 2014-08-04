@@ -262,7 +262,7 @@ def phot_figure(results, alpha=0.3, samples = [-1],
     
 
 def calibration_figure(cal_result, nocal_result, samples = [-1],
-                       start=0, thin=1,
+                       start=0, thin=1, multiplicative=False,
                        alpha = 0.3):
     #plot the calibration vector and the reconstruction of it
     # from the f(alpha) and GP, for cal and uncal.
@@ -287,7 +287,10 @@ def calibration_figure(cal_result, nocal_result, samples = [-1],
             comps = diagnostics.model_components(theta, result, result['obs'],
                                              sps, photflag=0)
             spec, gp, cal, mask, stars = comps
-            full_cal = cal[mask] + gp/stars[mask]
+            if multiplicative:
+                full_cal = (cal[mask] + gp)
+            else:
+                full_cal = cal[mask] + gp/stars[mask]
             mwave = result['obs']['wavelength'][mask]
             ax.plot(mwave, 1/full_cal, label = label,
                           color = 'cyan', alpha = alpha)
