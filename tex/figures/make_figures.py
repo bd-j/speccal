@@ -22,6 +22,7 @@ pardict['poly_coeffs1']=r'$c_1$'
 pardict['poly_coeffs2']=r'$c_2$'
 pardict['spec_norm']=r'$c_0$'
 pardict['emission_disp']= r'$\sigma_e \, (\AA)$'
+pardict['phot_jitter']=r'$s_{{phot}}$'
 
 def data_figure(results_list, layout = None, shaded = False, **kwargs):
     fig = pl.figure(figsize=(10, 5))
@@ -369,14 +370,14 @@ if __name__ == '__main__':
     nsample = 5
     samples = np.random.uniform(0, 1, size=nsample)
     showpars_phys = ['mass', 'tage', 'zmet', 'dust2', 'sigma_smooth']
-    showpars_cal = ['zmet', 'dust2', 'poly_coeffs1', 'poly_coeffs2', 'gp_length', 'gp_amplitude']
+    showpars_cal = ['dust2', 'spec_norm','poly_coeffs1', 'poly_coeffs2', 'gp_length', 'gp_amplitude', 'phot_jitter']
     zoom_regions = [[3920,4150.], [6500, 6600.], [5850, 5950], [5000, 5400]]
     
     results = []
     rdir = '/Users/bjohnson/Projects/cetus/results/'
     #res = [rdir+'b192-g242.020.cal_1405648278.sampler01',
     #       rdir+'b192-g242.020.nocal_1405677518.sampler01']
-    res = [rdir+'b192-g242.225.cal_1407177118.sampler01']
+    res = [rdir+'b192-g242.225.cal_1407182846.sampler01']
     mult = True
 
     name = ['B192 cal.', 'B192 no cal.']
