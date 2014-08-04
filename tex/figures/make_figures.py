@@ -84,14 +84,14 @@ def one_data_figure_sep(obs, fig, subplot_spec=None, **kwargs):
     return fig, gs
     
 def spec_figure(results, alpha=0.3, samples=[-1],
-                start=0, thin=1,
+                start=0, thin=1, multiplicative=False,
                 subplot_spec=None, xlim=None, **kwargs):
     """
     plot stars+dust+neb, then the calibration vector, then the GP
     predicitions, then data and full model, then residuals
     """
     
-    obs = results['obs']
+    
     fig = pl.figure(figsize = (10,6))
     gs = gridspec.GridSpec(3, 2, height_ratios=[3,1,1], hspace=0, wspace=0.05)
     
@@ -114,9 +114,10 @@ def spec_figure(results, alpha=0.3, samples=[-1],
     [ax.yaxis.set_ticks_position('both') for ax in axes[3:]]
 
     # plot the data
+    obs = results['obs']
     wave, ospec, mask = obs['wavelength'], obs['spectrum'], obs['mask']
     axes[3].plot(wave[mask], ospec[mask], color='magenta', label='Obs', **kwargs)
-
+    mwave, mospec = wave[mask], ospec[mask]
     # plot posterior draws
     flatchain = results['chain'][:,start::thin,:]
     flatchain = flatchain.reshape(flatchain.shape[0] * flatchain.shape[1],
@@ -124,12 +125,19 @@ def spec_figure(results, alpha=0.3, samples=[-1],
     for s in samples:
         theta = flatchain[s,:]
         comps = diagnostics.model_components(theta, results, results['obs'],
-                                             sps, photflag=0)
-        spec, gp, cal, mask, stars = comps
-        full_cal = cal[mask] + gp/stars[mask]
-        mwave, ospec, mod = obs['wavelength'][mask],  obs['spectrum'][mask], (spec + gp)
-        vecs = [stars[mask], cal[mask], gp,
-                spec+gp, ospec/mod, (ospec-mod) / obs['unc'][mask]]
+                                             sps, photflag=0,
+                                             multiplicative=multiplicative)
+        mu, cal, delta, mask = comps
+        
+        if multiplicative:
+            full_cal = (cal + delta)
+            mod = mu * full_cal
+        else:
+            full_cal = cal + delta/mu
+            mod = (mu*cal + delta)
+
+        vecs = [mu, cal, delta, mod,
+                mospec/mod, (mospec-mod) / obs['unc'][mask]]
         [ax.plot(mwave, v, color=c, alpha=alpha, **kwargs) for ax,v,c in zip(axes, vecs, color)]
 
     [a.axhline( int(i==0), linestyle=':', color='black') for i,a in enumerate(axes[-2:])]
@@ -142,6 +150,7 @@ def spec_figure(results, alpha=0.3, samples=[-1],
 
 def zoom_spec_figure(results, zoom_region_list,
                      alpha=0.3, samples=[-1],
+                     multiplicative=False,
                      start=0, thin=1, layout=None,
                      subplot_spec=None, xlim=None, **kwargs):
 
@@ -150,7 +159,10 @@ def zoom_spec_figure(results, zoom_region_list,
     and residuals.
     """
     fig = pl.figure(figsize=(10, 5))
+
     obs = results['obs']
+    wave, ospec, mask = obs['wavelength'], obs['spectrum'], obs['mask']
+    mwave, mospec = wave[mask], ospec[mask]
 
     #get the observd and the model draws
     specvecs = []
@@ -162,14 +174,21 @@ def zoom_spec_figure(results, zoom_region_list,
     for s in samples:
         theta = flatchain[s,:]
         comps = diagnostics.model_components(theta, results, results['obs'],
-                                             sps, photflag=0)
-        spec, gp, cal, mask, stars = comps
-        full_cal = cal[mask] + gp/stars[mask]
-        mwave, ospec, mod = obs['wavelength'][mask],  obs['spectrum'][mask], (spec + gp)
-        specvecs += [ [stars[mask], cal[mask], gp,
-                       spec+gp, ospec/mod, (ospec-mod) / obs['unc'][mask]] ]
+                                             sps, photflag=0,
+                                             multiplicative = multiplicative)
 
-    
+        mu, cal, delta, mask = comps
+        
+        if multiplicative:
+            full_cal = (cal + delta)
+            mod = mu * full_cal
+        else:
+            full_cal = cal + delta/mu
+            mod = (mu*cal + delta)
+
+        specvecs += [ [mu, cal, delta, mod,
+                       mospec/mod, (mospec-mod) / obs['unc'][mask]] ]
+
     #get the panel geometry if not given
     nobj = len(zoom_region_list)
     if layout is None:
@@ -181,7 +200,7 @@ def zoom_spec_figure(results, zoom_region_list,
     gs = gridspec.GridSpec(layout[0], layout[1])
     for i, reg in enumerate(zoom_region_list):
         x, y = i % nx, np.floor(i*1.0 / nx)
-        fig, subgs = one_specregion_figure(mwave, ospec, specvecs,
+        fig, subgs = one_specregion_figure(mwave, mospec, specvecs,
                                            reg, fig, subplot_spec = gs[i])
 
     return fig
@@ -237,20 +256,22 @@ def phot_figure(results, alpha=0.3, samples = [-1],
     flatchain = flatchain.reshape(flatchain.shape[0] * flatchain.shape[1],
                                   flatchain.shape[2])
     label = 'modeled'
+    mask = obs['mask']
+    mwave, mospec, mo_unc = obs['wavelength'][mask], obs['spectrum'][mask], obs['unc'][mask]
     for s in samples:
         theta = flatchain[s,:]
         comps = diagnostics.model_components(theta, results, obs,
                                              sps, photflag=1)
-        spec, gp, cal, mask, stars = comps
-        wave, ospec, ounc = obs['wavelength'][mask], obs['spectrum'][mask], obs['unc'][mask]
-        phot.plot(wave, spec, label = label,
+        mu, cal, delta, mask = comps
+        
+        phot.plot(mwave, mu, label = label,
                   alpha=alpha, color='cyan', marker=marker, **kwargs)
-        res.plot(wave, (ospec - spec) / ounc,
+        res.plot(mwave, (mospec - mu) / mo_unc,
                  alpha=alpha, color='cyan', marker=marker, **kwargs)
         label = None
-    phot.errorbar(wave, ospec, yerr=ounc,
+    phot.errorbar(mwave, mospec, yerr=mo_unc,
                   color='magenta')
-    phot.plot(wave, ospec, label = 'observed',
+    phot.plot(mwave, mospec, label = 'observed',
               color='magenta', marker=marker, **kwargs)
     phot.legend(loc=0)
     res.axhline(0, linestyle=':', color='black')
@@ -282,16 +303,18 @@ def calibration_figure(cal_result, nocal_result, samples = [-1],
                                       flatchain.shape[2])
 
         label = 'modeled'
+        mask = result['obs']['mask']
+        mwave = result['obs']['wavelength'][mask]
         for s in samples:
             theta = flatchain[s,:]
             comps = diagnostics.model_components(theta, result, result['obs'],
-                                             sps, photflag=0)
-            spec, gp, cal, mask, stars = comps
+                                             sps, photflag=0,
+                                             multiplicative=multiplicative)
+            mu, cal, delta, mask = comps
             if multiplicative:
-                full_cal = (cal[mask] + gp)
+                full_cal = (cal + delta)
             else:
-                full_cal = cal[mask] + gp/stars[mask]
-            mwave = result['obs']['wavelength'][mask]
+                full_cal = (cal + delta/mu)
             ax.plot(mwave, 1/full_cal, label = label,
                           color = 'cyan', alpha = alpha)
             label = None
@@ -353,7 +376,8 @@ if __name__ == '__main__':
     rdir = '/Users/bjohnson/Projects/cetus/results/'
     #res = [rdir+'b192-g242.020.cal_1405648278.sampler01',
     #       rdir+'b192-g242.020.nocal_1405677518.sampler01']
-    res = [rdir+'b192-g242.225.cal_1406930609.sampler01']
+    res = [rdir+'b192-g242.225.cal_1407177118.sampler01']
+    mult = True
 
     name = ['B192 cal.', 'B192 no cal.']
     
@@ -365,26 +389,27 @@ if __name__ == '__main__':
         ns = result['chain'].shape[0] * result['chain'].shape[1]
         sample = [int(s * ns) for s in samples]
     
-        #sfig = spec_figure(result, samples=sample,
-        #                linewidth = 0.5, xlim = (3650, 7300))
-        #sfig.suptitle(name[i])
-        #sfig.savefig('sfig_'+ of + figext)
-        #pl.close(sfig)
+        sfig = spec_figure(result, samples=sample,
+                        linewidth = 0.5, xlim = (3650, 7300),
+                        multiplicative=mult)
+        sfig.suptitle(name[i])
+        sfig.savefig('sfig_'+ of + figext)
+        pl.close(sfig)
         
-        #pfig = phot_figure(result, samples=sample)
-        #pfig.suptitle(name[i])
-        #pfig.savefig('pfig_' + of + figext)
-        #pl.close(pfig)
+        pfig = phot_figure(result, samples=sample)
+        pfig.suptitle(name[i])
+        pfig.savefig('pfig_' + of + figext)
+        pl.close(pfig)
 
-        #tfig = corner_plot(result, showpars = showpars_phys, start=-1250)
-        #tfig.suptitle(name[i])
-        #tfig.savefig('ptri_' + of + figext)
-        #pl.close(tfig)
+        tfig = corner_plot(result, showpars = showpars_phys, start=-1250)
+        tfig.suptitle(name[i])
+        tfig.savefig('ptri_' + of + figext)
+        pl.close(tfig)
 
-        #tfig = corner_plot(result, showpars = showpars_cal, start=-1250)
-        #tfig.suptitle(name[i])
-        #tfig.savefig('ctri_' + of + figext)
-        #pl.close(tfig)
+        tfig = corner_plot(result, showpars = showpars_cal, start=-1250)
+        tfig.suptitle(name[i])
+        tfig.savefig('ctri_' + of + figext)
+        pl.close(tfig)
 
                
         results += [result]
@@ -396,12 +421,14 @@ if __name__ == '__main__':
     #[dfig.axes[i*2].set_title(name[i]) for i in range(len(name))]
     #dfig.savefig('dfig_'+ '_'.join(of.split('_')[0:2]) + figext)
 
-    #cfig = calibration_figure(*results, samples =sample)
+    cfig = calibration_figure(*results, samples=sample,
+                              multiplicative=mult)
     #[cfig.axes[i].set_title(name[i]) for i in range(len(name))]
     #[cfig.axes[i].set_ylabel(r'$f_{{\lambda}}\,/\, f_{{\lambda, obs}}$') for i in range(len(name))]
-    #cfig.savefig('cfig_'+ '_'.join(of.split('_')[0:2]) + figext)
+    cfig.savefig('cfig_'+ '_'.join(of.split('_')[0:2]) + figext)
 
 
     zfig = zoom_spec_figure(results[0], zoom_regions,
+                            multiplicative=mult,
                             samples =sample, color='magenta')
-    zfig.savefig('zfig_'+ '_'.join(of.split('_')[0:2]) + figext)
+    zfig.savefig('zfig_'+ of + figext)
