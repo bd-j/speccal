@@ -32,11 +32,10 @@ def data_figure(results_list, layout = None, shaded = False, **kwargs):
         nx = int(np.floor(np.sqrt(nobj)))
         ny = int(np.ceil(nobj*1.0/nx))
         layout = [nx,ny]
-    print(ny, nx)
+        
     gs = gridspec.GridSpec(layout[0], layout[1])
     for i, res in enumerate(results_list):
         x, y = i % nx, np.floor(i*1.0 / nx)
-        #print(x,y)
         obs = res['obs']
 
         if shaded:
@@ -45,7 +44,7 @@ def data_figure(results_list, layout = None, shaded = False, **kwargs):
             fig.add_subplot(ax)
         else:
             fig, sub_gs = one_data_figure_sep(obs, fig, subplot_spec = gs[i], **kwargs)
-    #pl.tight_layout(fig)
+            
     return fig
         
 def one_data_figure_shaded(obs, axobj, color='Blue', facecolor='Blue',
@@ -146,6 +145,10 @@ def zoom_spec_figure(results, zoom_region_list,
                      start=0, thin=1, layout=None,
                      subplot_spec=None, xlim=None, **kwargs):
 
+    """
+    Plot zoom-ins on selected spectral regions, showing obs, model,
+    and residuals.
+    """
     fig = pl.figure(figsize=(10, 5))
     obs = results['obs']
 
@@ -173,7 +176,8 @@ def zoom_spec_figure(results, zoom_region_list,
         nx = int(np.floor(np.sqrt(nobj)))
         ny = int(np.ceil(nobj*1.0/nx))
         layout = [nx,ny]
-    
+        
+    #loop over panels, one for each spectral region
     gs = gridspec.GridSpec(layout[0], layout[1])
     for i, reg in enumerate(zoom_region_list):
         x, y = i % nx, np.floor(i*1.0 / nx)
