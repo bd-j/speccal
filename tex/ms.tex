@@ -238,6 +238,20 @@ pick up smaller-scale residuals away from \emph{that}.
 This---equation~(\ref{eq:spectroscopicLF})---is the log-likelihood we
 are going to use for the spectroscopic data in what follows.
 
+
+XXX Alternative XXX.
+Because the model  of equation \ref{eq:spectroscopicLF} includes an
+additive term in the form of the residual column vector $\Delta$,
+sharp spectral features can be diluted. To mitigate this we try a
+model where the residual column vector is taken to be the residual
+\emph{from the calibration vector $f(\alpha)$}.  That is, 
+\begin{eqnarray}\label{eq:spectroscopicLFalt}
+\Delta &\equiv& \frac{d}{\mu(\theta)} - f(\alpha)
+\quad ,
+\end{eqnarray}
+
+
+
 In detail, we are going to choose a $M$th-order polynomial form for
 the calibration vector $f(\alpha)$ and a bell shape (Gaussian) for the
 kernel function $K_\alpha(\cdot)$:
