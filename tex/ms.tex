@@ -257,6 +257,35 @@ where $d$, $\mu(\theta)$ and $f(\alpha)$ are as before, and
 $\sigma'_{n}$ are now the observational uncertainties
 
 
+XXX Alternative 2 XXX.
+Because the residual column vector $\Delta$ of equation
+\ref{eq:spectroscopicLF} is additive with respect to the mean model
+$\mu$, sharp spectral features in the mean model (such as absorption
+lines) can be artificially diluted or enhanced, affecting the derived
+parameters. To mitigate this we construct a noise model where the
+residual column vector is taken to be additive in the log and is
+therefore multiplicative with respect to the mean model $\mu$.  That
+is,
+\begin{eqnarray}\label{eq:spectroscopicLFalt2} 
+\Delta &\equiv&
+\ln d - \ln \mu(\theta) - f(\alpha) \\
+\sigma_{n} & = & \sigma'_n / d
+\quad ,
+\end{eqnarray}
+where $d$, $\mu(\theta)$ and $f(\alpha)$ are as before, and
+$\sigma'_{n}$ are now the observational uncertainties. In this
+formulation the the mean model $\mu$ will be effectively multiplied by
+$\e ^{f(\alpha)}$ which, given our quadratic form for $f(\alpha)$, is
+equivalent to a large scale Gaussian ({\color{red} could we just add
+this to the covariance matrix with a single long quadratic ?}).  This
+logarithmic formulation requires that $d$ be everywhere positive, and
+the uncertainties will be truncated to only allow positive values and
+incorrect in detail.  However, at high signal to noise they should be
+approximately correct. {color{\red} As I understand it, additional
+`bad lines' in the mean model could be accounted for using narrow
+quadratics in the covariance matrix, though their interpretation would
+be hellish.}
+
 
 
 In detail, we are going to choose a $M$th-order polynomial form for
