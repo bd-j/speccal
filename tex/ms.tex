@@ -238,7 +238,6 @@ pick up smaller-scale residuals away from \emph{that}.
 This---equation~(\ref{eq:spectroscopicLF})---is the log-likelihood we
 are going to use for the spectroscopic data in what follows.
 
-
 XXX Alternative XXX.
 Because the residual column vector $\Delta$ of equation
 \ref{eq:spectroscopicLF} is additive with respect to the mean model
@@ -255,7 +254,6 @@ with respect to the mean model $\mu$.  That is,
 \end{eqnarray}
 where $d$, $\mu(\theta)$ and $f(\alpha)$ are as before, and
 $\sigma'_{n}$ are now the observational uncertainties
-
 
 XXX Alternative 2 XXX.
 Because the residual column vector $\Delta$ of equation
@@ -275,18 +273,16 @@ is,
 where $d$, $\mu(\theta)$ and $f(\alpha)$ are as before, and
 $\sigma'_{n}$ are now the observational uncertainties. In this
 formulation the the mean model $\mu$ will be effectively multiplied by
-$\e ^{f(\alpha)}$ which, given our quadratic form for $f(\alpha)$, is
+$e ^{f(\alpha)}$ which, given our quadratic form for $f(\alpha)$, is
 equivalent to a large scale Gaussian ({\color{red} could we just add
 this to the covariance matrix with a single long quadratic ?}).  This
 logarithmic formulation requires that $d$ be everywhere positive, and
 the uncertainties will be truncated to only allow positive values and
 incorrect in detail.  However, at high signal to noise they should be
-approximately correct. {color{\red} As I understand it, additional
+approximately correct. {\color{red} As I understand it, additional
 `bad lines' in the mean model could be accounted for using narrow
 quadratics in the covariance matrix, though their interpretation would
 be hellish.}
-
-
 
 In detail, we are going to choose a $M$th-order polynomial form for
 the calibration vector $f(\alpha)$ and a bell shape (Gaussian) for the

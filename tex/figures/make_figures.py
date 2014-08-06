@@ -72,8 +72,8 @@ def spec_figure(results, alpha=0.3, samples=[-1],
     gs = gridspec.GridSpec(3, 2, height_ratios=[3,1,1], hspace=0, wspace=0.05)
     
     # Axis variables
-    ylabels = [r'$\mu$',r'$f(\alpha)$', r'$\tilde{\Delta}$ (GP)', #r'$\delta[f(\alpha)\mu]$ (GP)',
-               r'$\mu\,f(\alpha) \, e^{\tilde{\Delta}}$','o/m', r'(o-m)/$\sigma$']
+    ylabels = [r'$\mu$',r'$e^{f(\alpha)}$', r'$\tilde{\Delta}$ (GP)', #r'$\delta[f(\alpha)\mu]$ (GP)',
+               r'$\mu \, e^{f(\alpha) + \tilde{\Delta}}$','o/m', r'$\chi$']
     color = ['blue', 'green', 'red', 'magenta', 'orange','orange']
     row = [0,1,2,0,1,2]
     col = [0,0,0,1,1,1]
@@ -163,7 +163,7 @@ def one_specregion_figure(wave, obs, specs, reg,
     pl.setp(sfig.get_xticklabels(), visible = False)
 
     rfig = pl.Subplot(fig, gs[1,0])
-    rfig.set_ylabel(r'(o-m)$/\sigma$')
+    rfig.set_ylabel(r'$\chi$')
     rfig.set_xlabel(r'$\lambda (\AA)$')
     inreg = (wave > reg[0]) & (wave < reg[1])
     print(inreg.sum())
@@ -189,7 +189,7 @@ def phot_figure(results, alpha=0.3, samples = [-1],
     gs = gridspec.GridSpec(2,1, height_ratios=[3,1])
     gs.update(hspace=0)
     phot, res = pl.Subplot(fig, gs[0]), pl.Subplot(fig, gs[1])
-    res.set_ylabel( r'(obs-model)/$\sigma$')
+    res.set_ylabel( r'$\chi$')
     phot.set_ylabel('maggies')
     
     # posterior draws
@@ -365,6 +365,44 @@ def one_data_figure_sep(obs, fig, subplot_spec=None, **kwargs):
     return fig, gs
 
 
+def gp_figure(result, start=0, thin=1,
+              inlog=True, samples=[-1]):
+    fig = pl.figure(figsize = (10,6))
+    gs = gridspec.GridSpec(3, 2, height_ratios=[1,1,1], hspace=0, wspace=0.05)
+    
+    # Axis variables
+    ylabels = [r'$(\sigma/d)^2$', r'$\ln d$', r'$\ln \mu$', r'$f(\alpha)$', r'$\Delta$ (residual)',
+                r'$\chi$ (linear)']
+    color = ['magenta',  'grey', 'blue', 'green', 'red', 'orange']
+    row = [0,1,2,0,1,2]
+    col = [0,0,0,1,1,1]
+    show_tick = [False, False, True, False, False, True]
+    
+    # generate axes
+    axes = [pl.Subplot(fig, gs[c,r]) for r,c in zip(col, row)]
+    # suppress ticks on shared axes
+    [pl.setp(ax.get_xticklabels(), visible = sh) for ax,sh in zip(axes, show_tick)]
+    # y-labels
+    [ax.set_ylabel(label) for ax, label in zip(axes, ylabels)]
+    [pl.setp(ax.yaxis, label_position='right') for ax in axes[3:]]
+    [ax.yaxis.set_ticks_position('right') for ax in axes[3:]]
+    [ax.yaxis.set_ticks_position('both') for ax in axes[3:]]
+
+    # make posterior draws
+    flatchain = result['chain'][:,start::thin,:]
+    flatchain = flatchain.reshape(flatchain.shape[0] * flatchain.shape[1],
+                                  flatchain.shape[2])
+    thetas = [flatchain[s,:] for s in samples]
+    thetas += [result['initial_center']]
+
+    mwave, mospec, mounc, specvecs = comp_samples(thetas, result['model'], inlog=inlog)
+    for vec in specvecs:
+        vv = [(mounc/mospec)**2, np.log(mospec), np.log(vec[0]), np.log(vec[1]), vec[2], vec[-1]]
+        [ax.plot(mwave,v, color=c, alpha=0.3) for ax, v, c in zip(axes[2:], vv[2:], color[2:])]
+    [ax.plot(mwave,v, color=c, alpha=1.0) for ax, v, c in zip(axes[:2], vv[:2], color[:2])]
+    [fig.add_subplot(ax) for ax in axes]
+    return fig
+
 def comparison_figure(results_list):
     pass
 
@@ -394,7 +432,11 @@ if __name__ == '__main__':
         of = of.replace('.','_')
         ns = result['chain'].shape[0] * result['chain'].shape[1]
         sample = [int(s * ns) for s in samples]
-    
+
+        gfig = gp_figure(result, samples=sample, inlog=inlog)
+        gfig.savefig('gp_figure.png')
+        sys.exit()
+        
         sfig = spec_figure(result, samples=sample,
                         linewidth = 0.5, xlim = (3650, 7300),
                         inlog=inlog)
@@ -437,4 +479,5 @@ if __name__ == '__main__':
                             inlog=inlog,
                             samples=sample, color='grey')
     zfig.savefig('zfig_'+ of + figext)
+
     print(of)
