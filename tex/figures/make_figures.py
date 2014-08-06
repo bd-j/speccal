@@ -141,6 +141,24 @@ def spec_figure(results, alpha=0.3, samples=[-1],
                 mospec/mod, (mospec-mod) / obs['unc'][mask]]
         [ax.plot(mwave, v, color=c, alpha=alpha, **kwargs) for ax,v,c in zip(axes, vecs, color)]
 
+    theta = results['initial_center']
+    c = 'black'
+    comps = diagnostics.model_components(theta, results, results['obs'],
+                                         sps, photflag=0,
+                                         multiplicative=multiplicative)
+    mu, cal, delta, mask = comps
+        
+    if multiplicative:
+        full_cal = (cal + delta)
+        mod = mu * full_cal
+    else:
+        full_cal = cal + delta/mu
+        mod = (mu*cal + delta)
+
+    vecs = [mu, cal, delta, mod,
+            mospec/mod, (mospec-mod) / obs['unc'][mask]]
+    [ax.plot(mwave, v, color=c, alpha=1.0, **kwargs) for ax,v in zip(axes, vecs)]
+
     [a.axhline( int(i==0), linestyle=':', color='black') for i,a in enumerate(axes[-2:])]
     if xlim is not None:
         [a.set_xlim(xlim) for a in axes]
@@ -370,7 +388,7 @@ if __name__ == '__main__':
     nsample = 5
     samples = np.random.uniform(0, 1, size=nsample)
     showpars_phys = ['mass', 'tage', 'zmet', 'dust2', 'sigma_smooth']
-    showpars_cal = ['dust2', 'spec_norm','poly_coeffs1', 'poly_coeffs2', 'gp_length', 'gp_amplitude', 'phot_jitter']
+    showpars_cal = ['dust2', 'spec_norm','poly_coeffs1', 'poly_coeffs2', 'gp_length', 'gp_amplitude', 'gp_jitter']
     zoom_regions = [[3920,4150.], [6500, 6600.], [5850, 5950], [5000, 5400]]
     
     results = []
@@ -385,6 +403,8 @@ if __name__ == '__main__':
     for i,r in enumerate(res):
         sf, mf = r+'_mcmc', r+'_model'
         result, pr, model = diagnostics.read_pickles(sf, model_file = mf)
+        #best = np.argmin([p.fun for p in powell_guesses])
+        #result['optimizer_results'] = pr[best]
         of = result['run_params']['outfile'].split('/')[-1]
         of = of.replace('.','_')
         ns = result['chain'].shape[0] * result['chain'].shape[1]
@@ -433,3 +453,4 @@ if __name__ == '__main__':
                             multiplicative=mult,
                             samples =sample, color='magenta')
     zfig.savefig('zfig_'+ of + figext)
+    print(of)
