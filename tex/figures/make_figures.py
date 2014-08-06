@@ -434,8 +434,9 @@ if __name__ == '__main__':
         sample = [int(s * ns) for s in samples]
 
         gfig = gp_figure(result, samples=sample, inlog=inlog)
+        gfig.axes[0].set_yscale('log')
         gfig.savefig('gp_figure.png')
-        sys.exit()
+        
         
         sfig = spec_figure(result, samples=sample,
                         linewidth = 0.5, xlim = (3650, 7300),
@@ -444,6 +445,7 @@ if __name__ == '__main__':
         sfig.suptitle(name[i])
         sfig.savefig('sfig_'+ of + figext)
         pl.close(sfig)
+        sys.exit()
         
         pfig = phot_figure(result, samples=sample)
         pfig.suptitle(name[i])
