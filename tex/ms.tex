@@ -467,7 +467,7 @@ distribution of the population from which a given cluster is drawn.
 \input{tables/priors.tbl}
 
 \begin{figure*}[h!]
-\includegraphics[width=\textwidth]{figures/sfig_b192-g242_020_cal.png}
+\includegraphics[width=\textwidth]{figures/sfig_b192-g242_225_cal.png}
 \caption{Spectra resulting from draws from the posterior parameter
 space conditioned on the calibrated \excluster~ spectrum and
 photometry.  Left: For each of 5 draws from the posterior we show from
@@ -481,6 +481,13 @@ normalized by the uncertainty.
 \label{fig:inferred_spectrum}}
 \end{figure*}
 
+\begin{figure*}[h!]
+\includegraphics[width=\textwidth]{figures/zfig_b192-g242_225_cal.png}
+\caption{Zoom-in on selected regions of the observed spectrum, showing
+also draws from the posterior model for the spectra in these regions
+and residulas of these draws from the observations.
+\label{fig:zoom_spectrum}}
+\end{figure*}
 
 \subsection{Results}
 
@@ -495,7 +502,8 @@ which the priors were conditioned, and residuals between the posterior
 models and the observed data.  The agreement is quite good, though
 some lines are not accurately predicted.  For example, the observed
 Mg$b$ absorption appears stronger than the modeled
-absorption. {\color{blue} Should I show blowups of selected regions/lines?}
+absorption. {\color{blue} Should I show blowups of selected
+regions/lines?}
 
 In Figure \ref{fig:inferred_sed} we show the corresponding SED for the
 posterior parameter draws, compared to the observed SED. There is some
@@ -505,20 +513,21 @@ marginalized and joint PDFs for a subset of the full model parameters.
 
 
 \begin{figure}[h!]
-\includegraphics[width=0.5\textwidth]{figures/pfig_b192-g242_020_cal.png}
-\caption{Model SEDs.  Top: The model photometric SED resulting from draws from the posterior
-  parameter space conditioned ({\it cyan}) on the observed photometry
-  ({\it magenta})  and spectra.  Bottom: uncertainty normalized
-  residuals of the models from the observations. 
- . \label{fig:inferred_sed}}
+\includegraphics[width=0.5\textwidth]{figures/pfig_b192-g242_225_cal.png}
+\caption{ Model SEDs.  Top: The model photometric SED resulting from
+draws from the posterior parameter space conditioned ({\it cyan}) on
+the observed photometry ({\it magenta}) and spectra.  Bottom:
+uncertainty normalized residuals of the models from the observations.
+\label{fig:inferred_sed}}
 \end{figure}
 
 \begin{figure}[h!]
-\includegraphics[width=0.5\textwidth]{figures/ptri_b192-g242_020_cal.png}
-\caption{ Marginalized and joint PDFs of  subset of the physical
-  parameters $\theta$ inferred from the spectophotometrically
-  calibrated spectrum of \excluster. The blue lines indicate the
-  parameter values that resulted from the powell minimization. \label{fig:inferred_params}}
+\includegraphics[width=0.5\textwidth]{figures/ptri_b192-g242_225_cal.png}
+\caption{ Marginalized and joint PDFs of subset of the physical
+parameters $\theta$ inferred from the spectophotometrically calibrated
+spectrum of \excluster. The blue lines indicate the parameter values
+that resulted from the powell minimization.
+\label{fig:inferred_params}}
 \end{figure}
 
 The physical model parameters that we infer indicate that \excluster~
@@ -554,12 +563,12 @@ function of wavelength.
 
 
 \begin{figure*}[h!]
-\includegraphics[width=\textwidth]{figures/cfig_b192-g242_020.png}
+\includegraphics[width=\textwidth]{figures/cfig_b192-g242_225.png}
 \caption{Left: Samples of the effective multiplicative calibration
-  vector for the spectrophotometrically calibrated spectrum of
-  \excluster~ ({\it cyan}) compared to that obtained from ancillary
-  photometric data ({\it magenta}).  Right:  The same, but for the
-  uncalibrated data. 
+vector for the spectrophotometrically calibrated spectrum of
+\excluster~ ({\it cyan}) compared to that obtained from ancillary
+photometric data ({\it magenta}).  
+%Right: The same, but for the uncalibrated data.
  \label{fig:inferred_calib}}
 \end{figure*}
 
@@ -593,37 +602,60 @@ down-weighting or up-weighting of certain data. Instead, we explicitly
 model our uncertain knowledge of the spectral calibration and infer
 this calibration jointly with the physical properties. For a number of
 applications this combination of spectroscopy and photometry reduces
-the need for spectrophotometric calibration.  Calibration information,
-if it exists, can be incorporated into informative priors on the
-calibration parameters of the model.
+the need for spectrophotometric calibration, such that the less
+expensive photometry is sufficient.  Additional calibration
+information, if it exists, can be incorporated into informative priors
+on the calibration parameters of the model, or inform the construction
+of the calibration model.
 
 Our strategy is easily extensible to more complicated models, which
 include for example night sky-line emission in the spectroscopy (or
 residuals from an intial sky-line subtraction), and uncertainties in
-wavelength calibration. {\color{blue} DISCUSS MORE COMPLICATED
-COVARIANCE KERNELS, MULTIPLE KERNELS, etc.  MODEL CHECKING.}
+wavelength calibration. Furthermore, more complex physical models may
+be considered for the mean object model, for example including SFH
+parameters so as to model galaxies.  {\color{blue} DISCUSS MORE
+COMPLICATED COVARIANCE KERNELS, MULTIPLE KERNELS, etc.  MODEL
+CHECKING.}
 
 In a heirarchical modelling context it should be possible to use the
 inferred calibration parameters, along with additional information
 about the observations (e.g. airmass, instrument temperature), to in
-turn infer the parameters of a generative model for the
-calibration. This generative model can then be used in the
-(probabilistic) calibration of objects where the spectra are difficult
-to model explicitly.
+turn infer the parameters of a generative model for the calibration
+\citep[e.g.][]{spectrophot}. This generative model can then be used in
+the (probabilistic) calibration of objects where the spectra are
+difficult to model explicitly.
 
 Limitations.  The strategy we have advocated has several limitations.
 First, it requires a generative model for the spectrum of the object
 of interest, and is thus ill-suited to discovery projects.  Second,
 care must be taken to avoid absorbing interesting model deficiencies
-into the calibration model.  Third, we have made the assumption that
-the spectroscopy and the photometry are sampling the same populations.
-In practice, differences between spectroscopic and photometric
-apertures often mean that the photometry and the spectroscopy are sampling
+into the calibration model. For example, in the model we have
+described, it is possible that broad shallow features (for example due
+to molecular bands or absorption line complexes) will be absorbed into
+the Gaussian process. Third, we have made the assumption that the
+spectroscopy and the photometry are sampling the same populations.  In
+practice, differences between spectroscopic and photometric apertures
+often mean that the photometry and the spectroscopy are sampling
 slightly different physical regions.  The correct response to this
 situation is to explicitly model the differences, incorporating prior
 information about the spatial variation of physical properties.
 Finally, this method is computationally intensive and expensive, since
 we are constantly inverting largish matrices.
+
+Fundamentally, calibration involves observing a `known' or `truth'
+with an instrument, and using the observation to infer the effects of
+the instrument.  However, we do not have knowledge of a single truth
+for any object, only relative probabilities for what might be true.
+In this sense, one should never use a single point estimate of the
+calibration, the full distribution of the possible calibrations should
+be inferred from our probabilistic knowledge of the calibration object
+and forward propogated \citep[e.g.][]{lee11}. Once this is done, the only the
+only distinction between 'calibration' objects and targets of interest
+is the complexity of the model for the object and the level of
+uncertainty in the calibration object spectrum.  If one is interested
+in inferring parameters of interest of spectral models of
+astrophysical objects, then there is no reason not to use those
+objects themselves as calibration objects.
 
 BDJ misc issues, collected here in case we want to address them and to
 keep me from cluttering up the main text: Model resolution and
