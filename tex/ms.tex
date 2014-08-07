@@ -474,8 +474,8 @@ photometry.  Left: For each of 5 draws from the posterior we show from
 top to bottom, three components of the model: the mean cluster
 spectrum, the calibration vector, and the mean prediction of $\Delta$
 for the Gaussian process.  Right: From top to bottom, the full model
-({\it cyan}) compared to the observed, calibrated spectrum ({\it
-magenta}), the ratio of the observed to the modeled spectrum, and the
+({\it magenta}) compared to the observed, calibrated spectrum ({\it
+grey}), the ratio of the observed to the modeled spectrum, and the
 difference between the observed spectrum and the modeled spectrum
 normalized by the uncertainty.
 \label{fig:inferred_spectrum}}
@@ -572,9 +572,17 @@ photometric data ({\it magenta}).
  \label{fig:inferred_calib}}
 \end{figure*}
 
+\subsection{Tests}
+
 BDJ: Next, we infer the parameters of the spectrum of the same cluster
 \emph{without} spectrophotometric calibration.  How many/which figures
 to show?
+
+BDJ: Then, we infer the parameters of the calibrated spectrum without
+including the noise model!  What changed, what did we get wrong
+without the noise model?
+
+BDJ: We should also test on fake data
 
 BDJ: Then, we show select marginalized or joint PDFs for each cluster
 calibrated/uncalibrated, to assess consistency.  Or we just show
