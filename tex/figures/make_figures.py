@@ -226,6 +226,7 @@ def calibration_figure(cal_result, nocal_result = None, samples = [-1],
     fig = pl.figure()
     gs = gridspec.GridSpec(1,1)
     ax = pl.Subplot(fig, gs[0])
+    ax.set_ylabel(r'$\mu/e^{f(\alpha) + \tilde{\Delta}}$')
 
     if nocal_result is None:
         result = cal_result
@@ -418,7 +419,7 @@ if __name__ == '__main__':
     rdir = '/Users/bjohnson/Projects/cetus/results/'
     #res = [rdir+'b192-g242.020.cal_1405648278.sampler01',
     #       rdir+'b192-g242.020.nocal_1405677518.sampler01']
-    res = [rdir+'b192-g242.225.cal_1407338103.sampler01']
+    res = [rdir+'b192-g242.225.cal_1407376313.sampler01']
     inlog = True
 
     name = ['B192 cal.', 'B192 no cal.']
@@ -445,23 +446,28 @@ if __name__ == '__main__':
         sfig.suptitle(name[i])
         sfig.savefig('sfig_'+ of + figext)
         pl.close(sfig)
-        sys.exit()
+        
         
         pfig = phot_figure(result, samples=sample)
         pfig.suptitle(name[i])
         pfig.savefig('pfig_' + of + figext)
         pl.close(pfig)
 
-        #tfig = corner_plot(result, showpars = showpars_phys, start=-1250)
-        #tfig.suptitle(name[i])
-        #tfig.savefig('ptri_' + of + figext)
-        #pl.close(tfig)
+        tfig = corner_plot(result, showpars = showpars_phys, start=-1250)
+        tfig.suptitle(name[i])
+        tfig.savefig('ptri_' + of + figext)
+        pl.close(tfig)
 
-        #tfig = corner_plot(result, showpars = showpars_cal, start=-1250)
-        #tfig.suptitle(name[i])
-        #tfig.savefig('ctri_' + of + figext)
-        #pl.close(tfig)
+        tfig = corner_plot(result, showpars = showpars_cal, start=-1250)
+        tfig.suptitle(name[i])
+        tfig.savefig('ctri_' + of + figext)
+        pl.close(tfig)
 
+        zfig = zoom_spec_figure(result, zoom_regions,
+                                inlog=inlog,
+                                samples=sample, color='grey')
+        zfig.savefig('zfig_'+ of + figext)
+        pl.close(zfig)
                
         results += [result]
 
@@ -477,9 +483,5 @@ if __name__ == '__main__':
     cfig.savefig('cfig_'+ '_'.join(of.split('_')[0:2]) + figext)
 
 
-    zfig = zoom_spec_figure(results[0], zoom_regions,
-                            inlog=inlog,
-                            samples=sample, color='grey')
-    zfig.savefig('zfig_'+ of + figext)
 
     print(of)
