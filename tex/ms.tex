@@ -207,20 +207,23 @@ This modification shows the necessity of including the log-variance
 term.
 This---equation~(\ref{eq:photometricLF})---is in fact the
 log-likelihood function we are going to use for the photometric
-measurements ({\color{blue} BDJ: IS THIS TRUE?} {\color{red} DWH,
-Currently I'm not using a jitter term, but I can and will.  Update:
-having difficulty with a jitter term}) in what follows.  In this
-formulation, if $\theta$ are the parameters of interest, the jitter
-variance $s^2$ is a nuisance noise-model parameter.  The Gaussian
-Process will be a generalization of this modification.
+measurements ({\color{blue} BDJ: IS THIS TRUE?} {\color{red} Jitter
+will be added now with correct sign as I test increases in model
+complexity }) in what follows.  
+In this formulation, if $\theta$ are the parameters of interest, the
+jitter variance $s^2$ is a nuisance noise-model parameter.  The
+Gaussian Process will be a generalization of this modification.
 
 The calibration-vector and Gaussian-Process modified log-likelihood is
 \begin{eqnarray}\label{eq:spectroscopicLF}
 \ln p(d\given\theta,\alpha) &=& -\frac{1}{2}\,\left[\transpose{\Delta}\,C^{-1}\,\Delta + \ln([2\pi]^N\,\det{C}) \right]
 \\
-\Delta &\equiv& d - f(\alpha)\ast\mu(\theta)
+\Delta &\equiv& \ln d - \ln \mu(\theta) - f(\alpha) 
 \\
-C_{nn'} &\equiv& [\sigma_n^2 + s^2]\,\delta_{nn'} + K_\alpha(\lambda_n - \lambda_{n'})
+C_{nn'} &\equiv& [\hat{\sigma}_n^2 + s^2]\,\delta_{nn'} +
+K_\alpha(\lambda_n - \lambda_{n'})
+\\
+\hat{\sigma_n} & = &\sigma_n/d
 \quad ,
 \end{eqnarray}
 where $\alpha$ is a blob of nuisance parameters
@@ -231,57 +234,29 @@ the ``$\ast$'' operator is the pixel-wise multiplication operator,
 $C$ is the Gaussian Process covariance matrix,
 made up of $N^2$ values $C_{nn'}$,
 $K_\alpha$ is a kernel function,
+$\hat{\sigma}_n$ are the fractional uncertainties of the data,
 and each $\lambda_n$ is the wavelength of spectral pixel $n$.
 The calibration vector $f(\alpha)$ is going to take care of the
 large-scale calibration residual; the Gaussian process is going to
 pick up smaller-scale residuals away from \emph{that}.
+The residual column vector is defined in terms of the logarithmic
+difference between the data and the mean model $\mu$ since we are
+taking the calibration vector to be multiplicative with respect to
+the mean model $\mu$.
 This---equation~(\ref{eq:spectroscopicLF})---is the log-likelihood we
 are going to use for the spectroscopic data in what follows.
 
-XXX Alternative XXX.
-Because the residual column vector $\Delta$ of equation
-\ref{eq:spectroscopicLF} is additive with respect to the mean model
-$\mu$, sharp spectral features in the mean model (such as absorption
-lines) can be artificially
-diluted or enhanced, affecting the inferred physical parameters. To mitigate this we construct a
-model where the residual column vector is taken to be the residual
-\emph{from the calibration vector $f(\alpha)$} and is multiplicative
-with respect to the mean model $\mu$.  That is,
-\begin{eqnarray}\label{eq:spectroscopicLFalt} \Delta &\equiv&
-\frac{d}{\mu(\theta)} - f(\alpha) \\
-\sigma_{n} & = & \sigma'_n / \mu(\theta)
-\quad ,
-\end{eqnarray}
-where $d$, $\mu(\theta)$ and $f(\alpha)$ are as before, and
-$\sigma'_{n}$ are now the observational uncertainties
-
-XXX Alternative 2 XXX.
-Because the residual column vector $\Delta$ of equation
-\ref{eq:spectroscopicLF} is additive with respect to the mean model
-$\mu$, sharp spectral features in the mean model (such as absorption
-lines) can be artificially diluted or enhanced, affecting the inferred
-physical parameters. To mitigate this we construct a noise model where the
-residual column vector is taken to be additive in the log and is
-therefore multiplicative with respect to the mean model $\mu$.  That
-is,
-\begin{eqnarray}\label{eq:spectroscopicLFalt2} 
-\Delta &\equiv&
-\ln d - \ln \mu(\theta) - f(\alpha) \\
-\sigma_{n} & = & \sigma'_n / d
-\quad ,
-\end{eqnarray}
-where $d$, $\mu(\theta)$ and $f(\alpha)$ are as before, and
-$\sigma'_{n}$ are now the observational uncertainties. In this
-formulation the the mean model $\mu$ will be effectively multiplied by
-$e ^{f(\alpha)}$ ({\color{red} could we just add
-this to the covariance matrix with a single long quadratic ?}).  This
+In this formulation the the mean model $\mu$ will be effectively
+multiplied by $e ^{f(\alpha)}$ ({\color{red} could we just add this to
+the covariance matrix with a single long quadratic ?}).  This
 logarithmic formulation requires that $d$ be everywhere positive, and
 the uncertainties will be truncated to only allow positive values and
-incorrect in detail.  However, at high signal to noise they should be
-approximately correct. {\color{red} As I understand it, additional
-`bad lines' in the mean model could be accounted for using narrow
-quadratics in the covariance matrix, though their interpretation would
-be hellish.}
+are therefore incorrect in detail.  However, at high signal to noise
+the results should be unaffected. {\color{red} As I understand it,
+additional `bad lines' in the mean model could be accounted for using
+narrow quadratics in the covariance matrix, though their
+interpretation would be hellish. The best way is probably to explictly
+model them in the mean model}
 
 In detail, we are going to choose a $M$th-order polynomial form for
 the calibration vector $f(\alpha)$ and a bell shape (Gaussian) for the
@@ -330,6 +305,39 @@ have been renormalized to avoid floating point errors. {\color{blue}
 SHOULD THIS SHOW ALL THE CLUSTERS OR JUST ONE?.}\label{fig:data}}
 \end{figure}
 
+\subsection{List of Tests}
+
+\begin{enumerate}
+
+\item We should test on fake data, with known squiggly
+  calibration applied, to demonstrate that we can infer the
+  calibration vector and the physical parameters with no bias.
+
+\item We infer the parameters of the spectrum of a real cluster that
+  has been photometrically calibrated. 
+
+\item Next, we infer the parameters of the spectrum of the same
+cluster \emph{without} spectrophotometric calibration, to see if we
+infer physical parameters consistent with the calibrated case.  How
+many/which figures to show?
+
+\item  Then, we show select marginalized or joint PDFs for many
+clusters calibrated/uncalibrated, to assess consistency.  Or we just
+show comparisons of confidence intervals for the parameters of a
+number of clusters.
+
+\item We infer the parameters of the calibrated spectrum without
+including the noise model, or presumably the photometry (since
+reconciling photometry and spectroscopy is done by our noise model).
+What changed, what did we get wrong without the noise model?
+{\color{blue} Should we keep the $f(\alpha)$ and the photometry?  This
+just has the potential to show shortcomings in the spectrophotometric
+calibration calibration}
+
+\item Finally, we change the number of photometric bands and see what
+happens to the inferred parameters, using the full model.
+
+\end{enumerate}
 
 \subsection{Test Data}
 
@@ -502,8 +510,7 @@ which the priors were conditioned, and residuals between the posterior
 models and the observed data.  The agreement is quite good, though
 some lines are not accurately predicted.  For example, the observed
 Mg$b$ absorption appears stronger than the modeled
-absorption. {\color{blue} Should I show blowups of selected
-regions/lines?}
+absorption.
 
 In Figure \ref{fig:inferred_sed} we show the corresponding SED for the
 posterior parameter draws, compared to the observed SED. There is some
@@ -513,7 +520,7 @@ marginalized and joint PDFs for a subset of the full model parameters.
 
 
 \begin{figure}[h!]
-\includegraphics[width=0.5\textwidth]{figures/pfig_b192-g242_225_cal.png}
+%\includegraphics[width=0.5\textwidth]{figures/pfig_b192-g242_225_cal.png}
 \caption{ Model SEDs.  Top: The model photometric SED resulting from
 draws from the posterior parameter space conditioned ({\it cyan}) on
 the observed photometry ({\it magenta}) and spectra.  Bottom:
@@ -522,7 +529,7 @@ uncertainty normalized residuals of the models from the observations.
 \end{figure}
 
 \begin{figure}[h!]
-\includegraphics[width=0.5\textwidth]{figures/ptri_b192-g242_225_cal.png}
+%\includegraphics[width=0.5\textwidth]{figures/ptri_b192-g242_225_cal.png}
 \caption{ Marginalized and joint PDFs of subset of the physical
 parameters $\theta$ inferred from the spectophotometrically calibrated
 spectrum of \excluster. The blue lines indicate the parameter values
@@ -540,30 +547,25 @@ FWHM \citep{beifiori11}, reproduces the typical line-spread function
 of the MMT Hectospec instrument, $\sim 5$\AA~ \citep{fabricant13}.
 We obtain strong constraints on the systemic velocity.
 
-For the calibration model, we obtain a vector $f(\alpha)$
-that is nearly linear in wavelength {\color{red} WHY IS IT NOT A
-CONSTANT?  Need longer burn-in?  Is this the same issue as the SED
-residuals?}.  The length scale of the Gaussian process is $\sim
-60$\AA.  It is possible to reconstruct the inferred total
-multiplicative calibration vector for each draw of the model
-parameters.  Rearranging equation \ref{eq:spectroscopicLF} yields
+It is possible to reconstruct the inferred total multiplicative
+calibration vector for each draw of the model parameters.  Rearranging
+equation \ref{eq:spectroscopicLF} yields
 \begin{eqnarray} 
-\frac{d}{\mu(\theta)} & = & f(\alpha) +
-\frac{\tilde{\Delta}}{\mu(\theta)}
+\frac{d}{\mu(\theta)} & = & exp(f(\alpha) + \tilde{\Delta})
 \quad ,
 \end{eqnarray}
 for the total effective multiplicative calibration, where
 $\tilde{\Delta}$ is now the Gaussian process mean prediction for the
-residual between the data and the model. The inverse of this ratio is
-shown in the left panel of Figure \ref{fig:inferred_calib} as our
-inferred total multiplicative calibration function; if the
-spectrophotometric calibration were perfect and we had correctly
-inferred it, then we would expect this vector to be constant as a
-function of wavelength.
+logarithmic residual between the data and the model. The inverse of
+this ratio is shown in the left panel of Figure
+\ref{fig:inferred_calib} as our inferred total multiplicative
+calibration function; if the spectrophotometric calibration were
+perfect and we had correctly inferred it, then we would expect this
+vector to be constant as a function of wavelength.
 
 
 \begin{figure*}[h!]
-\includegraphics[width=\textwidth]{figures/cfig_b192-g242_225.png}
+%\includegraphics[width=\textwidth]{figures/cfig_b192-g242_225.png}
 \caption{Left: Samples of the effective multiplicative calibration
 vector for the spectrophotometrically calibrated spectrum of
 \excluster~ ({\it cyan}) compared to that obtained from ancillary
@@ -572,24 +574,9 @@ photometric data ({\it magenta}).
  \label{fig:inferred_calib}}
 \end{figure*}
 
-\subsection{Tests}
-
-BDJ: Next, we infer the parameters of the spectrum of the same cluster
-\emph{without} spectrophotometric calibration.  How many/which figures
-to show?
-
-BDJ: Then, we infer the parameters of the calibrated spectrum without
-including the noise model!  What changed, what did we get wrong
-without the noise model?
-
-BDJ: We should also test on fake data
-
-BDJ: Then, we show select marginalized or joint PDFs for each cluster
-calibrated/uncalibrated, to assess consistency.  Or we just show
-comparisons of confidence intervals.
 
 \begin{figure}[h!]
-\includegraphics[width =0.5\textwidth]{figures/B192_020_cratio.pdf}
+%\includegraphics[width =0.5\textwidth]{figures/B192_020_cratio.pdf}
 \caption{Money plot.  Show the difference between the parameters
   inferred from the calibrated and uncalibrated spectra, for each
   cluster. Tjis is a placeholder, since it only shows B192 for fixed
@@ -611,11 +598,15 @@ model our uncertain knowledge of the spectral calibration and infer
 this calibration jointly with the physical properties. For a number of
 applications this combination of spectroscopy and photometry reduces
 the need for spectrophotometric calibration entirely, such that the less
-expensive photometry is sufficient.  Additional calibration
+expensive photometric calibration is sufficient.  Additional calibration
 information, if it exists, can be incorporated into informative priors
-on the calibration parameters of the model, to inform the construction
-of the calibration model, or to approximately remove gross features
+on the calibration parameters of the model, inform the construction
+of the calibration model, or approximately remove gross features
 that are difficult to model parameterically or as a sum of Gaussians.
+
+{\color{blue} BDJ words about the gains that might be made by
+including photometry over a large range in wavelngth with spectroscopy
+over relatively small ranges.}
 
 Our strategy is easily extensible to more complicated models, which
 include for example night sky-line emission in the spectroscopy (or
@@ -651,20 +642,23 @@ information about the spatial variation of physical properties.
 Finally, this method is computationally intensive and expensive, since
 we are constantly inverting largish matrices.
 
-% Fundamentally, calibration involves observing a `known' or `truth'
-% with an instrument, and using the observation to infer the effects of
-% the instrument.  However, we do not have knowledge of a single truth
-% for any object, only relative probabilities for what might be true.
-% In this sense, one should never use a single point estimate of the
-% calibration, the full distribution of the possible calibrations should
-% be inferred from our probabilistic knowledge of the calibration object
-% and forward propogated \citep[e.g.][]{lee11}. Once this is done, the only the
-% only distinction between 'calibration' objects and targets of interest
-% is the complexity of the model for the object and the level of
-% uncertainty in the calibration object spectrum.  If one is interested
-% in inferring parameters of interest of spectral models of
-% astrophysical objects, then there is no reason not to use those
-% objects themselves as calibration objects.
+{\color{blue} BDJ - This paragraph is probably too calibration
+focused. We want to focus more on spec + phot combinations.  At least,
+this paragraph should not be in the discussion section.}
+Fundamentally, calibration involves observing a `known' or `truth'
+with an instrument, and using the observation to infer the effects of
+the instrument.  However, we do not have knowledge of a single truth
+for any object, only relative probabilities for what might be true.
+In this sense, one should never use a single point estimate of the
+calibration, the full distribution of the possible calibrations should
+be inferred from our probabilistic knowledge of the calibration object
+and forward propogated \citep[e.g.][]{lee11}. Once this is done, the only the
+only distinction between 'calibration' objects and targets of interest
+is the complexity of the model for the object and the level of
+uncertainty in the calibration object spectrum.  If one is interested
+in inferring parameters of interest of spectral models of
+astrophysical objects, then there is no reason not to use those
+objects themselves as calibration objects.
 
 BDJ misc issues, collected here in case we want to address them and to
 keep me from cluttering up the main text: Model resolution and

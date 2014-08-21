@@ -4,3 +4,6 @@
 tex/*.pdf
 tex/vc.tex
 tex/msNotes.bib
+tex/*.out
+*.pyc
+.DS_Store
