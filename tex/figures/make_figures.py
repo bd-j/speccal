@@ -166,7 +166,7 @@ def one_specregion_figure(wave, obs, specs, reg,
     rfig.set_ylabel(r'$\chi$')
     rfig.set_xlabel(r'$\lambda (\AA)$')
     inreg = (wave > reg[0]) & (wave < reg[1])
-    print(inreg.sum())
+    #print(inreg.sum())
 
     for s in specs:
         sfig.plot(wave[inreg], s[3][inreg], alpha=0.3, color = 'magenta')
@@ -198,7 +198,7 @@ def phot_figure(results, alpha=0.3, samples = [-1],
                                   flatchain.shape[2])
     thetas = [flatchain[s,:] for s in samples]
     mwave, mospec, mounc, specvecs = comp_samples(thetas, results['model'], photflag=1)
-    print(mwave, mospec)
+    #print(mwave, mospec)
     for vecs in specvecs:
         vv = vecs[0], vecs[-1]
         [ax.plot(mwave, v, color='magenta', alpha=alpha, marker='o', **kwargs)
@@ -413,13 +413,16 @@ if __name__ == '__main__':
     samples = np.random.uniform(0, 1, size=nsample)
     showpars_phys = ['mass', 'tage', 'zmet', 'dust2', 'sigma_smooth']
     showpars_cal = ['dust2', 'spec_norm','poly_coeffs1', 'poly_coeffs2', 'gp_length', 'gp_amplitude', 'gp_jitter']
-    zoom_regions = [[3920,4150.], [6500, 6600.], [5850, 5950], [5000, 5400]]
+    zoom_regions = [[3750,4100.], [6500, 6600.], [5850, 5950], [5000, 5400]]
     
     results = []
     rdir = '/Users/bjohnson/Projects/cetus/results/'
     #res = [rdir+'b192-g242.020.cal_1405648278.sampler01',
     #       rdir+'b192-g242.020.nocal_1405677518.sampler01']
-    res = [rdir+'b192-g242.225.cal_1407376313.sampler01']
+    #res = [rdir+'b192-g242.225.cal_1407376313.sampler01']
+    #res = [rdir+'b192-g242.225.cal_1407608570.sampler01']
+    #res = [rdir+'b192-g242.225.cal_1409443437.sampler01']
+    res = [rdir+'b192-g242.225.cal_1409477803.sampler01']
     inlog = True
 
     name = ['B192 cal.', 'B192 no cal.']
