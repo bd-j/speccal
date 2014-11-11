@@ -4,10 +4,10 @@ import matplotlib.pyplot as pl
 from matplotlib import gridspec
 import triangle
 
-import diagnostics
-from diagnostics import model_comp as mcomp
+import bsfh.read_results as diagnostics
+from bsfh.read_results import model_comp as mcomp
 
-import sps_basis
+from bsfh import sps_basis
 sps = sps_basis.StellarPopBasis(smooth_velocity=False)
 
 pardict = {}
@@ -267,7 +267,7 @@ def corner_plot(results, showpars=None, start=0, thin=1):
     """
 
     # pull out the parameter names and flatten the thinned chains
-    parnames = np.array(diagnostics.theta_labels(results['model'].theta_desc))
+    parnames = np.array(results['model'].theta_labels())
     flatchain = results['chain'][:,start::thin,:]
     flatchain = flatchain.reshape(flatchain.shape[0] * flatchain.shape[1],
                                   flatchain.shape[2])
@@ -422,7 +422,11 @@ if __name__ == '__main__':
     #res = [rdir+'b192-g242.225.cal_1407376313.sampler01']
     #res = [rdir+'b192-g242.225.cal_1407608570.sampler01']
     #res = [rdir+'b192-g242.225.cal_1409443437.sampler01']
-    res = [rdir+'b192-g242.225.cal_1409477803.sampler01']
+    res = [#rdir+'b192-g242.225.cal_1407608570.sampler01']
+           #rdir+'b192-g242.225.cal_1409443437.sampler01']
+           #rdir+'b192-g242.225.cal_1409477803.sampler01',
+           #rdir+'b192-g242.225.cal_1409534549.sampler01',
+           rdir+'b192-g242.225.cal_1412345250.sampler01']
     inlog = True
 
     name = ['B192 cal.', 'B192 no cal.']
@@ -430,6 +434,7 @@ if __name__ == '__main__':
     for i,r in enumerate(res):
         sf, mf = r+'_mcmc', r+'_model'
         result, pr, model = diagnostics.read_pickles(sf, model_file = mf)
+        result['model'] = model
         #best = np.argmin([p.fun for p in powell_guesses])
         #result['optimizer_results'] = pr[best]
         of = result['run_params']['outfile'].split('/')[-1]
