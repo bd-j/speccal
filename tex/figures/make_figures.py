@@ -205,7 +205,7 @@ def phot_figure(results, alpha=0.3, samples = [-1],
          for ax, v in zip([phot, res], vv) ]
     
     phot.errorbar(mwave, mospec, yerr=mounc,
-                  color='black')
+                  capthick=2, color='black')
     phot.plot(mwave, mospec, label = 'observed',
               color='black', marker='o', **kwargs)
     phot.legend(loc=0)
