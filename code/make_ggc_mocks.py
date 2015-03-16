@@ -1,6 +1,6 @@
 import numpy as np
 import pickle, os
-from bsfh import sps_basis, priors, sedmodel
+from bsfh import sps_basis, priors, sedmodel, elines
 from sedpy import attenuation
 
 sps = sps_basis.StellarPopBasis()

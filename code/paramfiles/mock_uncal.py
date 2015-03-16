@@ -145,6 +145,11 @@ model_params.append({'name': 'max_wave_smooth', 'N': 1,
                         'init': 7000.0,
                         'units': r'$\AA$'})
 
+#model.params.append({'name': 'lsf', 'N':1,
+#                         'isfree':False,
+#                         'init': line_spread_function,
+#                         'units': None})
+                         
 ###### CALIBRATION ###########
 
 polyorder = 2
@@ -164,7 +169,7 @@ model_params.append({'name': 'spec_norm', 'N':1,
                         'init':0.0001,
                         'units': None,
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':-0.3, 'maxi':0.3}})
+                        'prior_args': {'mini':-1.0, 'maxi':1.0}})
 
 model_params.append({'name': 'gp_jitter', 'N':1,
                         'isfree': True,
@@ -178,14 +183,14 @@ model_params.append({'name': 'gp_amplitude', 'N':1,
                         'init': 0.0001,
                         'units': 'spec units',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.0, 'maxi':0.5}})
+                        'prior_args': {'mini':0.0, 'maxi':0.2}})
 
 model_params.append({'name': 'gp_length', 'N':1,
                         'isfree': True,
                         'init': 60.0,
                         'units': r'$\AA$',
                         'prior_function': priors.lognormal,
-                        'prior_args': {'log_mean':np.log(60.0)+1.0**2, 'sigma':1.0}})
+                        'prior_args': {'log_mean':np.log(100.0)+0.1**2, 'sigma':0.1}})
 
 model_params.append({'name': 'phot_jitter', 'N':1,
                         'isfree': False,

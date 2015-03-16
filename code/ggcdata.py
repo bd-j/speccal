@@ -188,6 +188,22 @@ def integrated_flux_king(outer, A, r_c=1, r_t=30):
     total_flux = 2*np.pi * quad(func, 0, outer, args=(r_c, r_t, f0))
     return -2.5*np.log10(total_flux)
 
+
+def skymask(wave, flux, width=10, thresh=5., lsf=6.):
+    """Generate a mask based on peaks in the sky spectrum.
+    """
+    #median filter
+    shifts = np.arange(width) - int(width/2.0)
+    medspec = np.median(np.vstack([np.roll(flux, s) for s in shifts]), axis=0) 
+    sigma = (flux-medspec).std()
+    #find outliers
+    peak_ind = abs(flux-medspec) > (thresh * sigma)
+    peak_wave = wave[peak_ind]
+    #grow outliers based on lsf
+    dwave = abs(peak_wave[:, None] - wave[None, :])/lsf
+    mask = (dwave < 1).sum(axis=0)
+    return mask == 0
+    
 def ggc_mock(model, theta, sps, objname='', apply_cal=True,
              add_noise=False, phot_snr=30, spec_snr=None, **extras):
     """Generate a mock spectrum
