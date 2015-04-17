@@ -80,7 +80,7 @@ def lnprobfn(theta, model=None, obs=None, verbose=run_params['verbose']):
         try:
             s, a, l = model.spec_gp_params()
             gp_spec.kernel[:] = np.log(np.array([s[0],a[0]**2,l[0]**2]))
-        except(AttributeError):
+        except(AttributeError, KeyError):
             #There was no spec_gp_params method
             pass
         d1 = time.time() - t1

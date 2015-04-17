@@ -11,11 +11,11 @@ run_params = {'verbose':True,
               'nburn':[64, 128, 256], 'niter':512,
               'initial_disp':0.1,
               'debug':False,
-              'logify_spectrum':True,
-              'normalize_spectrum':True,
+              'logify_spectrum':False,
+              'normalize_spectrum':False,
               'norm_band_name':'sdss_g0',
-              'rescale':True,
-              'filename':'/Users/bjohnson/Projects/speccal/data/ggclib/mocks/miles/ggc_mock.u0.t1.0_z0.0_a0.5.pkl',
+              'rescale':False,
+              'filename':'/Users/bjohnson/Projects/speccal/data/ggclib/mocks/miles/ggc_mock.u0.t10.0_z0.0_a0.5.pkl',
               'wlo':3350.,
               'whi':6500.
               }
@@ -25,6 +25,7 @@ run_params = {'verbose':True,
 def load_obs(filename=run_params['filename'], **extras):
     with open(filename) as f:
         obs = pickle.load(f)
+    obs['spectrum'] = None
     return obs
 
 obs = load_obs()
@@ -123,22 +124,8 @@ model_params.append({'name': 'zred', 'N':1,
                         'isfree': True,
                         'init': 0.0000,
                         'units': None,
-                        'prior_function': priors.tophat,
-                        'prior_args': {'mini':-0.001, 'maxi':0.001}})
-
-model_params.append({'name': 'sigma_smooth', 'N': 1,
-                        'isfree': True,
-                        'init': 1.0,
-                        'units': r'$\AA$',
-                        'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.0, 'maxi':3}})
-                        #'prior_function': priors.lognormal,
-                        #'prior_args': {'log_mean':np.log(2.2)+0.05**2, 'sigma':0.05}})
-
-model_params.append({'name': 'smooth_velocity', 'N': 1,
-                        'isfree': False,
-                        'init': False,
-                        'units': None})
+                        'prior_function': priors.normal,
+                        'prior_args': {'mean':0.000, 'sigma':0.0001}})
 
 model_params.append({'name': 'min_wave_smooth', 'N': 1,
                         'isfree': False,
@@ -157,45 +144,6 @@ model_params.append({'name': 'max_wave_smooth', 'N': 1,
                          
 ###### CALIBRATION ###########
 
-polyorder = 2
-polymin = [-5e1, -1e2]
-polymax = [5e1, 1e2]
-polyinit = [0.01, 0.01]
-
-model_params.append({'name': 'poly_coeffs', 'N': polyorder,
-                        'isfree': True,
-                        'init': polyinit,
-                        'units': None,
-                        'prior_function': priors.tophat,
-                        'prior_args': {'mini':polymin, 'maxi':polymax}})
-    
-model_params.append({'name': 'spec_norm', 'N':1,
-                        'isfree': True,
-                        'init':0.0001,
-                        'units': None,
-                        'prior_function': priors.tophat,
-                        'prior_args': {'mini':-1.0, 'maxi':1.0}})
-
-model_params.append({'name': 'gp_jitter', 'N':1,
-                        'isfree': True,
-                        'init': 0.0001,
-                        'units': 'spec units',
-                        'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.0, 'maxi':0.2}})
-
-model_params.append({'name': 'gp_amplitude', 'N':1,
-                        'isfree': True,
-                        'init': 0.0001,
-                        'units': 'spec units',
-                        'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.0, 'maxi':0.2}})
-
-model_params.append({'name': 'gp_length', 'N':1,
-                        'isfree': True,
-                        'init': 60.0,
-                        'units': r'$\AA$',
-                        'prior_function': priors.lognormal,
-                        'prior_args': {'log_mean':np.log(100.0)+0.1**2, 'sigma':0.1}})
 
 model_params.append({'name': 'phot_jitter', 'N':1,
                         'isfree': False,

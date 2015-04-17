@@ -53,6 +53,37 @@ def ggc_spec(objname, exp='a', ext='1',
     obs['sky'] = adata[2,:] * (obs['spectrum'] / adata[0,:])
     return obs
 
+
+def spec_lsf(wave, sigma_smooth=1.31,
+             sigma_library=1.08, ref_wave=4838,
+             **extras):
+    """Line spread function of the GGC spectroscopy from Schiavon.
+
+    :param wave:
+        Wavelengths in angstroms
+        
+    :param sigma_smooth:
+        Dispersion at ref_wave, in AA.
+        
+    :param sigma_lib:
+        Resolution of the spectral library.  It will be subtracted in
+        quadrature from the desired total resolution
+
+    :param ref_wave:
+        The wavelength in AA at which sigma_smooth is defined,
+        defaults to 5500AA
+        
+    :returns disp:
+        The dispersion (or fwhm if sigma_smooth was gien as such) at
+        each wavelength given by wave.
+    """
+    coeffs = np.array([15.290, -6.079e-3, 9.472e-7, -4.395e-11])
+    powers = np.arange(len(coeffs))
+    fwhm = np.dot(coeffs, wave[None, :] ** powers[:, None])
+    fwhm_ref = (coeffs * ref_wave**powers).sum()
+    target = (fwhm/fwhm_ref) * sigma_smooth
+    return np.sqrt(target**2 - sigma_library**2)
+
 def ggc_phot(objname, datadir='', **extras):
     
     name = objname.upper().strip().replace(' ','')
@@ -189,8 +220,23 @@ def integrated_flux_king(outer, A, r_c=1, r_t=30):
     return -2.5*np.log10(total_flux)
 
 
-def skymask(wave, flux, width=10, thresh=5., lsf=6.):
-    """Generate a mask based on peaks in the sky spectrum.
+def make_skymask(wave, flux, width=10, thresh=5., lsf=6.):
+    """Generate a mask based on peaks in the sky spectrum, found using
+    median filtering.
+
+    :param width:
+        Width of the median filter, in pixels
+        
+    :param thresh:
+        Detection threshold, in sigma
+
+    :param lsf:
+        Distance from detected peaks to include in the mask of that
+        peak, in wavelength units.
+
+    :returns mask:
+        Boolean array with ``False`` for pixels to mask due to bright
+        sky emission.
     """
     #median filter
     shifts = np.arange(width) - int(width/2.0)
@@ -203,8 +249,9 @@ def skymask(wave, flux, width=10, thresh=5., lsf=6.):
     dwave = abs(peak_wave[:, None] - wave[None, :])/lsf
     mask = (dwave < 1).sum(axis=0)
     return mask == 0
-    
-def ggc_mock(model, theta, sps, objname='', apply_cal=True,
+
+
+def ggc_mock(model, theta, sps, objname='', apply_cal=True, mask=True,
              add_noise=False, phot_snr=30, spec_snr=None, **extras):
     """Generate a mock spectrum
     """
@@ -219,7 +266,7 @@ def ggc_mock(model, theta, sps, objname='', apply_cal=True,
         spec_snr = cal['spectrum']/cal['unc']
     mock['filters'] = observate.load_filters(fnames)
     mock['wavelength'] = cal['wavelength']
-    
+    mock['sky'] = cal['sky']
     s, p, x = model.sed(theta, mock, sps=sps)
     mock['intrinsic_true_spectrum'] = s.copy()
     mock['intrinsic_true_maggies'] = p.copy()
@@ -246,4 +293,25 @@ def ggc_mock(model, theta, sps, objname='', apply_cal=True,
     mock['unc'] = noise_sigma 
     mock['maggies_unc'] = pnoise_sigma
 
+    if mask:
+        mock = ggc_mask(mock)
+    
     return mock
+
+def ggc_mask(obs, minwave=3602, maxwave=1e4, pad=6.0):
+    """Generate a mask based on peaks in the sky spectrum, min and max
+    wavelengths, and regions around ISM and sky lines.
+    """
+    from bsfh import elines
+    wave = obs['wavelength']
+    skymask = make_skymask(wave, obs['sky'], lsf=3)
+    mask = (skymask & (wave > minwave) &
+            (wave < maxwave))
+        
+    for line in elines.ism_lines + elines.sky_lines:
+        inline  = ((wave > (elines.wavelength[line] - pad)) &
+                   (wave < (elines.wavelength[line] + pad)))
+        mask = mask & ~inline
+
+    obs['mask'] = obs.get('mask', True) & mask
+    return obs

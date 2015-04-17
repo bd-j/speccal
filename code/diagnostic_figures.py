@@ -31,19 +31,27 @@ if __name__ == '__main__':
     thin = 2
     
     #sys.exit()
-    efig = bread.param_evol(result, showpars=showpars_phys+showpars_cal)
-    efig.savefig(resfile.replace('_mcmc','.pevol.pdf'))
-    pl.close(efig)
-        
-    tfig = bread.subtriangle(result, showpars=showpars_phys,
-                             start=start, thin=thin)
-    tfig.savefig(resfile.replace('_mcmc','.pcorner.pdf'))
-    pl.close(tfig)
+    try:
+        efig = bread.param_evol(result, showpars=showpars_phys+showpars_cal)
+        efig.savefig(resfile.replace('_mcmc','.pevol.pdf'))
+        pl.close(efig)
+    except(IndexError):
+        print('not enough parameters to show in pevol plot')
+    try:
+        tfig = bread.subtriangle(result, showpars=showpars_phys,
+                                 start=start, thin=thin)
+        tfig.savefig(resfile.replace('_mcmc','.pcorner.pdf'))
+        pl.close(tfig)
+    except(IndexError):
+        print('not enough parameters to show in triangle plot')
 
-    cfig = bread.subtriangle(result, showpars=showpars_cal,
-                             start=start, thin=thin)
-    cfig.savefig(resfile.replace('_mcmc','.ccorner.pdf'))
-    pl.close(cfig)
+    try:
+        cfig = bread.subtriangle(result, showpars=showpars_cal,
+                                 start=start, thin=thin)
+        cfig.savefig(resfile.replace('_mcmc','.ccorner.pdf'))
+        pl.close(cfig)
+    except(IndexError):
+        print('not enough parameters to show in triangle plot')
 
     pcfig = bread.subtriangle(result, showpars=showpars_pc,
                              start=start, thin=thin)

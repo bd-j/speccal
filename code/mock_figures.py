@@ -53,7 +53,7 @@ def obsfig(wave, obsvec, specvecs, unc=None, fax=None):
     if unc is not None:
         x, y, e = wave, obsvec, unc
         oax.fill_between(x, y-e, y+e, facecolor='grey', alpha=0.3)
-    oax.plot(wave, obsvec, color='black', label='Mock Observed Spectroscopy',
+    oax.plot(wave, obsvec, color='black', label='Mock Observed Spectrum',
              linewidth=1.0, alpha=1.0)
     return ofig, oax
 
@@ -115,9 +115,9 @@ def histfig(samples, parnames, truths=None, fax=None, truth_color='k', **kwargs)
                 label = 'posterior PDF')
         if truths is not None:
             ax.axvline(truths[i], color=truth_color, label='Mock Truth')
-        ax.set_xlabel(name)
+        ax.set_xlabel(name, fontsize=6)
         ax.set_yticklabels([])
-        
+        pl.setp(ax.get_xticklabels(), fontsize=6)
     return hfig, haxes
 
 if __name__ == "__main__":
@@ -152,13 +152,13 @@ if __name__ == "__main__":
     cax = pl.subplot(gs1[-1,0])
     
     gs2 = gridspec.GridSpec(4, 2)
-    gs2.update(left=0.55, right=0.98, hspace=0.3)
+    gs2.update(left=0.55, right=0.98, hspace=0.5)
     sax = pl.subplot(gs2[0:2,:])
     haxes = np.array([pl.subplot(gs2[i, j]) for i in [2,3] for j in [0,1]])
 
     cfig, cax = calfig(mwave, calvec, specvecs, norm=norm, fax=(None, cax))
-    cax.set_ylabel(r'Calibration $F_{{obs}}/F_{{intrinsic}}$')
-    cax.legend(loc=0)
+    cax.set_ylabel(r'Calibration $F_{{obs}}/F_{{\lambda, intrinsic}}$')
+    cax.legend(loc=0, prop={'size':8})
     #cfig.show()
     #cfig.savefig('example_cal.png')
     
@@ -172,8 +172,8 @@ if __name__ == "__main__":
     #sfig.savefig('example_sed.png')
     
     ofig, oax = obsfig(mwave, mospec, specvecs, unc=mounc, fax=(None,oax))
-    oax.set_ylabel(r'Observed Spectrum $F_{{\lambda}}$')
-    oax.legend(loc=0)
+    oax.set_ylabel(r'Observed Spectrum $F_{{obs}}$ (unknown units)')
+    oax.legend(loc=0, prop={'size':8})
     #ofig.show()
     #ofig.savefig('example_obs.png')
 

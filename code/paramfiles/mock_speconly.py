@@ -25,6 +25,7 @@ run_params = {'verbose':True,
 def load_obs(filename=run_params['filename'], **extras):
     with open(filename) as f:
         obs = pickle.load(f)
+    obs['phot_mask'] = np.array(['sdss_g' in filt.name for filt in obs['filters']])
     return obs
 
 obs = load_obs()
