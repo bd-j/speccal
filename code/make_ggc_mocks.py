@@ -110,7 +110,7 @@ model_params.append({'name': 'zred', 'N':1,
 
 model_params.append({'name': 'sigma_smooth', 'N': 1,
                         'isfree': False,
-                        'init': 1.31,
+                        'init': 1.3,
                         'units': r'$\AA$',
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':0.0, 'maxi':3}})
@@ -205,7 +205,7 @@ if __name__ == "__main__":
     noisetype = ['0','1']
     name_template = os.path.join(info['outdir'], lib,
                                  'ggc_mock.{0}{1}.t{2:3.1f}_z{3:3.1f}_a{4:3.1f}.pkl')
-    vary_params = {'tage': [0.3, 1.0, 3.0, 6.0, 9.0],
+    vary_params = {'tage': [0.3, 1.1, 3.0, 6.0, 9.0],
                    'zmet': [-1.5, -1.0, -0.5, 0.0],
                    'dust2': [0, 0.5, 1.0, 2.0]
                    }

@@ -55,7 +55,7 @@ def ggc_spec(objname, exp='a', ext='1',
 
 
 def spec_lsf(wave, sigma_smooth=1.31,
-             sigma_library=1.08, ref_wave=4838,
+             sigma_library=1.08, lsf_ref_wave=4838,
              **extras):
     """Line spread function of the GGC spectroscopy from Schiavon.
 
@@ -67,11 +67,12 @@ def spec_lsf(wave, sigma_smooth=1.31,
         
     :param sigma_lib:
         Resolution of the spectral library.  It will be subtracted in
-        quadrature from the desired total resolution
+        quadrature from the desired total resolution, so when the
+        library is convolved with the result the desired LSF is
+        acheived
 
-    :param ref_wave:
-        The wavelength in AA at which sigma_smooth is defined,
-        defaults to 5500AA
+    :param lsf_ref_wave:
+        The wavelength in AA at which sigma_smooth is defined.
         
     :returns disp:
         The dispersion (or fwhm if sigma_smooth was gien as such) at
@@ -80,9 +81,23 @@ def spec_lsf(wave, sigma_smooth=1.31,
     coeffs = np.array([15.290, -6.079e-3, 9.472e-7, -4.395e-11])
     powers = np.arange(len(coeffs))
     fwhm = np.dot(coeffs, wave[None, :] ** powers[:, None])
-    fwhm_ref = (coeffs * ref_wave**powers).sum()
+    fwhm_ref = (coeffs * lsf_ref_wave**powers).sum()
     target = (fwhm/fwhm_ref) * sigma_smooth
-    return np.sqrt(target**2 - sigma_library**2)
+    delta_sigma_sq = np.clip(target**2 - sigma_library**2, 0, np.inf)
+    return np.sqrt(delta_sigma_sq)
+
+def broaden_ggcspec(wave, flux, minsig=1e-6):
+    """Convolve the observed spectrum to have have constant wavelength
+    resolution across the spectral range.  This is not kosher, but
+    makes run times tractable.
+    """
+    sigma_data = spec_lsf(wave, sigma_library=0.0, sigma_smooth=1.31)
+    delta_sigma = np.sqrt(sigma_data.max()**2 - sigma_data**2)
+    delta_sigma[delta_sigma <= 0.0] = minsig
+    def lsf():
+        return delta_sigma
+    newflux = observate.lsf_broaden(wave, flux, lsf=lsf)
+    return newflux
 
 def ggc_phot(objname, datadir='', **extras):
     
