@@ -1,18 +1,40 @@
 import numpy as np
 import pickle, os
-from bsfh import sps_basis, priors, sedmodel, elines
+from bsfh import priors, sedmodel
 from sedpy import attenuation
-import ggcdata
 
-sps = sps_basis.StellarPopBasis()
-nw = len(sps.ssp.wavelengths)
-if nw > 7000:
-    lib = 'ckc'
-elif nw > 2000:
-    lib = 'miles'
-    sigma_library = 1.08
-else:
-    lib = 'basel'
+run_params = {'verbose':True,
+              'outfile':'results/ggc_mock_c0_t9.0_z0.0_a0.5',
+              'do_powell': False,
+              'ftol':0.5e-4, 'maxfev':5000,
+              'nwalkers':64, 
+              'nburn':[64, 128, 256], 'niter':512,
+              'initial_disp':0.1,
+              'debug':False,
+              'logify_spectrum':True,
+              'normalize_spectrum':True,
+              'norm_band_name':'sdss_g0',
+              'rescale':True,
+              'filename':'/Users/bjohnson/Projects/speccal/data/ggclib/mocks/miles/ggc_mock.c0.t9.0_z0.0_a0.5.pkl',
+              'wlo':3350.,
+              'whi':6500.,
+              'noisefactor':10
+              }
+
+##### OBSERVATIONAL DATA ######
+
+def load_obs(filename=None, noisefactor=1.0, **extras):
+    with open(filename) as f:
+        obs = pickle.load(f)
+    obs['phot_mask'] = np.array(['sdss_g' in filt.name for filt in obs['filters']])
+    obs['unc'] *= noisefactor
+    obs['noisefactor'] = noisefactor
+    return obs
+
+obs = load_obs(**run_params)
+
+###### MODEL ###########
+model_type = sedmodel.SedModel
 
 model_params = []
 
@@ -27,22 +49,22 @@ model_params.append({'name': 'lumdist', 'N': 1,
 ###### SFH ################
 
 model_params.append({'name': 'mass', 'N': 1,
-                     'isfree': False,
-                     'init': 1e5,
+                     'isfree': True,
+                     'init': 2e5,
                      'units': r'M$_\odot$',
                      'prior_function': priors.tophat,
                      'prior_args': {'mini':1e4, 'maxi': 1e6}})
 
 model_params.append({'name': 'tage', 'N': 1,
                         'isfree': True,
-                        'init': 9.0,
+                        'init': 5.0,
                         'units': 'Gyr',
                         'prior_function': priors.tophat,
                         'prior_args':{'mini':0.1, 'maxi':15.0}})
 
 model_params.append({'name': 'zmet', 'N': 1,
                         'isfree': True,
-                        'init': -0.1,
+                        'init': -0.5,
                         'units': r'$\log (Z/Z_\odot)$',
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':-2, 'maxi':0.19}})
@@ -61,7 +83,7 @@ model_params.append({'name': 'dust_curve', 'N': 1,
 
 model_params.append({'name': 'dust2', 'N': 1,
                         'isfree': True,
-                        'init': 0.5,
+                        'init': 1.0,
                         'units': r'$\tau_V$',
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':0.0, 'maxi':2.5}})
@@ -102,30 +124,21 @@ model_params.append({'name': 'imf3', 'N':1,
 ###### WAVELENGTH SCALE ######
 
 model_params.append({'name': 'zred', 'N':1,
-                        'isfree': False,
+                        'isfree': True,
                         'init': 0.0000,
                         'units': None,
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':-0.001, 'maxi':0.001}})
 
 model_params.append({'name': 'sigma_smooth', 'N': 1,
-                        'isfree': False,
-                        'init': 1.3,
+                        'isfree': True,
+                        'init': 1.0,
                         'units': r'$\AA$',
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':0.0, 'maxi':3}})
                         #'prior_function': priors.lognormal,
                         #'prior_args': {'log_mean':np.log(2.2)+0.05**2, 'sigma':0.05}})
 
-model_params.append({'name': 'lsf', 'N': 1,
-                        'isfree': False,
-                        'init': None,
-                        #'init': ggcdata.spec_lsf,
-                        'units': r'$\AA (dispersion)$',
-                        'prior_function': None,
-                        'prior_args': None})
-
-                        
 model_params.append({'name': 'smooth_velocity', 'N': 1,
                         'isfree': False,
                         'init': False,
@@ -133,55 +146,60 @@ model_params.append({'name': 'smooth_velocity', 'N': 1,
 
 model_params.append({'name': 'min_wave_smooth', 'N': 1,
                         'isfree': False,
-                        'init': 3000.0,
+                        'init': 3200.0,
                         'units': r'$\AA$'})
 
 model_params.append({'name': 'max_wave_smooth', 'N': 1,
                         'isfree': False,
-                        'init': 7500.0,
+                        'init': 7000.0,
                         'units': r'$\AA$'})
 
+#model.params.append({'name': 'lsf', 'N':1,
+#                         'isfree':False,
+#                         'init': line_spread_function,
+#                         'units': None})
+                         
 ###### CALIBRATION ###########
 
 polyorder = 2
-polymin = [-1e1, -1e1]
-polymax = [1e1, 1e1]
-polyinit = [0.0, 0.0]
+polymin = [-5e1, -1e2]
+polymax = [5e1, 1e2]
+polyinit = [0.01, 0.01]
 
 model_params.append({'name': 'poly_coeffs', 'N': polyorder,
-                        'isfree': False,
+                        'isfree': True,
                         'init': polyinit,
                         'units': None,
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':polymin, 'maxi':polymax}})
     
 model_params.append({'name': 'spec_norm', 'N':1,
-                        'isfree': False,
-                        'init':1.00000,
+                        'isfree': True,
+                        'init':0.0001,
                         'units': None,
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.2, 'maxi':5}})
+                        'prior_args': {'mini':-1.0, 'maxi':1.0}})
 
 model_params.append({'name': 'gp_jitter', 'N':1,
-                        'isfree': False,
-                        'init': 0.0000,
+                        'isfree': True,
+                        'init': 0.0001,
                         'units': 'spec units',
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':0.0, 'maxi':0.2}})
 
 model_params.append({'name': 'gp_amplitude', 'N':1,
-                        'isfree': False,
-                        'init': 0.0000,
+                        'isfree': True,
+                        'init': 0.0001,
                         'units': 'spec units',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.0, 'maxi':0.5}})
+                        'prior_args': {'mini':0.0, 'maxi':0.2}})
 
 model_params.append({'name': 'gp_length', 'N':1,
-                        'isfree': False,
+                        'isfree': True,
                         'init': 60.0,
                         'units': r'$\AA$',
                         'prior_function': priors.lognormal,
-                        'prior_args': {'log_mean':np.log(60.0)+1.0**2, 'sigma':1.0}})
+                        'prior_args': {'log_mean':np.log(100.0)+0.1**2, 'sigma':0.1}})
 
 model_params.append({'name': 'phot_jitter', 'N':1,
                         'isfree': False,
@@ -189,42 +207,3 @@ model_params.append({'name': 'phot_jitter', 'N':1,
                         'units': 'mags',
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':0.0, 'maxi':0.1}})
-
-
-
-if __name__ == "__main__":
-    
-    info = {'objname': 'NGC7089',
-            'datadir': '/Users/bjohnson/Projects/speccal/data/ggclib/spectra/',
-            'outdir': '/Users/bjohnson/Projects/speccal/data/ggclib/mocks/',
-            'apply_cal': False,
-            'add_noise': False,
-            'mask': True
-            }
-    caltype = ['c', 'u']
-    noisetype = ['0','1']
-    name_template = os.path.join(info['outdir'], lib,
-                                 'ggc_mock.{0}{1}.t{2:3.1f}_z{3:3.1f}_a{4:3.1f}.pkl')
-    vary_params = {'tage': [0.3, 1.1, 3.0, 6.0, 9.0],
-                   'zmet': [-1.5, -1.0, -0.5, -0.1],
-                   'dust2': [0, 0.5, 1.0, 2.0]
-                   }
-    #vary_params = {'tage':[10.0]}
-    #theta_default = np.array([1.0, 0.0, 0.5])
-    model = sedmodel.SedModel(model_params)
-    theta_default = model.initial_theta
-    
-    for p, vals in vary_params.iteritems():
-        ind = model.theta_labels().index(p)
-        theta = theta_default
-        for v in vals:
-            theta[ind] = v
-            mock = ggcdata.ggc_mock(model, theta, sps,
-                                phot_snr=10,
-                                **info)
-            filename = name_template.format(caltype[info['apply_cal']],
-                                            noisetype[info['add_noise']],
-                                            *theta)
-            print('writing to {0}'.format(filename))
-            with open(filename, 'w') as f:
-                pickle.dump(mock, f)

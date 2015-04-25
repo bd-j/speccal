@@ -138,7 +138,7 @@ if __name__ == "__main__":
                                                   gp=gp)
     pwave, mosed, mosed_unc, pvecs = comp_samples_phot(thetas, mod, obsdat, sps=sps)
 
-    calvec = obsdat['calibration'].copy()
+    calvec = obsdat['calibration']
     if np.size(calvec) == 1:
         calvec = np.zeros(len(mwave)) + calvec
     else:
