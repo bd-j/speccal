@@ -4,11 +4,11 @@ from bsfh import priors, sedmodel
 from sedpy import attenuation
 
 run_params = {'verbose':True,
-              'outfile':'results/ggc_mock_c0_t9.0_z0.0_a0.5',
+              'outfile':'results/ggc_mock_ideal.c0.t9.0_z0.0_a0.5',
               'do_powell': False,
               'ftol':0.5e-4, 'maxfev':5000,
               'nwalkers':64, 
-              'nburn':[64, 64, 128, 128, 256], 'niter':512,
+              'nburn':[64, 128, 256], 'niter':512,
               'initial_disp':0.1,
               'debug':False,
               'logify_spectrum':True,
@@ -125,7 +125,7 @@ model_params.append({'name': 'imf3', 'N':1,
 
 model_params.append({'name': 'zred', 'N':1,
                         'isfree': True,
-                        'init': 0.000001,
+                        'init': 0.00001,
                         'units': None,
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':-0.001, 'maxi':0.001}})
@@ -167,35 +167,35 @@ polymax = [5e1, 1e2]
 polyinit = [0.01, 0.01]
 
 model_params.append({'name': 'poly_coeffs', 'N': polyorder,
-                        'isfree': True,
-                        'init': polyinit,
+                        'isfree': False,
+                        'init': obs['mock_params']['poly_coeffs'],
                         'units': None,
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':polymin, 'maxi':polymax}})
     
 model_params.append({'name': 'spec_norm', 'N':1,
-                        'isfree': True,
-                        'init':0.0001,
+                        'isfree': False,
+                        'init':0.0000,
                         'units': None,
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':-1.0, 'maxi':1.0}})
 
 model_params.append({'name': 'gp_jitter', 'N':1,
-                        'isfree': True,
-                        'init': 0.0001,
+                        'isfree': False,
+                        'init': 0.0000,
                         'units': 'spec units',
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':0.0, 'maxi':0.2}})
 
 model_params.append({'name': 'gp_amplitude', 'N':1,
-                        'isfree': True,
-                        'init': 0.0001,
+                        'isfree': False,
+                        'init': 0.0000,
                         'units': 'spec units',
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':0.0, 'maxi':0.2}})
 
 model_params.append({'name': 'gp_length', 'N':1,
-                        'isfree': True,
+                        'isfree': False,
                         'init': 60.0,
                         'units': r'$\AA$',
                         'prior_function': priors.lognormal,

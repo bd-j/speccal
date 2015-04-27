@@ -134,6 +134,9 @@ if __name__ == "__main__":
     
     fsamples = np.random.uniform(0,1,nsample)
     thetas, start, samples = theta_samples(res, samples=fsamples, start=0.75, thin=1)
+    fwave, mospec, mounc, fspecvecs = comp_samples_fullspec(thetas, mod, obsdat, sps=sps,
+                                                  gp=gp)
+
     mwave, mospec, mounc, specvecs = comp_samples(thetas, mod, obsdat, sps=sps,
                                                   gp=gp)
     pwave, mosed, mosed_unc, pvecs = comp_samples_phot(thetas, mod, obsdat, sps=sps)

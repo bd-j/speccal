@@ -191,7 +191,6 @@ model_params.append({'name': 'phot_jitter', 'N':1,
                         'prior_args': {'mini':0.0, 'maxi':0.1}})
 
 
-
 if __name__ == "__main__":
     
     info = {'objname': 'NGC7089',

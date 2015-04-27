@@ -2,12 +2,35 @@
 %% http://bibdesk.sourceforge.net/
 
 
-%% Created for Benjamin Johnson at 2015-03-31 12:09:47 -0400 
+%% Created for Benjamin Johnson at 2015-04-27 16:59:51 -0400 
 
 
 %% Saved with string encoding Unicode (UTF-8) 
 
 
+
+@article{walker15,
+	Abstract = {We introduce a Bayesian method for fitting faint, resolved stellar spectra in order to obtain simultaneous estimates of redshift and stellar-atmospheric parameters. We apply the method to thousands of spectra - covering 5160-5280 {\AA} at resolution R˜ 20 000 - that we have acquired with the MMT/Hectochelle fibre spectrograph for red giant and horizontal branch candidates along the line of sight to the Milky Way's dwarf spheroidal satellite in Draco. The observed stars subtend an area of ˜4 deg2, extending ˜3 times beyond Draco's nominal `tidal' radius. For each spectrum, we tabulate the first four moments - central value, variance, skewness and kurtosis - of posterior probability distribution functions representing estimates of the following physical parameters: line-of-sight velocity (vlos), effective temperature (Teff), surface gravity (log g) and metallicity ([Fe/H]). After rejecting low-quality measurements, we retain a new sample consisting of 2813 independent observations of 1565 unique stars, including 1879 observations for 631 stars with (as many as 13) repeat observations. Parameter estimates have median random errors of sigma _{v_{los}} = 0.88 km s-1, sigma _{T_{eff}} = 162 K, sigmalog g = 0.37 dex and sigma[Fe/H] = 0.20 dex. Our estimates of physical parameters distinguish ˜470 likely Draco members from interlopers in the Galactic foreground.},
+	Adsnote = {Provided by the SAO/NASA Astrophysics Data System},
+	Adsurl = {http://adsabs.harvard.edu/abs/2015MNRAS.448.2717W},
+	Archiveprefix = {arXiv},
+	Arxivurl = {http://arXiv.org/abs/1503.02589},
+	Author = {{Walker}, M.~G. and {Olszewski}, E.~W. and {Mateo}, M.},
+	Date-Added = {2015-04-27 15:12:12 +0000},
+	Date-Modified = {2015-04-27 15:12:13 +0000},
+	Doi = {10.1093/mnras/stv099},
+	Eprint = {1503.02589},
+	Journal = {\mnras},
+	Keywords = {methods: data analysis, techniques: spectroscopic, galaxies: dwarf, galaxies: individual: Draco, galaxies: kinematics and dynamics, Local Group},
+	Month = apr,
+	Pages = {2717-2732},
+	Title = {{Bayesian analysis of resolved stellar spectra: application to MMT/Hectochelle observations of the Draco dwarf spheroidal}},
+	Volume = 448,
+	Year = 2015,
+	Bdsk-File-1 = {YnBsaXN0MDDUAQIDBAUGJCVYJHZlcnNpb25YJG9iamVjdHNZJGFyY2hpdmVyVCR0b3ASAAGGoKgHCBMUFRYaIVUkbnVsbNMJCgsMDxJXTlMua2V5c1pOUy5vYmplY3RzViRjbGFzc6INDoACgAOiEBGABIAFgAdccmVsYXRpdmVQYXRoWWFsaWFzRGF0YV8QJy4uLy4uLy4uL0RvY3VtZW50cy9QYXBlcnMvV2Fsa2VyMTVhLnBkZtIXCxgZV05TLmRhdGFPEQF2AAAAAAF2AAIAAARkYWxpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADOl3ODSCsAAAAUNA0NV2Fsa2VyMTVhLnBkZgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALLa7tFjygoAAAAAAAAAAAADAAMAAAkgAAAAAAAAAAAAAAAAAAAABlBhcGVycwAQAAgAAM6Xq8MAAAARAAgAANFkAkoAAAABABAAFDQNAAj6MQAI+jAAAmSOAAIANmRhbGk6VXNlcnM6AGJqb2huc29uOgBEb2N1bWVudHM6AFBhcGVyczoAV2Fsa2VyMTVhLnBkZgAOABwADQBXAGEAbABrAGUAcgAxADUAYQAuAHAAZABmAA8ACgAEAGQAYQBsAGkAEgAtVXNlcnMvYmpvaG5zb24vRG9jdW1lbnRzL1BhcGVycy9XYWxrZXIxNWEucGRmAAATAAEvAAAVAAIAD///AACABtIbHB0eWiRjbGFzc25hbWVYJGNsYXNzZXNdTlNNdXRhYmxlRGF0YaMdHyBWTlNEYXRhWE5TT2JqZWN00hscIiNcTlNEaWN0aW9uYXJ5oiIgXxAPTlNLZXllZEFyY2hpdmVy0SYnVHJvb3SAAQAIABEAGgAjAC0AMgA3AEAARgBNAFUAYABnAGoAbABuAHEAcwB1AHcAhACOALgAvQDFAj8CQQJGAlECWgJoAmwCcwJ8AoECjgKRAqMCpgKrAAAAAAAAAgEAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAq0=},
+	Bdsk-Url-1 = {http://dx.doi.org/10.1093/mnras/stv099},
+	Bdsk-Url-2 = {http://arXiv.org/abs/1503.02589},
+	Bdsk-Url-3 = {http://adsabs.harvard.edu/abs/2015MNRAS.448.2717W}}
 
 @article{czekala14,
 	Abstract = {We present a modular, extensible framework for the spectroscopic inference of physical parameters based on synthetic model spectra. The subtraction of an imperfect model from a continuously sampled spectrum introduces covariance between adjacent datapoints (pixels) into the residual spectrum. In the limit of high signal-to-noise data with large spectral range that is common for stellar parameter estimation, that covariant structure can bias the parameter determinations. We have designed a likelihood function formalism to account for the structure of the covariance matrix, utilizing the machinery of Gaussian process kernels. We specifically address the common problem of mismatches in model spectral line strengths (with respect to data) due to intrinsic model imperfections (e.g., in the atomic or molecular data, or radiative transfer treatment) by developing a novel local covariance kernel framework that identifies and self-consistently downweights pathological spectral line "outliers." By fitting multiple spectra in a hierarchical manner, these local kernels provide a mechanism to learn about and build data-driven corrections to synthetic model spectral libraries. The application of this method, implemented as a freely available open source code, is demonstrated by fitting the high resolution optical (V-band) spectrum of WASP-14, an F5 dwarf with a transiting exoplanet, and the moderate resolution near-infrared (K-band) spectrum of Gliese 51, an M5 dwarf.},

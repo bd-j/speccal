@@ -1,9 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as pl
 import bsfh.read_results as bread
+from copy import deepcopy
 
 def comp_samples(thetas, model, obs, sps=None, gp=None):
-    """Different components of the model for 
+    """Different components of the model for a given set of thetas.
+
+    :returns wave:
+        The full wavelength array
+    :return 
     """
     specvecs = []
     wave, ospec, mask = obs['wavelength'], obs['spectrum'], obs['mask']
@@ -40,6 +45,33 @@ def comp_samples_phot(thetas, model, obs, sps=None):
         specvecs += [ [mu, zero, zero, mu, mospec - mu, (mospec - mu)/mounc] ]
     return wave[mask], mospec, mounc, specvecs
 
+def comp_samples_fullspec(thetas, model, obs, sps=None, gp=None):
+    specvecs = []
+    mospec, mounc = None
+    fullobs = deepcopy(obs)
+    fullobs['wavelength'] = sps.wavelengths.copy()
+    fullobs['mask'] = np.ones( len(fullobs['wavelength']), dtype= bool)
+    for theta in thetas:
+        mu, cal, delta, mask, wave = bread.model_comp(theta, model, obs, sps,
+                                                      gp=gp, photflag=0)
+        cal = np.exp(cal)
+        full_cal = np.exp(np.log(cal) + delta)
+        mod = np.exp(np.log(mu) + np.log(cal) + delta)
+        specvecs += [[mu, cal, delta, mod]]
+        
+    return wave, mospec, mounc, specvecs
+
+def true_sed(model, obs, sps=None, fullspec=False):
+    fullobs = deepcopy(obs)
+    mockpars = deepcopy(obs['mock_params'])
+    model.params = mockpars
+    theta = model.theta.copy()
+    if fullspec:
+        fullobs['wavelength'] = sps.wavelengths.copy()
+        fullobs['mask'] = np.ones( len(fullobs['wavelength']), dtype= bool)
+
+    mu, phot, x = model.sed(theta, fullobs, sps=sps)
+        
 def theta_samples(res, samples=[1.0], start=0.0, thin=1):
 
     nw, niter = res['chain'].shape[:-1]

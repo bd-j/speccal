@@ -235,7 +235,7 @@ def integrated_flux_king(outer, A, r_c=1, r_t=30):
     return -2.5*np.log10(total_flux)
 
 
-def make_skymask(wave, flux, width=10, thresh=5., lsf=6.):
+def make_skymask(wave, flux, width=10, thresh=5., lsf=6., **extras):
     """Generate a mask based on peaks in the sky spectrum, found using
     median filtering.
 
@@ -313,13 +313,13 @@ def ggc_mock(model, theta, sps, objname='', apply_cal=True, mask=True,
     
     return mock
 
-def ggc_mask(obs, minwave=3602, maxwave=1e4, pad=6.0):
+def ggc_mask(obs, minwave=3602, maxwave=1e4, pad=6.0, **kwargs):
     """Generate a mask based on peaks in the sky spectrum, min and max
     wavelengths, and regions around ISM and sky lines.
     """
     from bsfh import elines
     wave = obs['wavelength']
-    skymask = make_skymask(wave, obs['sky'], lsf=3)
+    skymask = make_skymask(wave, obs['sky'], lsf=6, **kwargs)
     mask = (skymask & (wave > minwave) &
             (wave < maxwave))
         

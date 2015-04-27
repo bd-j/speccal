@@ -1,16 +1,19 @@
 \begin{figure}[h!]
-%\includegraphics[width = 0.5 \textwidth]{figures/dfig_b192-g242_020.png}
-\caption{The calibrated spectrum for \excluster, along with the
-uncertainties (bottom panel).The right panel shows the
-spectrophotometric calibration vector determined by
-\citet{schiavon05}. \label{fig:ggc_data}}
+\begin{center}
+\includegraphics[width = 0.5 \textwidth]{figures/data.pdf}
+\caption{Observational data. 
+Top: The calibrated spectrum for \excluster.
+Middle: The signal-to-noise ratio.
+Bottom: The spectrophotometric calibration vector determined by
+\citet{schiavon05}. Note the wiggles in the calibration vector\label{fig:ggc_data}}
+\end{center}
 \end{figure}
 
 \begin{figure}[h!]
 %\includegraphics[width = 0.5 \textwidth]{figures/dfig_b192-g242_020.png}
-\caption{A mock spectrum for a star cluster with $10^5 M_\odot$ total
-  stellar mass, an age of  9 Gyr, solar
-  metallicity, and $A_V=0.5$ mag. \label{fig:mock_data}}
+\caption{A mock spectrum for a star cluster with the fiducial
+parameters $10^5 M_\odot$ total stellar mass, an age of 9 Gyr, solar
+metallicity, and $A_V=0.5$ mag. \label{fig:mock_data}}
 \end{figure}
 
 
@@ -59,59 +62,60 @@ vertical lines.
 \begin{figure*}[h!]
 %\includegraphics[width=\textwidth]{figures/sfig_b192-g242_225_cal.png}
 \caption{Results of inference from an \emph{uncalibrated} mock
-  spectrum and a single photometric data point.
-Top Left: The observed spectrum. The mock observed spectrum ({\it
-black}) is shown as well as YY model spectra constructed from draws
-from the posterior PDFs of the model parameters, including calibration
-parameters {\it green}.
-Bottom Left: The calibration vector. The true calibration vector ({\it
-black}) that was used to construct the mock spectrum is compared to
-posterior samples of the inferred calibration vector ({\it green})
-which include both the polynomial and the Gaussian Process mean
-prediction (Equation
-\ref{eq:calibration}).
-Top Right: The intrinsic spectrum. Samples of the posterior prediction
-for the \emph{intrinsic} spectrum ({\it green}) as well as for the
-photometry ({\it magenta}).  The true mock photometry is also shown
-({\it black}).
-Bottom Right: Marginalized posterior PDFs for several of the physical
-parameters of interest.  The input mock parameters are shown as
-vertical lines.
-\label{fig:speconly_calibrated}}
+  spectrum and a single photometric data point.  Panels and colors are
+  as in Figure \ref{fig:speconly_calibrated}.  In this case the
+  observed spectrum is in arbitrary units and the true
+  calibration vector is not a constant with wavelength.
+\label{fig:speconly_uncalibrated}}
 \end{figure*}
 
 \begin{figure*}[h!]
 %\includegraphics[width=\textwidth]{figures/sfig_b192-g242_225_cal.png}
-\caption{Results of inference from the photometry only.
+\caption{Results of inference from the photometric data only.
 Top: The intrinsic spectrum. Samples of the posterior prediction
-for the \emph{intrinsic} spectrum ({\it green}) as well as for the
-photometry ({\it magenta}).  The true mock photometry is also shown
+for the \emph{intrinsic} spectrum ({\it green}) and the
+photometry ({\it magenta}).  The mock photometry is also shown
 ({\it black}).
 Right: Marginalized posterior PDFs for several of the physical
 parameters of interest.  The input mock parameters are shown as
 vertical lines.
-\label{fig:speconly_calibrated}}
+\label{fig:photonly}}
 \end{figure*}
 
 \begin{figure*}[h!]
 %\includegraphics[width=\textwidth]{figures/sfig_b192-g242_225_cal.png}
-\caption{Results of inference from the combination of mock 
-Top Left: The observed spectrum. The mock observed spectrum ({\it
-black}) is shown as well as YY model spectra constructed from draws
-from the posterior PDFs of the model parameters, including calibration
-parameters {\it green}.
-Bottom Left: The calibration vector. The true calibration vector ({\it
-black}) that was used to construct the mock spectrum is compared to
-posterior samples of the inferred calibration vector ({\it green})
-which include both the polynomial and the Gaussian Process mean
-prediction (Equation
-\ref{eq:calibration}).
-Top Right: The intrinsic spectrum. Samples of the posterior prediction
-for the \emph{intrinsic} spectrum ({\it green}) as well as for the
-photometry ({\it magenta}).  The true mock photometry is also shown
-({\it black}).
-Bottom Right: Marginalized posterior PDFs for several of the physical
-parameters of interest.  The input mock parameters are shown as
-vertical lines.
+\caption{Results of inference from the combination of
+  \emph{uncalibrated} spectroscopy and all the photometric data
+  points.  Panels and colors are as in Figure \ref{fig:speconly_calibrated}.
 \label{fig:speconly_calibrated}}
+\end{figure*}
+
+
+\begin{figure*}[h!]
+%\includegraphics[width=\textwidth]{figures/sfig_b192-g242_225_cal.png}
+\caption{Joint posterior PDFs for several physical parameters. The
+  posteriors obtained from photometry only is in {\it red}, from
+  \emph{uncalibrated} spectroscopy and a single photometric point in {\it blue}, and from
+  the photometry and spectroscopy combined in {\it magenta}.
+\label{fig:combined_posterior}}
+\end{figure*}
+
+
+\begin{figure*}[h!]
+%\includegraphics[width=\textwidth]{figures/sfig_b192-g242_225_cal.png}
+\caption{Posterior PDFs obtained from multiple noise realizations of the
+  mock photometry and uncalibrated spectra, for a single set of
+  parameters.  The input mock parameters are shown as a 
+  vertical line, medians of the posterior CDF for each realization are
+  shown as dotted lines.
+\label{fig:noise_realizations}}
+\end{figure*}
+
+
+\begin{figure*}[h!]
+%\includegraphics[width=\textwidth]{figures/sfig_b192-g242_225_cal.png}
+\caption{Posterior PDFs obtained from mock spectra and photometry
+  created with  a variety of mock physical parameters, as a function
+  of those parameters.
+\label{fig:mock_parameter_space}}
 \end{figure*}

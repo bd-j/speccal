@@ -297,7 +297,9 @@ To avoid making the logarithmic transform described above, which
 distorts the errors, we can formulate the problem in a different way,
 modifying Equation \label{eq:spectroscopicLF} above as 
 \begin{eqnarray}\label{eq:spectroscopicLF_v2}
-\ln p(d\given\theta,\alpha) &=& -\frac{1}{2}\,\left[\transpose{\Delta}\,C^{-1}\,\Delta + \ln([2\pi]^N\,\det{C}) \right]
+\ln p(d\given\theta,\alpha) &=&
+                                -\frac{1}{2}\,\left[\transpose{\Delta}\,C^{-1}\,\Delta
+                                + \ln([2\pi]^N\,\det{C}) \right]
 \\
 \Delta &\equiv& d - \mu(\theta) * f(\alpha) 
 \\
@@ -525,9 +527,8 @@ distribution of the population from which a given cluster is drawn.
 \item Mock uncalibrated data: inference using spectroscopy and all
   photometry, full calibration model.
 
-\item Mock perfectly calibrated data: inference using spectroscopy and all
-  photometry, with both full calibration model and assuming no
-  calibration uncertainty.
+\item Do this for a bunch of ages, metallicities, and dust
+  attenuations, possibly compare to the ideal posteriors.
 
 \item Real calibrated spectrum:   Inference using spectroscopy and all
   photometry, with full calibration model. 
@@ -673,7 +674,7 @@ continuum normalization when fitting spectroscopy.}
 Our strategy is easily extensible to more complicated models, which
 include for example night sky-line emission in the spectroscopy (or
 residuals from an intial sky-line subtraction) and uncertainties in
-wavelength calibration. Furthermore, more complex physical models may
+wavelength calibration \citep[e.g.,][]{walker15}. Furthermore, more complex physical models may
 be considered for the mean object model, for example including SFH
 parameters so as to model galaxies.  {\color{blue} DISCUSS MORE
 COMPLICATED COVARIANCE KERNELS, MULTIPLE KERNELS, etc.  MODEL
@@ -813,6 +814,10 @@ J.~A., Courteau, S., \& MacArthur, L.~A.\ 2005, \apjs, 160, 163
 
 \bibitem[Sch{\"o}nrich 
 \& Bergemann(2014)]{schonrich14} Sch{\"o}nrich, R., \& Bergemann, M.\ 2014, \mnras, 443, 698 
+
+\bibitem[Walker et al.(2015)]{walker15} Walker, M.~G., 
+Olszewski, E.~W., \& Mateo, M.\ 2015, \mnras, 448, 2717 
+
 
 \end{thebibliography}
 
