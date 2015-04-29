@@ -4,30 +4,34 @@ from bsfh import priors, sedmodel
 from sedpy import attenuation
 
 run_params = {'verbose':True,
-              'outfile':'results/ggc_mock',
+              'outfile':'results/ggc_mock_u0_t9.0_z0.0_a0.5',
               'do_powell': False,
               'ftol':0.5e-4, 'maxfev':5000,
               'nwalkers':64, 
-              'nburn':[64, 128, 256], 'niter':512,
+              'nburn':[64, 64, 128, 128, 256], 'niter':512,
               'initial_disp':0.1,
               'debug':False,
               'logify_spectrum':True,
               'normalize_spectrum':True,
               'norm_band_name':'sdss_g0',
               'rescale':True,
-              'filename':'/Users/bjohnson/Projects/speccal/data/ggclib/mocks/miles/ggc_mock.u0.t1.0_z0.0_a0.5.pkl',
+              'filename':'/Users/bjohnson/Projects/speccal/data/ggclib/mocks/miles/ggc_mock.u0.t9.0_z0.0_a0.5.pkl',
               'wlo':3350.,
-              'whi':6500.
+              'whi':6500.,
+              'noisefactor':10
               }
 
 ##### OBSERVATIONAL DATA ######
 
-def load_obs(filename=run_params['filename'], **extras):
+def load_obs(filename=None, noisefactor=1.0, **extras):
     with open(filename) as f:
         obs = pickle.load(f)
+    #obs['phot_mask'] = np.array(['sdss_g' in filt.name for filt in obs['filters']])
+    obs['unc'] *= noisefactor
+    obs['noisefactor'] = noisefactor
     return obs
 
-obs = load_obs()
+obs = load_obs(**run_params)
 
 ###### MODEL ###########
 model_type = sedmodel.SedModel
@@ -121,7 +125,7 @@ model_params.append({'name': 'imf3', 'N':1,
 
 model_params.append({'name': 'zred', 'N':1,
                         'isfree': True,
-                        'init': 0.0000,
+                        'init': 0.000001,
                         'units': None,
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':-0.001, 'maxi':0.001}})
