@@ -18,15 +18,14 @@ metallicity, and $A_V=0.5$ mag. \label{fig:mock_data}}
 
 
 \begin{figure*}[h!]
-%\includegraphics[width=\textwidth]{figures/sfig_b192-g242_225_cal.png}
+\includegraphics[width=\textwidth]{figures/ideal.pdf}
 \caption{Results of inference from a mock spectrum and a single photometric data point where the spectrophotometric calibration is assumed to be perfectly known.
 Top Left: The mock observed spectrum ({\it black}) is shown as well as
 YY model spectra constructed from draws from the posterior PDFs of the
 model parameters, including calibration parameters {\it green}.
-Bottom Left: In this case the true calibration vector ({\it black}) is a constant.
-Posterior samples of the inferred calibration vector ({\it green}) include both
-the polynomial and the Gaussian Process mean prediction (Equation
-\ref{eq:calibration}).
+Bottom Left: The calibration vector. In this case the true calibration
+vector ({\it black}) is a constant and it is not inferred as part of
+the model
 Top Right: Samples of the posterior prediction for the
 \emph{intrinsic} spectrum ({\it green}) as well as for the photometry
 ({\it magenta}).  The true mock photometry is also shown ({\it
@@ -41,7 +40,8 @@ vertical lines.
 \begin{figure*}[h!]
 %\includegraphics[width=\textwidth]{figures/sfig_b192-g242_225_cal.png}
 \caption{Results of inference from a \emph{perfectly calibrated} mock
-  spectrum and a single photometric data point.
+  spectrum and a single photometric data point, where uncertainties in
+  the calibration are modeled.
 Top Left: The mock observed spectrum ({\it black}) is shown as well as
 YY model spectra constructed from draws from the posterior PDFs of the
 model parameters, including calibration parameters {\it green}.
@@ -70,8 +70,10 @@ vertical lines.
 \end{figure*}
 
 \begin{figure*}[h!]
-%\includegraphics[width=\textwidth]{figures/sfig_b192-g242_225_cal.png}
-\caption{Results of inference from the photometric data only.
+\includegraphics[width=0.5 \textwidth]{figures/photonly.pdf}
+\caption{Results of inference from the photometric data only.  The
+  redshift is fixed {\color{blue} (should just use a tight prior)} and
+ spectroscopic calibration parameters are not modeled.
 Top: The intrinsic spectrum. Samples of the posterior prediction
 for the \emph{intrinsic} spectrum ({\it green}) and the
 photometry ({\it magenta}).  The mock photometry is also shown
@@ -87,7 +89,7 @@ vertical lines.
 \caption{Results of inference from the combination of
   \emph{uncalibrated} spectroscopy and all the photometric data
   points.  Panels and colors are as in Figure \ref{fig:speconly_calibrated}.
-\label{fig:speconly_calibrated}}
+\label{fig:specphot_uncalibrated}}
 \end{figure*}
 
 
