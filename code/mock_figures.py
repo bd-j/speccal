@@ -18,6 +18,8 @@ gp = george.GP(kernel, solver=george.HODLRSolver)
 
 
 def calfig(wave, calvec, specvecs, norm=1.0, fax=None):
+    """Plot the calibration and posterior samples of it
+    """
     if fax is None:
         cfig, cax = pl.subplots()
     else:
@@ -37,6 +39,8 @@ def calfig(wave, calvec, specvecs, norm=1.0, fax=None):
     return cfig, cax
 
 def obsfig(wave, obsvec, specvecs, unc=None, fax=None):
+    """Plot the observed spectrum and posterior samples of it
+    """
     if fax is None:
         ofig, oax = pl.subplots()
     else:
@@ -58,7 +62,9 @@ def obsfig(wave, obsvec, specvecs, unc=None, fax=None):
     return ofig, oax
 
 def sedfig(wave, specvecs, phot, photvecs, norm = 1.0, fax=None):
-
+    """Plot the photometric SED, posterior samples of it, and
+    posterior samples of the intrinsic spectrum.
+    """
     if fax is None:
         sfig, sax = pl.subplots()
     else:

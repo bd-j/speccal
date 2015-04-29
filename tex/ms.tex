@@ -200,11 +200,11 @@ We have included the $\ln(\sigma_n^2)$ term in the likelihood because
 in what follows we are going to be modifying the noise model.
 
 If you don't believe the reported data noise variances $\sigma_n^2$,
-it often makes sense to add in quadrature a ``jitter'' variance
-$s^2$.  For photometric data this ``jitter'' is often best described
-as a fractional error, $(\hat{s}\mu(\theta))^2$, corresponding for example
-to an additional magnitude zero-point uncertainty.
-This is a simple modification of the chi-squared log-likelihood:
+it often makes sense to add in quadrature a ``jitter'' variance $s^2$.
+For photometric data this ``jitter'' is often best described as a
+fractional error, $s^2 \equiv \hat{s}^2\mu(\theta)^2$, corresponding
+for example to an additional magnitude zero-point uncertainty.  This
+is a simple modification of the chi-squared log-likelihood:
 \begin{eqnarray}\label{eq:photometricLF}
 \ln p(d\given\theta,s^2) &=& -\frac{1}{2}\,\sum_{n=1}^N
                              \left[\frac{[d_n - \mu_n(\theta)]^2}
@@ -217,7 +217,7 @@ term.
 This---equation~(\ref{eq:photometricLF})---is in fact the
 log-likelihood function we are going to use for the photometric
 measurements in what follows.  In this formulation, if $\theta$ are
-the parameters of interest, the jitter variance $\hat{s}^2\equiv
+the parameters of interest, the jitter variance $\hat{s} = 
 s/\mu(\theta)$ is a nuisance noise-model parameter representing
 additonal fractional uncertainty in the flux.  The Gaussian Process
 will be a generalization of this modification.
@@ -233,9 +233,24 @@ defining the residual in this way are that the model remains linear
 positive everywhere.  Additionally, at high signal to noise the
 distortion of the uncertainties will be minimal.
 
+{\color{blue} BDJ This paragraph should explain why we are using the
+GP, not just how it works.}
+The multiplicative calibration vector can be explicitly modeled, for
+example using polynomials.  However, for complex calibration vectors
+over large wavelength ranges, the number of parameters required to
+model the calibration can become quite large (e.g., very high order
+polynomials) and the correct parameterization may be unknown.  It is
+therefore desirable to introduce a non-parameteric model of the
+calibration.  We do this using a Gaussian Process: prior over
+functions, analytically marginalizable, covariant fractional
+uncertainties the same as multiplying by a function (covariant
+uncertainties the same as adding a function)
+
 The calibration-vector and Gaussian-Process modified log-likelihood is
 \begin{eqnarray}\label{eq:spectroscopicLF}
-\ln p(d\given\theta,\alpha) &=& -\frac{1}{2}\,\left[\transpose{\Delta}\,C^{-1}\,\Delta + \ln([2\pi]^N\,\det{C}) \right]
+\ln p(d\given\theta,\alpha) &=&
+                                -\frac{1}{2}\,\left[\transpose{\Delta}\,C^{-1}\,\Delta
+                                + \ln([2\pi]^N\,\det{C}) \right]
 \\
 \Delta &\equiv& \ln d - \ln \mu(\theta) - f(\alpha) 
 \\
@@ -265,9 +280,9 @@ prior over functions implied by $C$ is analytically conditioned on the
 residuals $\Delta$.
 The residual column vector is defined in terms of the logarithmic
 difference between the data and the mean model $\mu$ since we are
-taking the calibration vector to be multiplicative with respect to
-the mean model $\mu$. In this formulation the the mean model $\mu$ will be effectively
-multiplied by $e ^{f(\alpha)}$ 
+taking the calibration vector to be multiplicative with respect to the
+mean model $\mu$. In this formulation the the mean model $\mu$ will be
+effectively multiplied by $e ^{f(\alpha)}$
 This---equation~(\ref{eq:spectroscopicLF})---is the log-likelihood we
 are going to use for the spectroscopic data in what follows.
 
@@ -578,12 +593,12 @@ fit we show both the mock input spectrum and predictions of the
 observed spectra that result from several draws of the model
 parameters $[\theta, \alpha]$ from posterior distribution.  We also
 show samples of the inferred calibration vector,
-\begin{eqnarray} 
+\begin{eqnarray} \label{eq:calibration}
 \frac{d}{\mu(\theta)} & = & e^{f(\alpha) + \tilde{\Delta}}
 \quad ,
 \end{eqnarray}
 where $\tilde{\Delta}$ is the Gaussian Process mean prediction for the
-logarithmic residual between the data and the model.  For the
+logarithmic residual between the data and the model \citep{RW}.  For the
 perfectly calibrated spectrum the true calibration vector (shown in
 black) is one everywhere.  The spread of the inferred calibration
 vectors approximately indicates our uncertainty in the spectrophotometric
@@ -611,7 +626,7 @@ In Figure \ref{fig:speconly_uncalibrated} we show the results of
 inference on an \emph{uncalibrated} mock spectrum.
 
 
-\subsection{Real Data: NGCXXXX} 
+\subsection{Real Data: \excluster} 
 We first infer the parameters of interest $\theta$ for a calibrated
 spectrum of one of the clusters, \excluster, using the full YY-band
 photometry. In Figure \ref{fig:inferred_spectrum} we show the spectra
@@ -629,21 +644,10 @@ why. Finally, In Figure \ref{fig:inferred_params} we show the
 marginalized and joint PDFs for a subset of the full model parameters.
 
 It is possible to reconstruct the inferred total multiplicative
-calibration vector for each draw of the model parameters.  Rearranging
-equation \ref{eq:spectroscopicLF} yields
-\begin{eqnarray} 
-\frac{d}{\mu(\theta)} & = & e^{f(\alpha) + \tilde{\Delta}}
-\quad ,
-\end{eqnarray}
-for the total effective multiplicative calibration, where
-$\tilde{\Delta}$ is now the Gaussian Process mean prediction for the
-logarithmic residual between the data and the model. The inverse of
-this ratio is shown in the left panel of Figure
-\ref{fig:inferred_calib} as our inferred total multiplicative
-calibration function; if the spectrophotometric calibration were
+calibration vector for each draw of the model parameters (Equation
+\ref{eq:calibration}) If the spectrophotometric calibration were
 perfect and we had correctly inferred it, then we would expect this
 vector to be constant as a function of wavelength.
-
 
 
 \section{Discussion}
@@ -662,7 +666,8 @@ exists, can be incorporated into informative priors on the calibration
 parameters of the model, inform the construction of the calibration
 model (including the form of the covariance kernel), or approximately
 remove gross features that are difficult to model parametrically or
-via a Gaussian Process.
+via a Gaussian Process.  {\color{blue} Discuss more complicated
+covariance kernels, multiple kernels}
 
 {\color{blue} BDJ words about the gains that might be made by
 including photometry over a large range in wavelength with spectroscopy
@@ -672,13 +677,13 @@ over relatively small ranges.}
 continuum normalization when fitting spectroscopy.}
 
 Our strategy is easily extensible to more complicated models, which
-include for example night sky-line emission in the spectroscopy (or
-residuals from an intial sky-line subtraction) and uncertainties in
-wavelength calibration \citep[e.g.,][]{walker15}. Furthermore, more complex physical models may
-be considered for the mean object model, for example including SFH
-parameters so as to model galaxies.  {\color{blue} DISCUSS MORE
-COMPLICATED COVARIANCE KERNELS, MULTIPLE KERNELS, etc.  MODEL
-CHECKING.}
+include for example night sky-line emission in the spectroscopy
+\citep[e.g.,][]{gullikson14} or residuals from an intial sky-line
+subtraction and uncertainties in wavelength calibration
+\citep[e.g.,][]{walker15}. Furthermore, more complex physical models
+may be considered for the mean object model, for example including SFH
+parameters so as to model galaxies. {\color{blue} Discuss background
+modeling}
 
 In a heirarchical modelling context it should be possible to use the
 inferred calibration parameters, along with additional information
@@ -695,18 +700,18 @@ care must be taken to avoid absorbing interesting model deficiencies
 into the calibration model. For example, in the model we have
 described, it is possible that broad shallow features (for example due
 to molecular bands or absorption line complexes) will be absorbed into
-the Gaussian process. Third, we have made the assumption that the
-spectroscopy and the photometry are sampling the same populations.  In
-practice, differences between spectroscopic and photometric apertures
-often mean that the photometry and the spectroscopy are sampling
-slightly different physical regions.  The correct response to this
-situation is to explicitly model the differences, incorporating prior
-information about the spatial variation of physical properties.
-Fourth, the method will break down at very low S/N due to the
-logarithmic formulation of the residual in
-equation~(\ref{eq:spectroscopicLF}).  Finally, this method is
-computationally intensive and expensive, since we are constantly
-inverting largish matrices.
+the Gaussian process if not properly included in the mean
+model. Third, we have made the assumption that the spectroscopy and
+the photometry are sampling the same populations.  In practice,
+differences between spectroscopic and photometric apertures often mean
+that the photometry and the spectroscopy are sampling slightly
+different physical regions.  The correct response to this situation is
+to explicitly model the differences, incorporating prior information
+about the spatial variation of physical properties.  Fourth, the
+method will break down at very low S/N due to the logarithmic
+formulation of the residual in equation~(\ref{eq:spectroscopicLF}).
+Finally, this method is computationally intensive and expensive, since
+we are constantly inverting largish matrices.
 
 {\color{blue} BDJ - This paragraph is probably too calibration
 focused. We want to focus more on spec + phot combinations.  At least,
@@ -798,6 +803,9 @@ Girardi, L., Bressan, A., Bertelli, G., \& Chiosi, C.\ 2000, \aaps, 141, 371
 
 \bibitem[Goodman~\&\ Weare(2010)]{goodman}
 Goodman,~J. \& Weare,\ J., 2010, Comm.\ App.\ Math.\ Comp.\ Sci., 5, 65
+
+\bibitem[Gullikson et al.(2014)]{gullikson14} Gullikson, K., 
+Dodson-Robinson, S., \& Kraus, A.\ 2014, \aj, 148, 53 
 
 \bibitem[Lee et al.(2011)]{xray_calunc} Lee, H., Kashyap, V.~L., 
 van Dyk, D.~A., et al.\ 2011, \apj, 731, 126 

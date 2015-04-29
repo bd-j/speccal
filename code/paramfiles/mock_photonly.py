@@ -4,7 +4,7 @@ from bsfh import priors, sedmodel
 from sedpy import attenuation
 
 run_params = {'verbose':True,
-              'outfile':'results/ggc_mock',
+              'outfile':'results/ggc_mock_photonly',
               'do_powell': False,
               'ftol':0.5e-4, 'maxfev':5000,
               'nwalkers':64, 
@@ -15,7 +15,7 @@ run_params = {'verbose':True,
               'normalize_spectrum':False,
               'norm_band_name':'sdss_g0',
               'rescale':False,
-              'filename':'/Users/bjohnson/Projects/speccal/data/ggclib/mocks/miles/ggc_mock.u0.t10.0_z0.0_a0.5.pkl',
+              'filename':'/Users/bjohnson/Projects/speccal/data/ggclib/mocks/miles/ggc_mock.c0.t9.0_z0.0_a0.5.pkl',
               'wlo':3350.,
               'whi':6500.
               }
@@ -121,7 +121,7 @@ model_params.append({'name': 'imf3', 'N':1,
 ###### WAVELENGTH SCALE ######
 
 model_params.append({'name': 'zred', 'N':1,
-                        'isfree': True,
+                        'isfree': False,
                         'init': 0.0000,
                         'units': None,
                         'prior_function': priors.normal,
