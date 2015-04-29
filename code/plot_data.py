@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as pl
-import ggcdata
+import ggcdata, os
 
+#The speccal directory
+sdir = os.path.join.(os.environ['PROJECTS'], 'speccal')
 
 ##### OBSERVATIONAL DATA ######
 
@@ -19,7 +21,7 @@ if __name__ == "__main__":
 
     clr = 'black'
     
-    datadir = '/Users/bjohnson/Projects/speccal/data/ggclib/spectra/'
+    datadir = os.path.join(sdir, 'data/ggclib/spectra/')
     dat = ggcdata.ggc_spec(datadir+objname, 'a', '1', fluxtype=None)
     mdat = ggcdata.ggc_mask(dat, thresh=3)
     mask = mdat['mask']

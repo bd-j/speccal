@@ -7,7 +7,8 @@ from bsfh import read_results as bread
 from bsfh import sps_basis
 from bsfh.gp import GaussianProcess
 
-
+def joint_pdf():
+    pass
 
 if __name__ == "__main__":
     photonly = ''

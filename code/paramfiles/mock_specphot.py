@@ -3,6 +3,9 @@ import pickle, os
 from bsfh import priors, sedmodel
 from sedpy import attenuation
 
+#The speccal directory
+sdir = os.path.join.(os.environ['PROJECTS'], 'speccal')
+
 run_params = {'verbose':True,
               'outfile':'results/ggc_mock_u0_t9.0_z0.0_a0.5',
               'do_powell': False,
@@ -15,7 +18,7 @@ run_params = {'verbose':True,
               'normalize_spectrum':True,
               'norm_band_name':'sdss_g0',
               'rescale':True,
-              'filename':'/Users/bjohnson/Projects/speccal/data/ggclib/mocks/miles/ggc_mock.u0.t9.0_z0.0_a0.5.pkl',
+              'filename':os.path.join(sdir, 'data/ggclib/mocks/miles/ggc_mock.u0.t9.0_z0.0_a0.5.pkl'),
               'wlo':3350.,
               'whi':6500.,
               'noisefactor':10

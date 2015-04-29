@@ -1,8 +1,11 @@
 import numpy as np
-import pickle, os
+import pickle, os, sys
 from bsfh import sps_basis, priors, sedmodel, elines
 from sedpy import attenuation
 import ggcdata
+
+#The speccal directory
+sdir = os.path.join.(os.environ['PROJECTS'], 'speccal')
 
 sps = sps_basis.StellarPopBasis()
 nw = len(sps.ssp.wavelengths)
@@ -192,10 +195,11 @@ model_params.append({'name': 'phot_jitter', 'N':1,
 
 
 if __name__ == "__main__":
-    
+
+     
     info = {'objname': 'NGC7089',
-            'datadir': '/Users/bjohnson/Projects/speccal/data/ggclib/spectra/',
-            'outdir': '/Users/bjohnson/Projects/speccal/data/ggclib/mocks/',
+            'datadir': os.path.join(sdir, 'data/ggclib/spectra/'),
+            'outdir': os.path.join(sdir, 'data/ggclib/mocks/'),
             'apply_cal': False,
             'add_noise': False,
             'mask': True
