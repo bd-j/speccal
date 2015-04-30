@@ -162,7 +162,7 @@ def sedfig(wave, specvecs, phot, photvecs, norm = 1.0, fax=None, peraa=False):
     sax.set_ylabel(ylabel)
     return sfig, sax
 
-def hist_samples(res, model, showpars, start=0, thin=1, **kwargs):
+def hist_samples(res, model, showpars, start=0, thin=1, **extras):
     
     nw, niter = res['chain'].shape[:-1]
     parnames = np.array(model.theta_labels())

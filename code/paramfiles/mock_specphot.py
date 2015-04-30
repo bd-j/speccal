@@ -7,7 +7,7 @@ from sedpy import attenuation
 sdir = os.path.join.(os.environ['PROJECTS'], 'speccal')
 
 run_params = {'verbose':True,
-              'outfile':'results/ggc_mock_u0_t9.0_z0.0_a0.5',
+              'outfile':'results/ggc_mock_specphot_u0_t9.0_z0.0_a0.5',
               'do_powell': False,
               'ftol':0.5e-4, 'maxfev':5000,
               'nwalkers':64, 

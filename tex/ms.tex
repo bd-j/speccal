@@ -395,7 +395,7 @@ Words about photometry.
 Our mock data are designed to mimic the actual data as much as
 possible.  Mock spectra and photometry are generated from the model
 described in below (\S\ref{sec:cluster_model}, equation
-\ref{eq:MeanModel}) for a given set of parameters $\theta^\prime$.  We
+\ref{eq:StarModel}) for a given set of parameters $\theta_s$.  We
 then convolve the spectrum with an instrumenal LSF, interpolate onto
 the observed wavelength scale and add noise according to the SNR of
 the real data.  For the photometry we assume a SNR of 10.  We also
@@ -413,7 +413,7 @@ the \emph{uncalibrated} mock spectra.
 \label{sec:cluster_model}
 We model the stellar cluster as a single age SSP. The spectrum of a
 star cluster under this assumption is given by a vector
-\begin{eqnarray}\displaystyle
+\begin{eqnarray} \label{eq:StarModel}\displaystyle
 f_{\theta_s}(\lambda_o) & = &
 \frac{m_*}{4\pi d_L^2(1+z)} \, L(\sigma_*, z) \, s(\lambda, t, Z , \beta) \, e^ {-k_\lambda\tau_V} \\
 \nonumber \\ 
