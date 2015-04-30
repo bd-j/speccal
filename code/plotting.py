@@ -30,7 +30,7 @@ def comp_samples(thetas, model, obs, sps=None, gp=None):
                        np.exp(np.log(mospec)-np.log(mod)),
                        (np.log(mospec)-np.log(mod)) / mounc] ]
             
-    return wave, mospec, mounc, specvecs
+    return wave, mospec, mounc*mospec, specvecs
 
 def comp_samples_phot(thetas, model, obs, sps=None):
     specvecs = []

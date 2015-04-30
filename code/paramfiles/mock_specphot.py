@@ -4,7 +4,7 @@ from bsfh import priors, sedmodel
 from sedpy import attenuation
 
 #The speccal directory
-sdir = os.path.join.(os.environ['PROJECTS'], 'speccal')
+sdir = os.path.join(os.environ['PROJECTS'], 'speccal')
 
 run_params = {'verbose':True,
               'outfile':'results/ggc_mock_specphot_u0_t9.0_z0.0_a0.5',

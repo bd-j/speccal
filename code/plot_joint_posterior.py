@@ -38,8 +38,8 @@ def compute_sigma_level(trace1, trace2, nbins=20):
 if __name__ == "__main__":
     photonly = 'results/ggc_mock_photonly.c0.t9.0_z0.0_a0.5_1430274922_mcmc'
     speconly = 'results/ggc_mock_speconly.c0.t9.0_z0.0_a0.5_1430010665_mcmc'
-    specphot = ''
-    resfiles = [photonly, speconly]#, specphot]
+    specphot = 'results/ggc_mock_specphot.u0.t9.0_z0.0_a0.5_1430380402_mcmc'
+    resfiles = [photonly, speconly, specphot]
     clr = ['red','blue', 'magenta']
     results = [bread.read_pickles(rfile, model_file=rfile.replace('mcmc','model'))[0]
                for rfile in resfiles]
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     for i, p1 in enumerate(showpars):
         dax = pl.subplot(gs[i,i])
         for n, res in enumerate(results):
-            trace, p = hist_samples(res, res['model'], [p1])
+            trace, p = hist_samples(res, res['model'], [p1], start=0.5)
             dax.hist(trace, bins = 50, color=clr[n], normed=True,
                      alpha=0.5, histtype='stepfilled')
             if i == 0:
@@ -73,7 +73,7 @@ if __name__ == "__main__":
             print('*****')
 
             for n, res in enumerate(results):
-                pdf = joint_pdf(res, p2, p1)
+                pdf = joint_pdf(res, p2, p1, start=0.5)
                 ax.contour(pdf[0], pdf[1], pdf[2], levels = [0.683, 0.955], colors=clr[n])
             if i == 0:
                 ax.set_ylabel(p2)

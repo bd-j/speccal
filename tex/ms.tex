@@ -328,7 +328,6 @@ construction of $C_{nn'}$ means that they are defined in
 linear flux space.  It remains to be seen whether this actually works.
 
 
-
 \section{Data and Experiments}
 
 We are now left to demonstrate that, by including photometry as well
@@ -336,14 +335,14 @@ as spectroscopy, it is possible to infer the parameters of interest
 $\theta$ while marginalizing over the calibration parameters $\alpha$.
 We will apply the methodology for spectrophotometric calibration
 described above to both \emph{mock} and \emph{real} optical spectra of
-Galactic globular clusters.  Spectra of globular clusters provide a good test case,
-as they are less complex than galaxy spectra (for which it is
-necessary to model the star formation history) but are by no means
-trivial. In this way the key features of the calibration model and
-methodology are not obscured.  Additionally, information
+Galactic globular clusters.  Spectra of globular clusters provide a
+good test case, as they are less complex than galaxy spectra (for
+which it is necessary to model the star formation history) but are by
+no means trivial. In this way the key features of the calibration
+model and methodology are not obscured.  Additionally, information
 about the physical parameters of the cluster is available from
-resolved stellar CMDs, providing an important check on our inference methodology
-and especially our population synthesis models.
+resolved stellar CMDs, providing an important check on our inference
+methodology and especially our population synthesis models.
 
 This separate treatment of mock and real data allows us to address two
 separate issues.  The inference from mock data (with a realistic
@@ -357,9 +356,8 @@ resolved star CMDs (i.e. some estimate of ground truth).
 To demonstrate the effectiveness of our strategy for combining
 spectroscopic and photometric information we will infer the parameters
 $\theta$ from a spectrum both \emph{before} and \emph{after} it has
-been spectrophotometrically calibrated using and
-ancillary spectrophotometric calibration data.
-
+been spectrophotometrically calibrated using and ancillary
+spectrophotometric calibration data.
 
 
 \subsection{Real Data}
@@ -376,13 +374,13 @@ uncertainties on the data.
 
 An example spectrum (and the inferred spectrophotometric calibration
 vector) is shown in Figure \ref{fig:ggc_data}.  As stated by
-\citet{schiavon05}, the spectrophotometric calibration of these data are
-only approximate.  When fitting the spectra we mask the region around
-the bright OI5577\AA~ sky line, and we fit only to the spectrum with $3550\AA
-< \lambda < 6500$\AA~ which are covered by the MILES spectral library
-(see \S\ref{sec:cluster_model}).  Absorption lines of the interstellar
-medium (ISM) can significantly affect the spectrum, so we
-additionally mask the Calcium H and K lines and the NaD doublet.
+\citet{schiavon05}, the spectrophotometric calibration of these data
+are only approximate.  When fitting the spectra we mask the region
+around the bright OI5577\AA~ sky line, and we fit only to the spectrum
+with $3550\AA < \lambda < 6500$\AA~ which are covered by the MILES
+spectral library (see \S\ref{sec:cluster_model}).  Absorption lines of
+the interstellar medium (ISM) can significantly affect the spectrum,
+so we additionally mask the Calcium H and K lines and the NaD doublet.
 
 Words about photometry.
 
@@ -395,11 +393,11 @@ Words about photometry.
 Our mock data are designed to mimic the actual data as much as
 possible.  Mock spectra and photometry are generated from the model
 described in below (\S\ref{sec:cluster_model}, equation
-\ref{eq:StarModel}) for a given set of parameters $\theta_s$.  We
-then convolve the spectrum with an instrumenal LSF, interpolate onto
-the observed wavelength scale and add noise according to the SNR of
-the real data.  For the photometry we assume a SNR of 10.  We also
-mask the mock spectra at the location of significant sky lines and ISM
+\ref{eq:StarModel}) for a given set of parameters $\theta_s$.  We then
+convolve the spectrum with an instrumenal LSF, interpolate onto the
+observed wavelength scale and add noise according to the SNR of the
+real data.  For the photometry we assume a SNR of 10.  We also mask
+the mock spectra at the location of significant sky lines and ISM
 lines that are present in the real data.
 
 We will refer to these spectra as the \emph{perfectly calibrated} mock
@@ -488,7 +486,7 @@ where the matrix $L(\sigma_{inst})$ represents the convolution kernel
 for the instrumental linespread function parameterized by
 $\sigma_{inst}$,
 and the full parameter set $\theta$ now includes
-the instrumental broadening $\sigma_{inst}$ 
+this instrumental broadening $\sigma_{inst}$ 
 and the gas-phase parameters $\theta_g$.
 This is the mean model which appears in equation
 \ref{eq:spectroscopicLF}.
@@ -675,22 +673,26 @@ We have demonstrated, using using both mock and real spectra of
 galactic stellar clusters, that we can combine photometric and
 spectroscopic data in a principled way to infer physical properties.
 We do not resort to an arbitrary down-weighting or up-weighting of
-certain data. Instead, we explicitly model our uncertain knowledge of
-the spectral calibration and infer this calibration jointly with the
-physical properties. For a number of applications this combination of
-spectroscopy and photometry reduces the need for spectrophotometric
-calibration entirely, such that the less expensive photometric
-calibration is sufficient.  Additional calibration information, if it
-exists, can be incorporated into informative priors on the calibration
-parameters of the model, inform the construction of the calibration
-model (including the form of the covariance kernel), or approximately
-remove gross features that are difficult to model parametrically or
-via a Gaussian Process.  {\color{blue} Discuss more complicated
-covariance kernels, multiple kernels}
+certain data. Instead, we explicitly and flexibly model our uncertain
+knowledge of the spectral calibration and infer this calibration
+jointly with the physical properties. For a number of applications
+this combination of spectroscopy and photometry reduces the need for
+spectrophotometric calibration entirely, such that the less expensive
+photometric calibration is sufficient.  Additional calibration
+information, if it exists, can be incorporated into informative priors
+on the calibration parameters of the model, inform the construction of
+the calibration model (including the form of the covariance kernel),
+or approximately remove gross features that are difficult to model
+parametrically or via a Gaussian Process.  {\color{blue} Discuss more
+complicated covariance kernels, multiple kernels.}
 
-{\color{blue} BDJ words about the gains that might be made by
-including photometry over a large range in wavelength with spectroscopy
-over relatively small ranges.}
+{\color{blue} BDJ words (and experiments?) about the gains that might
+be made by including photometry over a large range in wavelength with
+spectroscopy over relatively small ranges.}  In this case even with
+perfectly known spectrophotometric calibration, the photometry would
+in principle add information.  This would occur if models with very
+similar spectra in the observed range had differing SEDs outside that
+range.
 
 {\color{blue} BDJ discuss the relation of this technique to the typical use of
 continuum normalization when fitting spectroscopy.}
