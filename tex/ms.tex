@@ -180,10 +180,8 @@ community.
 THIS SECTION NEEDS WORK; THIS IS JUST AN EQUATION DUMP.
 
 HOGG: A model is a parameterized likelihood function, with prior PDFs on the nuisance parameters (at least)...
-
-HOGG: There is a likelihood for the photometry and for the spectroscopy...
-
-HOGG: Each of these penalizes the difference between a column vector of data and a column vector of model expectation value...
+There is a likelihood for the photometry and for the spectroscopy...
+Each of these penalizes the difference between a column vector of data and a column vector of model expectation value...
 
 The standard chi-squared or log-Gaussian log-likelihood is
 \begin{eqnarray}
@@ -502,15 +500,16 @@ $f(\alpha)$ in this projection.
 We estimate the posterior through MCMC sampling after an initial round
 of optimization using Powell's method.  The specific sampling
 algorithm we use is the affine-invariant ensemble sampling scheme of
-\citet{goodman}, as implemented in the \texttt{emcee} package \citep{emcee}
-Unlike typical Metropolis-Hastings MCMC sampling, the affine-invariant
-sampler does not require the specification of step sizes in each
-dimension.  {\color{blue}ASSESSING SAMPLER CONVERGENCE}
+\citet{goodman}, as implemented in the \texttt{emcee} package
+\citep{emcee} Unlike typical Metropolis-Hastings MCMC sampling, the
+affine-invariant sampler does not require the specification of step
+sizes in each dimension.
  
 At each iteration of the sampler the photometric and spectroscopic
 likelihood are computed, multiplied together, and multiplied by the
 the prior probability of that parameter position to obtain an estimate
-of the posterior probability for those parameters given the data.
+of the posterior probability for those parameters given the
+data. {\color{blue}Assessing sampler convergence.}
 
 Our prior distributions are in all cases top-hat functions, described
 in Table \ref{tbl:priors}, though more informative prior distributions
@@ -754,9 +753,9 @@ the object and the level of uncertainty in the observed object
 spectrum -- this is why calibration objects are typically bright and
 simple.  If one is interested in inferring parameters of interest of
 spectral models of astrophysical objects, then there is often no
-reason not to use those objects themselves as calibration objects
-(especially if you expect your calibration to be spatially or
-temporally variable, or to change with the brightness of the object)
+reason not to use those objects themselves as calibration objects,
+especially if you expect your calibration to be spatially or 
+temporally variable, or to change with the brightness of the object.
 
 {\color{blue} BDJ misc issues, collected here in case we want to
 address them and to keep me from cluttering up the main text:} Model

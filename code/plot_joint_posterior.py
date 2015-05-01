@@ -68,9 +68,6 @@ if __name__ == "__main__":
         for j, p2 in enumerate(showpars[(i+1):]):
             k = j+i+1
             ax = pl.subplot(gs[k, i])
-            print(p1, p2)
-            print(i, j, k)
-            print('*****')
 
             for n, res in enumerate(results):
                 pdf = joint_pdf(res, p2, p1, start=0.5)

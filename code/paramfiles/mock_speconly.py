@@ -199,7 +199,7 @@ model_params.append({'name': 'gp_length', 'N':1,
                         'init': 60.0,
                         'units': r'$\AA$',
                         'prior_function': priors.lognormal,
-                        'prior_args': {'log_mean':np.log(100.0)+0.1**2, 'sigma':0.1}})
+                        'prior_args': {'log_mean':np.log(100.0)+0.75**2, 'sigma':0.75}})
 
 model_params.append({'name': 'phot_jitter', 'N':1,
                         'isfree': False,

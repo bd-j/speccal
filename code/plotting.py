@@ -71,7 +71,7 @@ def true_sed(model, obs, sps=None, fullspec=False):
         fullobs['mask'] = np.ones( len(fullobs['wavelength']), dtype= bool)
         
     mu, phot, x = model.sed(theta, fullobs, sps=sps)
-    return mu, phot
+    return mu, phot, theta
         
 def theta_samples(res, samples=[1.0], start=0.0, thin=1):
 
@@ -162,16 +162,21 @@ def sedfig(wave, specvecs, phot, photvecs, norm = 1.0, fax=None, peraa=False):
     sax.set_ylabel(ylabel)
     return sfig, sax
 
-def hist_samples(res, model, showpars, start=0, thin=1, **extras):
+def hist_samples(res, model, showpars, start=0, thin=1,
+                 return_lnprob=False, **extras):
     
     nw, niter = res['chain'].shape[:-1]
     parnames = np.array(model.theta_labels())
     start_index = np.floor(start * (niter-1)).astype(int)
     flatchain = res['chain'][:,start_index::thin,:]
-    flatchain = flatchain.reshape(flatchain.shape[0] * flatchain.shape[1],
-                                  flatchain.shape[2])
+    dims = flatchain.shape[0], flatchain.shape[1], flatchain.shape[2]
+    flatchain = flatchain.reshape(dims[0]*dims[1], dims[2])
     ind_show = np.array([p in showpars for p in parnames], dtype= bool)
-    flatchain = flatchain[:,ind_show]
+    flatchain = flatchain[:, ind_show]
+    if return_lnprob:
+        flatlnprob = res['lnprobability'][:, start_index::thin].reshape(dims[0]*dims[1])
+        return flatchain, parnames[ind_show], flatlnprob
+    
     return flatchain, parnames[ind_show]
 
 def histfig(samples, parnames, truths=None, fax=None, truth_color='k', **kwargs):
