@@ -14,7 +14,7 @@ sps = sps_basis.StellarPopBasis()
 import george
 kernel = (george.kernels.WhiteKernel(0.0) +
           0.0 * george.kernels.ExpSquaredKernel(0.0))
-gp = george.GP(kernel, solver=george.HODLRSolver)
+gp = george.GP(kernel)#, solver=george.HODLRSolver)
 
 
 if __name__ == "__main__":
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     obsdat = res['obs']
     
     fsamples = np.random.uniform(0,1,nsample)
-    thetas, start, samples = theta_samples(res, samples=fsamples, start=0.75, thin=1)
+    thetas, start, samples = theta_samples(res, samples=fsamples, start=0.95, thin=1)
     fwave, _, _, fspecvecs = comp_samples_fullspec(thetas, mod, obsdat,
                                                    sps=sps, gp=None)
     mwave, mospec, mounc, specvecs = comp_samples(thetas, mod, obsdat, sps=sps,

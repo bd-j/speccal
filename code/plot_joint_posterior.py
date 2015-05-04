@@ -37,7 +37,7 @@ def compute_sigma_level(trace1, trace2, nbins=20):
 
 if __name__ == "__main__":
     photonly = 'results/ggc_mock_photonly.c0.t9.0_z0.0_a0.5_1430274922_mcmc'
-    speconly = 'results/ggc_mock_speconly.c0.t9.0_z0.0_a0.5_1430010665_mcmc'
+    speconly = 'results/ggc_mock_speconly.u0.t9.0_z0.0_a0.5_1430517825_mcmc'
     specphot = 'results/ggc_mock_specphot.u0.t9.0_z0.0_a0.5_1430380402_mcmc'
     resfiles = [photonly, speconly, specphot]
     clr = ['red','blue', 'magenta']
