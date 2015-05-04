@@ -5,7 +5,7 @@ from sedpy import attenuation
 import ggcdata
 
 #The speccal directory
-sdir = os.path.join.(os.environ['PROJECTS'], 'speccal')
+sdir = os.path.join(os.environ['PROJECTS'], 'speccal')
 
 sps = sps_basis.StellarPopBasis()
 nw = len(sps.ssp.wavelengths)
