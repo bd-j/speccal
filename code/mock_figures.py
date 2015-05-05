@@ -5,7 +5,7 @@ from matplotlib import gridspec
 
 from bsfh import read_results as bread
 from bsfh import sps_basis
-from bsfh.gp import GaussianProcess
+from bsfh.gp import ExpSquared
 
 from plotting import *
 
