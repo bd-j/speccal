@@ -18,6 +18,7 @@
  \usepackage{apjfonts}
 % ----
 \usepackage{color, hyperref}
+\usepackage[normalem]{ulem}
 \bibliographystyle{apj}
 \input{vc}
 
@@ -411,7 +412,7 @@ We model the stellar cluster as a single age SSP. The spectrum of a
 star cluster under this assumption is given by a vector
 \begin{eqnarray} \label{eq:StarModel}\displaystyle
 f_{\theta_s}(\lambda_o) & = &
-\frac{m_*}{4\pi d_L^2(1+z)} \, L(\sigma_*, z) \, s(\lambda, t, Z , \beta) \, e^ {-k_\lambda\tau_V} \\
+L(\sigma_s, z) ,\, \frac{m_*}{4\pi d_L^2(1+z)} \, s(\lambda, t, Z , \beta) \, e^ {-k_\lambda\tau_V} \\
 \nonumber \\ 
 \lambda_o & = & (1+z)\,\lambda 
 \\
@@ -423,9 +424,9 @@ the stellar mass $m_*$,
 effective optical depth to dust in the $V$-band $\tau_V$, 
 luminosity distance $d_L$,
 and redshift $z$.
-The matrix $L(\sigma_*, z)$ is a convolution kernel representing the
+The matrix $L(\sigma_s, z)$ is a convolution kernel representing the
 stellar velocity profile,
-and $\sigma_*$ is the stellar velocity dispersion. 
+and $\sigma_s$ is the stellar velocity dispersion. 
 The shape of the dust attenuation curve is given by $k_\lambda \equiv
 \tau_\lambda/\tau_V$.  
 The observed frame wavelengths $\lambda_o$ are related to the
@@ -521,32 +522,31 @@ distribution of the population from which a given cluster is drawn.
 
 \input{tables/priors.tbl}
 
-
 \subsection{List of Experiments}
 
 \begin{enumerate}
 
-\item Mock perfectly calibrated data: inference using spectroscopy and one
+\item \sout{Mock perfectly calibrated data: inference using spectroscopy and one
   photometric band, assuming no calibration uncertainty.  This is as
-  good as we could get given the data and its uncertainties.
+  good as we could get given the data and its uncertainties.}
 
-\item Mock perfectly calibrated data: inference using spectroscopy and one
+\item \sout{Mock perfectly calibrated data: inference using spectroscopy and one
   photometric band, with the full calibration model.  This is how much
   including additional calibration flexibility hurts the posterior
-  PDFs compared to perfectly known calibration.
+  PDFs compared to perfectly known calibration.}
 
-\item Mock uncalibrated data:  inference using spectroscopy and one
+\item \sout{Mock uncalibrated data:  inference using spectroscopy and one
   photometric band, with full calibration model.  This is how well we
   can get the calibration \emph{and} the physical parameters with
-  spectroscopy only.
+  spectroscopy only.}
 
-\item Mock data: inference using photometry only.  This is how well we
-  can get the physical parameters using photometry only.
+\item \sout{Mock data: inference using photometry only.  This is how well we
+  can get the physical parameters using photometry only.}
 
-\item Mock uncalibrated data: inference using spectroscopy and all
+\item \sout{Mock uncalibrated data: inference using spectroscopy and all
   photometry, full calibration model.  This is how well we
   can get the calibration and physical parameters using spectroscopy
-  and photometry.
+  and photometry.}
 
 \item Do this for a bunch of ages, metallicities, and dust
   attenuations, possibly compare to the ideal posteriors in each case.

@@ -143,6 +143,7 @@ def optical_maggies(name, datadir='', bands=['g','r','i','z'], **extras):
         g,r,i,z *magnitude* uncertainties
     """
     found = False
+    # make more DRY
     try:
         # ctio catalog
         ctio = pyfits.getdata(os.path.join(datadir,'ctio.fits'))

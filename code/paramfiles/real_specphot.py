@@ -2,15 +2,16 @@ import numpy as np
 import pickle, os
 from bsfh import priors, sedmodel
 from sedpy import attenuation
+from ggcdata import *
 
 #The speccal directory
 sdir = os.path.join(os.environ['PROJECTS'], 'speccal')
 
 run_params = {'verbose':True,
-              'outfile':'results/ggc_mock_specphot_u0_t9.0_z0.0_a0.5',
+              'outfile':'results/ggc_ngc7089',
               'do_powell': False,
               'ftol':0.5e-4, 'maxfev':5000,
-              'nwalkers':64, 
+              'nwalkers':64,
               'nburn':[64, 64, 128, 128, 256], 'niter':512,
               'initial_disp':0.1,
               'debug':False,
@@ -18,7 +19,7 @@ run_params = {'verbose':True,
               'normalize_spectrum':True,
               'norm_band_name':'sdss_g0',
               'rescale':True,
-              'filename':os.path.join(sdir, 'data/ggclib/mocks/miles/ggc_mock.u0.t9.0_z0.0_a0.5.pkl'),
+              'objname':'NGC7089',
               'wlo':3350.,
               'whi':6500.,
               'noisefactor':10
@@ -26,10 +27,22 @@ run_params = {'verbose':True,
 
 ##### OBSERVATIONAL DATA ######
 
-def load_obs(filename=None, noisefactor=1.0, **extras):
-    with open(filename) as f:
-        obs = pickle.load(f)
-    #obs['phot_mask'] = np.array(['sdss_g' in filt.name for filt in obs['filters']])
+def load_obs(objname=None, noisefactor=1.0, calibrated=True,
+             mask=True, **extras):
+    # get the spectrum
+    if calibrated:
+        fluxtype=None
+    else:
+        fluxtype=1
+    obs = ggc_spec(objname, 'a', '1', fluxtype=fluxtype,
+                   datadir=os.path.join(sdir, 'data/ggclib/spectra'), **extras)
+    #mask the spectrum
+    if mask:
+        obs = ggc_mask(obs)
+    #add the photometric data
+    obs.update(ggc_phot(objname, datadir=os.path.join(sdir, 'data/ggclib/photometry')))
+    obs['phot_mask'] = np.array(['sdss' in filt.name for filt in obs['filters']])
+    #adjust uncertainties
     obs['unc'] *= noisefactor
     obs['noisefactor'] = noisefactor
     return obs

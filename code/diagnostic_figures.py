@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as pl
 
 import bsfh.read_results as bread
-from bsfh.gp import GaussianProcess
+from bsfh.gp import ExpSquared as GaussianProcess
 from bsfh import sps_basis
 sps = sps_basis.StellarPopBasis()
 gp = GaussianProcess(None, None)
