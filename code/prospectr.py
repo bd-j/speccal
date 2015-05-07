@@ -8,6 +8,7 @@ import pickle
 from bsfh import model_setup, write_results
 import bsfh.fitterutils as utils
 from bsfh.likelihood import LikelihoodFunction
+from bsfh.gp import PhotOutlier
 
 #########
 # Read command line arguments
@@ -28,6 +29,7 @@ run_params = model_setup.get_run_params(argv = sargv, **clargs)
 sps = model_setup.load_sps(**run_params)
 # GP instance as global
 gp_spec = model_setup.load_gp(**run_params)
+gp_phot = PhotOutlier()
 # Model as global
 global_model = model_setup.load_model(param_file=clargs['param_file'])
 # Obs as global
@@ -83,6 +85,13 @@ def lnprobfn(theta, model=None, obs=None, verbose=run_params['verbose']):
         except(AttributeError, KeyError):
             #There was no spec_gp_params method
             pass
+        try:
+            s, a, l = model.phot_gp_params(obs=obs)
+            gp_phot.kernel = np.array( list(a) + list(l) + [s])
+        except(AttributeError):
+            #There was no phot_gp_params method
+            pass
+
         d1 = time.time() - t1
 
         #calculate likelihoods

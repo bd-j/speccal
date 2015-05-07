@@ -94,7 +94,7 @@ def broaden_ggcspec(wave, flux, minsig=1e-6):
     sigma_data = spec_lsf(wave, sigma_library=0.0, sigma_smooth=1.31)
     delta_sigma = np.sqrt(sigma_data.max()**2 - sigma_data**2)
     delta_sigma[delta_sigma <= 0.0] = minsig
-    def lsf():
+    def lsf(x):
         return delta_sigma
     newflux = observate.lsf_broaden(wave, flux, lsf=lsf)
     return newflux
@@ -110,6 +110,7 @@ def ggc_phot(objname, datadir='', **extras):
     maggies, mags_unc = optical_maggies(name, datadir=datadir, bands=bands)
     obs['maggies'] = maggies
     obs['maggies_unc'] =  mags_unc * maggies / 1.086
+    obs['maggies_unc'] = np.sqrt(obs['maggies_unc']**2 + (0.05*maggies)**2)
     
     # NIR.  These are in Vega!!!
     obs['filternames'] += ['twomass_J', 'twomass_H', 'twomass_Ks']
@@ -236,7 +237,7 @@ def integrated_flux_king(outer, A, r_c=1, r_t=30):
     return -2.5*np.log10(total_flux)
 
 
-def make_skymask(wave, flux, width=10, thresh=5., lsf=6., **extras):
+def make_skymask(wave, flux, width=10, thresh=3., lsf=6., **extras):
     """Generate a mask based on peaks in the sky spectrum, found using
     median filtering.
 
@@ -320,7 +321,7 @@ def ggc_mask(obs, minwave=3602, maxwave=1e4, pad=6.0, **kwargs):
     """
     from bsfh import elines
     wave = obs['wavelength']
-    skymask = make_skymask(wave, obs['sky'], lsf=6, **kwargs)
+    skymask = make_skymask(wave, obs['sky'], **kwargs)
     mask = (skymask & (wave > minwave) &
             (wave < maxwave))
         
@@ -329,5 +330,9 @@ def ggc_mask(obs, minwave=3602, maxwave=1e4, pad=6.0, **kwargs):
                    (wave < (elines.wavelength[line] + pad)))
         mask = mask & ~inline
 
+    #mask one weird remaining line
+    inline = (wave > 6061.0) & (wave < 6075.0)
+    mask = mask & ~inline
+    
     obs['mask'] = obs.get('mask', True) & mask
     return obs

@@ -22,13 +22,15 @@ run_params = {'verbose':True,
               'objname':'NGC7089',
               'wlo':3350.,
               'whi':6500.,
-              'noisefactor':10
+              'noisefactor':1.0,
+              'mask':True,
+              'broaden_obs':True
               }
 
 ##### OBSERVATIONAL DATA ######
 
 def load_obs(objname=None, noisefactor=1.0, calibrated=True,
-             mask=True, **extras):
+             mask=True, broaden_obs=False, **extras):
     # get the spectrum
     if calibrated:
         fluxtype=None
@@ -38,7 +40,12 @@ def load_obs(objname=None, noisefactor=1.0, calibrated=True,
                    datadir=os.path.join(sdir, 'data/ggclib/spectra'), **extras)
     #mask the spectrum
     if mask:
-        obs = ggc_mask(obs)
+        obs = ggc_mask(obs, lsf=6, pad=6, thresh=3, width=20)
+    #broaden to constant FWHM in wave space.
+    if broaden_obs:
+        smask = obs.get('mask', np.ones(len(obs['wavelength']), dtype=bool))
+        bflux = broaden_ggcspec(obs['wavelength'][smask], obs['spectrum'][smask])
+        obs['spectrum'][smask] = bflux
     #add the photometric data
     obs.update(ggc_phot(objname, datadir=os.path.join(sdir, 'data/ggclib/photometry')))
     obs['phot_mask'] = np.array(['sdss' in filt.name for filt in obs['filters']])
@@ -57,7 +64,7 @@ model_params = []
 ###### Distance ##########
 model_params.append({'name': 'lumdist', 'N': 1,
                      'isfree': False,
-                     'init': 0.01,
+                     'init': 0.011,
                      'units': 'Mpc',
                      'prior_function': None,
                      'prior_args': None})
@@ -69,14 +76,14 @@ model_params.append({'name': 'mass', 'N': 1,
                      'init': 2e5,
                      'units': r'M$_\odot$',
                      'prior_function': priors.tophat,
-                     'prior_args': {'mini':1e4, 'maxi': 1e6}})
+                     'prior_args': {'mini':1e4, 'maxi': 1e7}})
 
 model_params.append({'name': 'tage', 'N': 1,
                         'isfree': True,
                         'init': 5.0,
                         'units': 'Gyr',
                         'prior_function': priors.tophat,
-                        'prior_args':{'mini':0.1, 'maxi':15.0}})
+                        'prior_args':{'mini':1.0, 'maxi':15.0}})
 
 model_params.append({'name': 'zmet', 'N': 1,
                         'isfree': True,
@@ -212,14 +219,14 @@ model_params.append({'name': 'gp_amplitude', 'N':1,
 
 model_params.append({'name': 'gp_length', 'N':1,
                         'isfree': True,
-                        'init': 60.0,
+                        'init': 100.0,
                         'units': r'$\AA$',
                         'prior_function': priors.lognormal,
                         'prior_args': {'log_mean':np.log(100.0)+0.75**2, 'sigma':0.75}})
 
 model_params.append({'name': 'phot_jitter', 'N':1,
-                        'isfree': False,
-                        'init': 0.0,
+                        'isfree': True,
+                        'init': 0.001,
                         'units': 'mags',
-                        'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.0, 'maxi':0.1}})
+                        'prior_function': priors.logarithmic,
+                        'prior_args': {'mini':0.0, 'maxi':0.05}})
