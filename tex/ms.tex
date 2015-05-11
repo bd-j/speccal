@@ -221,26 +221,28 @@ s/\mu(\theta)$ is a nuisance noise-model parameter representing
 additonal fractional uncertainty in the flux.  The Gaussian Process
 will be a generalization of this modification.
 
-We take the calibration-vector that modifies the mean model to produce
-the observed spectrum as multiplicative with respect to the mean
-model.  In this case we define the residual of the data from the model
-in terms of the logarithmic differences.  This logarithmic formulation
-requires that $d$ be everywhere positive, and distorts the
-uncertainties, especially at low S/N ratio.  The advantages of
-defining the residual in this way are that the model remains linear
-(and therefore fast) and the calibration vector is forced to be
-positive everywhere.  Additionally, at high signal to noise the
-distortion of the uncertainties will be minimal.
+For the spectroscopic measurements we are going to account for
+the spectrophotometric calibration in our likelihood function.  We
+take this calibration-vector that modifies the mean spectroscopic
+model to produce the observed spectrum to be multiplicative with
+respect to the mean model.  In this case we define the residual of the
+data from the model in terms of the logarithmic differences.  This
+logarithmic formulation requires that $d$ be everywhere positive, and
+distorts the uncertainties, especially at low S/N ratio.  The
+advantages of defining the residual in this way are that the model
+remains linear (and therefore fast) and the calibration vector is
+forced to be positive everywhere.  Additionally, at high signal to
+noise the distortion of the uncertainties will be minimal.
 
 {\color{blue} BDJ This paragraph should explain why we are using the
 GP, not just how it works.}
 The multiplicative calibration vector can be explicitly modeled, for
 example using polynomials.  However, for complex calibration vectors
 over large wavelength ranges, the number of parameters required to
-model the calibration can become quite large (e.g., very high order
+model the calibration can become quite large (e.g. very high order
 polynomials) and the correct parameterization may be unknown.  It is
 therefore desirable to introduce a non-parameteric model of the
-calibration.  We do this using a Gaussian Process: prior over
+calibration.  We do this using a Gaussian Process: BDJ: prior over
 functions, analytically marginalizable, covariant fractional
 uncertainties the same as multiplying by a function (covariant
 uncertainties the same as adding a function)
@@ -341,7 +343,9 @@ no means trivial. In this way the key features of the calibration
 model and methodology are not obscured.  Additionally, information
 about the physical parameters of the cluster is available from
 resolved stellar CMDs, providing an important check on our inference
-methodology and especially our population synthesis models.
+methodology and especially our models for star cluster spectra.  However,
+our methodology is applicable any spectral model: stars, galaxies or
+ISM emission.
 
 This separate treatment of mock and real data allows us to address two
 separate issues.  The inference from mock data (with a realistic
@@ -368,20 +372,42 @@ obtained by drift-scanning a long-slit spectrograph across the
 cluster.  The wavelength range of the spectra is $3500-6500$\AA. The
 instrumental resolution is $\sim 3.1$\AA~ at $\sim 4500\AA$ and varies
 with wavelength.  These spectra have been placed on the rest-frame,
-though in what follows we will model the effect of redshift
-uncertainties on the data.
+though in throughout our analysis we allow the redshift to vary as one
+of the model parameters. 
 
 An example spectrum (and the inferred spectrophotometric calibration
 vector) is shown in Figure \ref{fig:ggc_data}.  As stated by
 \citet{schiavon05}, the spectrophotometric calibration of these data
 are only approximate.  When fitting the spectra we mask the region
-around the bright OI5577\AA~ sky line, and we fit only to the spectrum
+around  several bright sky lines, and we fit only to the spectrum
 with $3550\AA < \lambda < 6500$\AA~ which are covered by the MILES
 spectral library (see \S\ref{sec:cluster_model}).  Absorption lines of
 the interstellar medium (ISM) can significantly affect the spectrum,
 so we additionally mask the Calcium H and K lines and the NaD doublet.
 
-Words about photometry.
+The line-spread function of the data is not constant as a function of
+velocity or wavelength.  While a wavelength dependent line spread
+function can be included in the model, it is computationally
+intensive. Therefore, we have convolved the observed spectra with a
+wavelength-dependent kernel to bring it to an approximately constant
+dispersion in wavelength across the whole spectrum. This dispersion is
+a free parameter in our model.
+
+Optical photometry is available from \citep{vanderbeke14} based on
+SDSS for objects in the northern hemisphere and on data from CTIO for
+southern hemisphere objects.  Briefly, total fluxes within the half-light radii
+of the clusters \citet{harris98} were calculated, with small
+corrections for stars unlikely to be cluster members based on their
+positions in the CMD. For this data the formal Poisson uncertainties
+are typically exceedingly small.  The dominant source of uncertainty
+comes from the photometric calibration and from uncertainties in
+cluster membership.
+
+Near-Infrared photometry is available from \citet{cohen07}, who fit
+King profiles \citet{king65} to 2MASS data in the $J$, $H$, and $K_s$
+bands.  To produce NIR photometry consistent with the optical we
+integrated the King profiles to the half-light radii used by
+\citet{vanderbeke14}.
 
 \begin{table}[h!]
 \caption{List all the clusters, RA, Dec, photometry and individual exposures.}
@@ -424,8 +450,8 @@ the stellar mass $m_*$,
 effective optical depth to dust in the $V$-band $\tau_V$, 
 luminosity distance $d_L$,
 and redshift $z$.
-The matrix $L(\sigma_s, z)$ is a convolution kernel representing the
-stellar velocity profile,
+Multiplication by the matrix $L(\sigma_s, z)$ represents a convolution
+with the stellar velocity profile,
 and $\sigma_s$ is the stellar velocity dispersion. 
 The shape of the dust attenuation curve is given by $k_\lambda \equiv
 \tau_\lambda/\tau_V$.  
@@ -468,10 +494,7 @@ into account the redshift. For computational simplicity we assume that
 the internal velocity dispersion of the cluster is negligible compared
 to the instrumental broadening, though in principle it can and should
 also be modeled. The instrumental resolution is given by the parameter
-$\sigma_{inst}$.  {\color{blue}Discuss intrinsic resolution of model spectra
-(MILES), what to do in situations where instrumental resolution is
-higher, lower or comparable (ouch) to intrinsic velocity broadening.}
-
+$\sigma_{inst}$. 
 
 The final mean model is then given by the convolution in wavelength
 \begin{eqnarray}\label{eq:MeanModel} 
@@ -551,16 +574,14 @@ distribution of the population from which a given cluster is drawn.
 \item Do this for a bunch of ages, metallicities, and dust
   attenuations, possibly compare to the ideal posteriors in each case.
 
-\item Real calibrated spectrum:   Inference using spectroscopy and all
-  photometry, with full calibration model. The calibration vector
+\item Real calibrated spectrum:   \sout{Inference using spectroscopy and all
+  photometry, with full calibration model.} The calibration vector
   inferred will highlight differences between the calibrated spectrum
   and the model (which could either be due to calibration problems or
   model problems)
 
 \item Real uncalibrated spectrum:   Inference using spectroscopy and all
-  photometry, with full calibration model. This is to show how much
-  the inferred physical parameters change when the calibration is
-  basically unknown.
+  photometry, with full calibration model. 
 
 \item Compare the physical parameters inferred from from the real
   calibrated and uncalibrated spectrum with each other and with CMD
@@ -575,18 +596,10 @@ distribution of the population from which a given cluster is drawn.
 
 \section{Results}
 
-For each test we want to show
-\begin{itemize}
-
-\item Posterior parameter pdfs (and joint pdfs).
-
-\item Samples of the posterior prediction for the observations, and
-  residuals thereform.
-
-\item The calibration vector, and posterior samples of it.
-
-\item Posterior samples of the intrinsic spectrum
-\end{itemize}
+In this section we describe the results of our experiments with mock
+data and with real data.  For the mock data we investigate the
+dependence of the recovered parameters on the type of data used in the
+inference.
 
 \subsection{Mocks}
 We first present the results of our inference from a spectrum where we
@@ -597,11 +610,21 @@ could be obtained for the physical parameters given the
 signal-to-noise of the mock data, perfect models, and perfectly known
 calibration.
 
-{\color{blue}BDJ Describe results from the ideal case.}
+The posterior parameter PDFs for the case of perfectly known
+calibration are shown in the bottom right panels of Figure
+\ref{fig:speconly_ideal}, along with the mock spectrum and posterior
+samples of the mock spectrum.  In this case the observed spectrum is
+the same as the intrinsic spectrum except for a distance dimming
+factor, as we have assumed that the calibration vector is one
+everywhere, wth no uncertainty. The PDF for stellar mass is extremely
+narrow is information about the overall normalization comes from all
+$\sim 3000$ spectral data points.  The single photometric data point,
+with S/N of 10, adds essentially no information beyond what is
+obtained from the spectrum.
 
 Next we will \emph{not} assume that the calibration is perfectly known
 and we will therefore allow the calibration parameters $\alpha$ in our
-model to vary.  In Figure
+model to vary.  {\color{red} This is not converged.} In Figure
 \ref{fig:speconly_calibrated} we show the result of our inference from
 the spectrum and a single photometric measurement (SDSS $g$) for a
 perfectly calibrated mock spectrum. To demonstrate the quality of the
@@ -621,25 +644,29 @@ vectors approximately indicates our uncertainty in the spectrophotometric
 calibration when no additional calibration information is available
 and only a single photometric point is available.
 
+When the spectrophotometric calibration is assumed to be unknown,
+the posterior PDFs for stellar mass and especially $A_v$ become
+extremely large.  There is now no information about the overall shape
+of the SED (and hence the dust attenuation), and the overall
+normalization is constrained entirely by the single photometric point.
+The uncertainty in the stellar mass is somewhat broader than the
+uncertainty on the $g$-band flux because of the variation in
+mass-to-light ratio due to uncertainties in dust and, to a lesser
+extent, age.
 
-Even in the case of a single photometric data point, many of the
-physical parameters are well-constrained and only minimally biased,
-e.g. age and metallicity.  These are the parameters that are
-constrained well by the spectrum itself and are not strongly sensitive
-to the overall shape of the spectral continuum.  Such parameters can
-be reasonably well recovered by fitting continuum normalized spectra,
-though here we have propogated the uncertainty in this normalization
-into the uncertainties on the physical parameters.
-
-On the other hand, the posterior PDF for the dust attenuation optical
-depth $A_v$ is extremely broad. 
-
-The uncertainty on the total stellar mass incorporates both the
-uncertainty in the photometric flux and the uncertainty in the $g$-
-band mass-to-light ratio.
+On the other hand, age and metallicity remain well-constrained.  These
+are the parameters that are constrained well by spectral lines and are
+not strongly sensitive to the overall shape of the spectral continuum.
+The posterior PDFs are only slightly broader than in the case of a
+perfectly known calibration. Such parameters can be reasonably well
+recovered by fitting continuum normalized spectra, though here we have
+propogated the uncertainty in this normalization into the
+uncertainties on the physical parameters, leading to slightly larger
+total uncertainties.
 
 In Figure \ref{fig:speconly_uncalibrated} we show the results of
-inference on an \emph{uncalibrated} mock spectrum.
+inference on an \emph{uncalibrated} mock spectrum. {\color{red} This
+  is not converged}
 
 
 \subsection{Real Data: \excluster} 

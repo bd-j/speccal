@@ -24,7 +24,8 @@ run_params = {'verbose':True,
               'whi':6500.,
               'noisefactor':1.0,
               'mask':True,
-              'broaden_obs':True
+              'broaden_obs':True,
+              'calibrated':True
               }
 
 ##### OBSERVATIONAL DATA ######
@@ -52,6 +53,7 @@ def load_obs(objname=None, noisefactor=1.0, calibrated=True,
     #adjust uncertainties
     obs['unc'] *= noisefactor
     obs['noisefactor'] = noisefactor
+    obs['spec_calibrated'] = calibrated
     return obs
 
 obs = load_obs(**run_params)
