@@ -92,18 +92,6 @@ This obviation of calibration overheads will pay \emph{all yall mad cheddar},
 
 \section{Introduction}
 
-In probabilistic inference, all information flows from the data to the
-parameters of interest by means of a likelihood function, or an
-expression for the probability of the data conditioned on the
-parameters.
-If there are $N$ independent sources of data, for each of which there
-is a likelihood function, the full-data likelihood is the product of
-the $N$ individual likelihoods (or the log-likelihood is a sum of the
-$N$ individual log-likelihoods).
-There is no bespoke ``weighting'' of the data that is justifiable in
-this framework.
-This creates some apparent paradoxes!
-One is the following:
 
 Imagine you have three photometric bands through which you have
 observed some object (independently, say), and also a 2500-pixel
@@ -114,7 +102,7 @@ measurements if they are derived from disjoint sets of detector pixels
 in the spectrograph detector plane.
 Each photometric band and each spectroscopic pixel has a
 log-likelihood function, and these 2503 log-likelihood functions must
-be (by the Rules of Righteousness) coadded equally into one full-data
+be coadded equally into one full-data
 log-likelihood.
 The log-likelihood is therefore fully dominated by the spectral
 pixels!
@@ -125,30 +113,17 @@ That is, if the spectral pixels tend to prefer one model, or one set
 of parameters, and the photometry another, the spectra will almost
 always ``win'' just by their overwhelming numbers.
 
-What is a Righteous Probabilistic Investigator (RPI) to do?
-One option---fully unjustified---is to ``down-weight'' the
-log-likelihoods of the spectral pixels relative to the photometric
-measurements.
-This is equivalent to taking the likelihoods to some power, which has
-no justification in inference (though it is sometimes used in
-optimization and sampling as an ``annealing'' move).
-This down-weighting is not justified, but there is even more
-ad-hockery than this, because there is no principled way to choose the
-unprincipled weights.
-
-The Right Thing To Do is to express the \emph{reason} that the RPI
-believes the spectroscopic data to be less reliable \emph{within} the
+The Right Thing To Do is to express the \emph{reason} that the
+spectroscopic data are less reliable \emph{within} the
 likelihood function.
-That is, the RPI must add nuisance parameters to parameterize the
+That is, the one must add nuisance parameters to parameterize the
 unreliability of the spectroscopy, and infer those along with the
 parameters of interest.
 If this parameterization is good, the information in the spectroscopy
 data will not flow entirely to the parameters of interest; instead,
 some will flow to the nuisance parameters.
 This will reduce the importance of the spectroscopy relative to the
-photometry and the RPI will be well pleased with the dominance of the
-photometric data in the final inferences of the parameters of
-interest.
+photometry.
 This amounts to propogating the uncertainties in the
 spectrophotometric calibration (or alternatively in the continuum
 normalization).
@@ -164,17 +139,7 @@ However, because the calibration adjustment is inferred along with the
 parameters of interest, the probabilistic inference that provides
 parameter estimates \emph{also} provides a spectrophotometric
 calibration of the spectral data.
-That is, the method we present has the potential to \emph{obviate
-spectrophotometric calibration}.
 
-We find that this potential---obviation of calibration---is realized.
-That is, if the procedures demonstrated below become widely adopted,
-some or perhaps most astronomical spectroscopic projects could
-potentially drop or dramatically reduce their spectrophotometric
-calibration programs.
-This would reduce telescope overheads and data-analysis time and
-complexity, delivering economic and sanity benefits to the whole
-community.
 
 \section{Model generalities}
 
@@ -483,7 +448,7 @@ lines are modeled as a sum of $\delta$-functions of unknown amplitude
 $a_\ell$, and with known central wavelengths $\lambda_\ell$, broadened
 by the gas velocity profile, $\sigma_{gas}$.  For emission lines the
 amplitudes are constrained to be positive, while for interstellar
-absorption (e.g. Na D and Ca K) the amplitudes are constrained to be
+absorption (e.g. NaD and CaK) the amplitudes are constrained to be
 negative. This framework can be easily extended to include more
 complex models for the nebular emission, such as allowing line
 dependent widths and velocities, and using Voight profiles for the
@@ -576,6 +541,9 @@ distribution of the population from which a given cluster is drawn.
 \item Do this for a bunch of ages, metallicities, and dust
   attenuations, possibly compare to the ideal posteriors in each case.
 
+\item Mock uncalibrated data:  vary the photometric bands to see how
+  much it changes the recovery of the parameters.
+
 \item Real calibrated spectrum:   \sout{Inference using spectroscopy and all
   photometry, with full calibration model.} The calibration vector
   inferred will highlight differences between the calibrated spectrum
@@ -589,8 +557,6 @@ distribution of the population from which a given cluster is drawn.
   calibrated and uncalibrated spectrum with each other and with CMD
   based parameters.
 
-\item Mock uncalibrated data:  vary the photometric bands to see how
-  much it changes the recovery of the parameters.
 
 \item how (some) of these things vary with S/N
 
@@ -667,8 +633,8 @@ uncertainties on the physical parameters, leading to slightly larger
 total uncertainties.
 
 In Figure \ref{fig:speconly_uncalibrated} we show the results of
-inference on an \emph{uncalibrated} mock spectrum. {\color{red} This
-  is not converged}
+inference on an \emph{uncalibrated} mock spectrum.  The results are
+similar to the case of the \emph{calibrated} spectrum.
 
 
 \subsection{Real Data: \excluster} 

@@ -19,10 +19,9 @@ mpirun -np 5 python prospectr.py --param_file=$PROJECTS/speccal/code/paramfiles/
 
 #speconly_uncalibrated, lo S/N
 mpirun -np 5 python prospectr.py --param_file=$PROJECTS/speccal/code/paramfiles/mock_speconly_losn.py \
-  --filename=$PROJECTS/speccal/data/ggclib/mocks/miles/ggc_mock.u0.t9.0_z0.0_a0.5.pkl  \
-  --outfile=$PROJECTS/speccal/code/results/ggc_mock_speconly.u0.t9.0_z0.0_a0.5 \
-  --nwalkers=126 --niter=1024 --do_powell=False
-
+       --filename=$PROJECTS/speccal/data/ggclib/mocks/miles/ggc_mock.u0.t9.0_z0.0_a0.5.pkl \
+       --outfile=$PROJECTS/speccal/code/results/ggc_mock_speconly.u0.t9.0_z0.0_a0.5 \
+       --nwalkers=254 --niter=6144 --do_powell=False
 
 # photonly
 mpirun -np 5 python prospectr.py --param_file=$PROJECTS/speccal/code/paramfiles/mock_photonly.py \

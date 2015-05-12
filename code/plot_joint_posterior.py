@@ -13,7 +13,7 @@ def joint_pdf(res, p1, p2, **kwargs):
     return xbins, ybins, sigma.T
 
 
-def compute_sigma_level(trace1, trace2, nbins=20):
+def compute_sigma_level(trace1, trace2, nbins=30):
     """From a set of traces, bin by number of standard deviations"""
     L, xbins, ybins = np.histogram2d(trace1, trace2, nbins)
     L[L == 0] = 1E-16
@@ -37,7 +37,7 @@ def compute_sigma_level(trace1, trace2, nbins=20):
 
 if __name__ == "__main__":
     photonly = 'results/ggc_mock_photonly.c0.t9.0_z0.0_a0.5_1430274922_mcmc'
-    speconly = 'results/ggc_mock_speconly.c0.t9.0_z0.0_a0.5_1430808300_mcmc'
+    speconly = 'results/ggc_mock_speconly.u0.t9.0_z0.0_a0.5_1431313829_mcmc'
     specphot = 'results/ggc_mock_specphot.u0.t9.0_z0.0_a0.5_1430380402_mcmc'
     resfiles = [photonly, speconly, specphot]
     clr = ['red','blue', 'magenta']
@@ -45,6 +45,10 @@ if __name__ == "__main__":
                for rfile in resfiles]
     obsdat = results[0]['obs']
     showpars = np.array(['mass', 'tage', 'zmet', 'dust2'])
+    parlims = np.array([[0.4e5, 4e5],
+                        [None, None],
+                        [-1.0, 0.19],
+                        [0, 1.5]])
     npar = len(showpars)
 
     fig = pl.figure()
@@ -54,17 +58,21 @@ if __name__ == "__main__":
         dax = pl.subplot(gs[i,i])
         for n, res in enumerate(results):
             trace, p = hist_samples(res, res['model'], [p1], start=0.5)
-            dax.hist(trace, bins = 50, color=clr[n], normed=True,
+            dax.hist(trace, bins = 30, color=clr[n], normed=True,
                      alpha=0.5, histtype='stepfilled')
-            if i == 0:
-                dax.set_ylabel(p1)
-            else:
-                dax.set_yticklabels('')
-            if i == (npar-1):
-                dax.set_xlabel(p2)
-            else:
-                dax.set_xticklabels('')
-            
+        # Axis label foo
+        if i == 0:
+            dax.set_ylabel(p1)
+        else:
+            dax.set_yticklabels('')
+        if i == (npar-1):
+            dax.set_xlabel(p2)
+        else:
+            dax.set_xticklabels('')
+        #xcur = dax.get_xlim()
+        #xlims = max([parlims[i,0], xcur[0]]), min([parlims[i,1], xcur[1]])
+        #dax.set_xlim(*xlims)
+                
         for j, p2 in enumerate(showpars[(i+1):]):
             k = j+i+1
             ax = pl.subplot(gs[k, i])
@@ -72,6 +80,8 @@ if __name__ == "__main__":
             for n, res in enumerate(results):
                 pdf = joint_pdf(res, p2, p1, start=0.5)
                 ax.contour(pdf[0], pdf[1], pdf[2], levels = [0.683, 0.955], colors=clr[n])
+                
+            # Axis label foo
             if i == 0:
                 ax.set_ylabel(p2)
             else:
@@ -81,7 +91,17 @@ if __name__ == "__main__":
                 dax.set_xlim(ax.get_xlim())
             else:
                 ax.set_xticklabels('')
-                
+
+            # Axis range foo
+            xcur = ax.get_xlim()
+            ycur = ax.get_ylim()
+            xlims = max([parlims[i,0], xcur[0]]), min([parlims[i,1], xcur[1]])
+            ylims = max([parlims[j+i+1,0], ycur[0]]), min([parlims[j+i+1,1], ycur[1]])
+            
+            ax.set_xlim(*xlims)
+            ax.set_ylim(*ylims)
+            dax.set_xlim(*xlims)
+                    
             truths = [obsdat['mock_params'][k] for k in [p1, p2]]
             ax.plot(truths[0], truths[1], 'ok')
     fig.savefig('../tex/figures/combined_post.pdf')
