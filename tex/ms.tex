@@ -320,13 +320,15 @@ modifying Equation \label{eq:spectroscopicLF} above as
 \Delta &\equiv& d - \mu(\theta) * f(\alpha) 
 \\
 C_{nn'} &\equiv& [\sigma_n^2 + (\hat{s} * \mu)^2]\,\delta_{nn'} +
-\transpose{\mu} \, K_\alpha(\lambda_n - \lambda_{n'}) \, \mu
+ K_\alpha(\lambda_n - \lambda_{n'}) \ast \mu \, \transpose{\mu}
 \quad ,
 \end{eqnarray}
-where the multiplication of $s$ and $K_\alpha$ by $\mu$ in the
-construction of $C_{nn'}$ means that they are defined in
-\emph{fractional} terms, and the uncertainties remain Gaussian in
-linear flux space.  It remains to be seen whether this actually works.
+where $\ast$ denotes element-wise multiplication and the
+multiplication of $s$ and $K_\alpha$ by $\mu$ and
+$\mu\,\transpose{\mu}$ respectively in the construction of $C_{nn'}$
+means that they are defined in \emph{fractional} terms, and the
+uncertainties remain Gaussian in linear flux space.  It remains to be
+seen whether this actually works.
 
 
 \section{Data and Experiments}
