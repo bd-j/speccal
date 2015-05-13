@@ -84,7 +84,8 @@ def theta_samples(res, samples=[1.0], start=0.0, thin=1):
     thetas = [flatchain[s,:] for s in np.floor(np.array(samples) * (ns-1)).astype(int)]
     return thetas, start_index, np.floor(np.array(samples) * (ns-1)).astype(int)
 
-def calfig(wave, calvec, specvecs, norm=1.0, fax=None):
+def calfig(wave, calvec, specvecs, norm=1.0,
+           labelprefix='Mock', fax=None):
     """Plot the calibration and posterior samples of it
     """
     if fax is None:
@@ -92,7 +93,7 @@ def calfig(wave, calvec, specvecs, norm=1.0, fax=None):
     else:
         cfig, cax = fax
     #plot the calibration vector 
-    cax.plot(wave, calvec, color='black', label='Mock Truth',
+    cax.plot(wave, calvec, color='black', label=labelprefix+' Truth',
              linewidth=3.0)
     # and posterior samples of it
     for i, specs in enumerate(specvecs):
@@ -105,7 +106,8 @@ def calfig(wave, calvec, specvecs, norm=1.0, fax=None):
     
     return cfig, cax
 
-def obsfig(wave, obsvec, specvecs, unc=None, fax=None):
+def obsfig(wave, obsvec, specvecs, unc=None,
+           labelprefix='Mock Observed', fax=None):
     """Plot the observed spectrum and posterior samples of it
     """
     if fax is None:
@@ -124,11 +126,12 @@ def obsfig(wave, obsvec, specvecs, unc=None, fax=None):
     if unc is not None:
         x, y, e = wave, obsvec, unc
         oax.fill_between(x, y-e, y+e, facecolor='grey', alpha=0.3)
-    oax.plot(wave, obsvec, color='black', label='Mock Observed Spectrum',
+    oax.plot(wave, obsvec, color='black', label=labelprefix +' Spectrum',
              linewidth=1.0, alpha=1.0)
     return ofig, oax
 
-def sedfig(wave, specvecs, phot, photvecs, norm = 1.0, fax=None, peraa=False):
+def sedfig(wave, specvecs, phot, photvecs, norm = 1.0,
+            labelprefix='Mock', fax=None, peraa=False):
     """Plot the photometric SED, posterior samples of it, and
     posterior samples of the intrinsic spectrum.
     """
@@ -158,7 +161,7 @@ def sedfig(wave, specvecs, phot, photvecs, norm = 1.0, fax=None, peraa=False):
 
     sax.errorbar(pwave, sed * pconv, yerr=sed_unc * pconv,
                  marker='o', markersize=8.0,
-                 color='black', linestyle='', label='Mock Photometry')
+                 color='black', linestyle='', label=labelprefix+' Photometry')
     sax.set_ylabel(ylabel)
     return sfig, sax
 

@@ -62,7 +62,8 @@ if __name__ == "__main__":
     sax = pl.subplot(gs2[0:2,:])
     haxes = np.array([pl.subplot(gs2[i, j]) for i in [2,3] for j in [0,1]])
 
-    cfig, cax = calfig(mwave, calvec, specvecs, norm=norm, fax=(None, cax))
+    cfig, cax = calfig(mwave, calvec, specvecs, norm=norm,
+                       labelprefix='', fax=(None, cax))
     cax.set_ylabel(r'Calibration $F_{{obs}}/F_{{\lambda, intrinsic}}$')
     cax.legend(loc=0, prop={'size':8})
     #cfig.show()
@@ -70,7 +71,7 @@ if __name__ == "__main__":
     
     sfig, sax = sedfig(fwave, fspecvecs, [pwave, mosed, mosed_unc], pvecs,
                        norm=1/obsdat['normalization_guess'], fax=(None,sax),
-                       peraa=True)
+                       labelprefix='Observed', peraa=True)
     #sax.plot(twave, tspec, color='black', label='True spectrum', alpha=0.6)
     sax.set_xscale('log')
     sax.set_xlim(2.5e3, 1.6e4)
@@ -78,7 +79,8 @@ if __name__ == "__main__":
     #sfig.show()
     #sfig.savefig('example_sed.png')
     
-    ofig, oax = obsfig(mwave, mospec, specvecs, unc=mounc, fax=(None,oax))
+    ofig, oax = obsfig(mwave, mospec, specvecs, unc=mounc,
+                       labelprefix='Observed', fax=(None,oax))
     oax.set_ylabel(r'Observed Spectrum $F_{{obs}}$ (unknown units)')
     oax.legend(loc=0, prop={'size':8})
     #ofig.show()

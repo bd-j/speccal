@@ -95,8 +95,10 @@ def lnprobfn(theta, model=None, obs=None, verbose=run_params['verbose']):
         d1 = time.time() - t1
 
         #calculate likelihoods
+        sf = ~run_params.get('logify_spectrum', True)
         t2 = time.time()
-        lnp_spec = likefn.lnlike_spec(mu, obs=obs, gp=gp_spec)
+        lnp_spec = likefn.lnlike_spec(mu, obs=obs, gp=gp_spec,
+                                      spec_noise_fractional=sf)
         lnp_phot = likefn.lnlike_phot(phot, obs=obs, gp=None)
         d2 = time.time() - t2
         if verbose:

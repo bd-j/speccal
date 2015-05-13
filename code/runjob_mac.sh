@@ -35,6 +35,14 @@ mpirun -np 5 python prospectr.py --param_file=$PROJECTS/speccal/code/paramfiles/
   --outfile=$PROJECTS/speccal/code/results/ggc_mock_specphot.u0.t9.0_z0.0_a0.5 \
   --nwalkers=126 --niter=1024 --do_powell=True --gptype=george
 
+
+#specphot linear
+mpirun -np 5 python prospectr.py \
+  --param_file=$PROJECTS/speccal/code/paramfiles/mock_specphot_linear.py \
+  --filename=$PROJECTS/speccal/data/ggclib/mocks/miles/ggc_mock.u0.t9.0_z0.0_a0.5.pkl \
+  --outfile=$PROJECTS/speccal/code/results/ggc_mock_specphot_linear.u0.t9.0_z0.0_a0.5 \
+  --nwalkers=126 --niter=1024 --do_powell=True
+
 #real data
 mpirun -np 5 python prospectr.py --param_file=$PROJECTS/speccal/code/paramfiles/real_specphot.py \
   --objname=NGC7089 --noisefactor=10.0 --calibrated=True
