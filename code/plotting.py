@@ -6,31 +6,48 @@ from copy import deepcopy
 def comp_samples(thetas, model, obs, sps=None, gp=None):
     """Different components of the model for a given set of thetas.
 
+    :param thetas:
+        A list or iterable of theta vectors for which model components
+        are desired.
     :returns wave:
         The full wavelength array
-    :return 
+    :returns mospec:
+        The observed spectrum, linear units
+    :returns mounc:
+        The observational errors, linear units
+    :returns specvecs:
+        A list length len(theta) where each element is a list of model
+        components corresponding to theta.  The model components are:
     """
+    logarithmic = obs.get('logify_spectrum', True)
     specvecs = []
     wave, ospec, mask = obs['wavelength'], obs['spectrum'], obs['mask']
     mwave, mospec = wave[mask], ospec[mask]
     mounc = obs['unc'][mask]
+    unc = mounc
     gp.wave, gp.sigma = mwave, obs['unc'][mask]
-    mospec = np.exp(mospec)
-         #mounc *= mospec
+    if logarithmic:
+        mospec = np.exp(mospec)
+        unc = mounc * mospec
 
     for theta in thetas:
         mu, cal, delta, mask, wave = bread.model_comp(theta, model, obs, sps,
                                                       gp=gp, photflag=0)
-        cal = np.exp(cal)
-        full_cal = np.exp(np.log(cal) + delta)
-        mod = np.exp(np.log(mu) + np.log(cal) + delta)
-        #mu = np.exp(mu)
+        
+        if logarithmic:
+            full_cal = np.exp(np.log(cal) + delta)
+            mod = np.exp(np.log(mu) + np.log(cal) + delta)
+            residual = np.exp(np.log(mospec) - np.log(mod))
+            chi =  (np.log(mospec)-np.log(mod)) / mounc
+        else:
+            full_cal = cal + delta/mu
+            mod = cal * mu + delta
+            residual  = mospec - mod
+            chi = (mospec - mod) / mounc
+        specvecs += [ [mu, full_cal, delta, mod,
+                       residual, chi]]
             
-        specvecs += [ [mu, cal, delta, mod,
-                       np.exp(np.log(mospec)-np.log(mod)),
-                       (np.log(mospec)-np.log(mod)) / mounc] ]
-            
-    return wave, mospec, mounc*mospec, specvecs
+    return wave, mospec, unc, specvecs
 
 def comp_samples_phot(thetas, model, obs, sps=None):
     specvecs = []
@@ -101,7 +118,7 @@ def calfig(wave, calvec, specvecs, norm=1.0,
             label = 'Posterior sample'
         else:
             label = None
-        cax.plot(wave, norm * np.exp(np.log(specs[1]) + specs[2]),
+        cax.plot(wave, norm * specs[1],
                  color='green', alpha=0.3, label=label)
     
     return cfig, cax

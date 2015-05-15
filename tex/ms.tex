@@ -583,8 +583,11 @@ samples of the mock spectrum.  In this case the observed spectrum is
 the same as the intrinsic spectrum except for a distance dimming
 factor, as we have assumed that the calibration vector is one
 everywhere, wth no uncertainty. The PDF for stellar mass is extremely
-narrow is information about the overall normalization comes from all
-$\sim 3000$ spectral data points.  The single photometric data point,
+narrow since information about the overall normalization comes from all
+$\sim 3000$ spectral data points.  The uncertainty in stellar mass
+largely reflects uncertainty in the mass-to-light ratio due to the
+small uncertainties in dust, metallicity, and age given the
+spectroscopic data. The single photometric data point,
 with S/N of 10, adds essentially no information beyond what is
 obtained from the spectrum.
 
@@ -599,7 +602,7 @@ observed spectra that result from several draws of the model
 parameters $[\theta, \alpha]$ from posterior distribution.  We also
 show samples of the inferred calibration vector,
 \begin{eqnarray} \label{eq:calibration}
-\frac{d}{\mu(\theta)} & = & e^{f(\alpha) + \tilde{\Delta}}
+\frac{d}{\mu(\theta)} & = & f(\alpha) + \frac{\tilde{\Delta}}{\mu(\theta)}
 \quad ,
 \end{eqnarray}
 where $\tilde{\Delta}$ is the Gaussian Process mean prediction for the
