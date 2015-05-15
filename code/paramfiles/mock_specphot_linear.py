@@ -7,7 +7,7 @@ from sedpy import attenuation
 sdir = os.path.join(os.environ['PROJECTS'], 'speccal')
 
 run_params = {'verbose':True,
-              'outfile':'results/ggc_mock_c0_t9.0_z0.0_a0.5',
+              'outfile':'results/ggc_mock_u0_t9.0_z0.0_a0.5',
               'do_powell': False,
               'ftol':0.5e-4, 'maxfev':5000,
               'nwalkers':64, 
@@ -18,7 +18,7 @@ run_params = {'verbose':True,
               'normalize_spectrum':True,
               'norm_band_name':'sdss_g0',
               'rescale':True,
-              'filename':os.path.join(sdir, 'data/ggclib/mocks/miles/ggc_mock.c0.t9.0_z0.0_a0.5.pkl'),
+              'filename':os.path.join(sdir, 'data/ggclib/mocks/miles/ggc_mock.u0.t9.0_z0.0_a0.5.pkl'),
               'wlo':3350.,
               'whi':6500.,
               'noisefactor':10
@@ -29,7 +29,7 @@ run_params = {'verbose':True,
 def load_obs(filename=None, noisefactor=1.0, **extras):
     with open(filename) as f:
         obs = pickle.load(f)
-    obs['phot_mask'] = np.array(['sdss' in filt.name for filt in obs['filters']])
+    #obs['phot_mask'] = np.array(['sdss' in filt.name for filt in obs['filters']])
     obs['unc'] *= noisefactor
     obs['noisefactor'] = noisefactor
     return obs
@@ -48,7 +48,7 @@ model_params.append({'name': 'lumdist', 'N': 1,
                      'units': 'Mpc',
                      'prior_function': None,
                      'prior_args': None})
-
+                         
 ###### SFH ################
 
 model_params.append({'name': 'mass', 'N': 1,

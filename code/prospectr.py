@@ -95,7 +95,7 @@ def lnprobfn(theta, model=None, obs=None, verbose=run_params['verbose']):
         d1 = time.time() - t1
 
         #calculate likelihoods
-        sf = ~run_params.get('logify_spectrum', True)
+        sf = not bool(obs.get('logify_spectrum', False))
         t2 = time.time()
         lnp_spec = likefn.lnlike_spec(mu, obs=obs, gp=gp_spec,
                                       spec_noise_fractional=sf)
@@ -187,8 +187,9 @@ if __name__ == "__main__":
         powell_opt = {'ftol': rp['ftol'], 'xtol':1e-6, 'maxfev':rp['maxfev']}
         powell_guesses, pinit = utils.pminimize(chisqfn, initial_theta,
                                                 args=chi2args, model=model,
-                                                method ='powell', opts=powell_opt,
-                                                pool = pool, nthreads = rp.get('nthreads',1))
+                                                method='powell', opts=powell_opt,
+                                                pool=pool, nthreads=rp.get('nthreads',1))
+        print('check1')
         best = np.argmin([p.fun for p in powell_guesses])
         initial_center = utils.reinitialize(powell_guesses[best].x, model,
                                             edge_trunc=rp.get('edge_trunc',0.1))
@@ -205,7 +206,8 @@ if __name__ == "__main__":
     # Sample
     ####################
     if rp['verbose']:
-        print('emcee sampling...')
+        print('emcee sampling from a ball around {}...'.format(initial_center))
+
     tstart = time.time()
     esampler = utils.run_emcee_sampler(lnprobfn, initial_center, model,
                                        postkwargs=postkwargs, pool = pool, **rp)
