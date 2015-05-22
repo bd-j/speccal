@@ -45,7 +45,7 @@ model_params.append({'name': 'tage', 'N': 1,
 
 model_params.append({'name': 'zmet', 'N': 1,
                         'isfree': True,
-                        'init': -0.1,
+                        'init': 0.0,
                         'units': r'$\log (Z/Z_\odot)$',
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':-2, 'maxi':0.19}})
@@ -208,8 +208,8 @@ if __name__ == "__main__":
     noisetype = ['0','1']
     name_template = os.path.join(info['outdir'], lib,
                                  'ggc_mock.{0}{1}.t{2:3.1f}_z{3:3.1f}_a{4:3.1f}.pkl')
-    vary_params = {'tage': [0.3, 1.1, 3.0, 6.0, 9.0],
-                   'zmet': [-1.5, -1.0, -0.5, -0.1],
+    vary_params = {'tage': [0.3, 1.1, 3.0, 6.0, 9.0, 12.0],
+                   'zmet': [-1.5, -1.0, -0.5, 0.0],
                    'dust2': [0, 0.5, 1.0, 2.0]
                    }
     #vary_params = {'tage':[10.0]}
