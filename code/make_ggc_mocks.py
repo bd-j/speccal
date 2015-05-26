@@ -38,7 +38,7 @@ model_params.append({'name': 'mass', 'N': 1,
 
 model_params.append({'name': 'tage', 'N': 1,
                         'isfree': True,
-                        'init': 9.0,
+                        'init': 12.0,
                         'units': 'Gyr',
                         'prior_function': priors.tophat,
                         'prior_args':{'mini':0.1, 'maxi':15.0}})
@@ -200,7 +200,7 @@ if __name__ == "__main__":
     info = {'objname': 'NGC7089',
             'datadir': os.path.join(sdir, 'data/ggclib/spectra/'),
             'outdir': os.path.join(sdir, 'data/ggclib/mocks/'),
-            'apply_cal': False,
+            'apply_cal': True,
             'add_noise': False,
             'mask': True
             }
@@ -215,11 +215,11 @@ if __name__ == "__main__":
     #vary_params = {'tage':[10.0]}
     #theta_default = np.array([1.0, 0.0, 0.5])
     model = sedmodel.SedModel(model_params)
-    theta_default = model.initial_theta
+    theta_default = model.initial_theta.copy()
     
     for p, vals in vary_params.iteritems():
         ind = model.theta_labels().index(p)
-        theta = theta_default
+        theta = theta_default.copy()
         for v in vals:
             theta[ind] = v
             mock = ggcdata.ggc_mock(model, theta, sps,

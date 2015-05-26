@@ -8,7 +8,7 @@ from ggcdata import *
 sdir = os.path.join(os.environ['PROJECTS'], 'speccal')
 
 run_params = {'verbose':True,
-              'outfile':'results/ggc_ngc7089',
+              'outfile':'results/ggc_ngc1851',
               'do_powell': False,
               'ftol':0.5e-4, 'maxfev':5000,
               'nwalkers':64,

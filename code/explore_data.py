@@ -14,17 +14,19 @@ sdat = []
 names = unique_names
 ngood = 0
 out = open('ggc_summary.dat','w')
-out.write('Name   phot_flag   SNR_spec_max  g_AB \n')
+out.write('Name   phot_flag   SNR_spec_max  g_AB  r_h \n')
 pfig = pl.figure()
 for name in unique_names:
     spec.append(ggcdata.ggc_spec(name, datadir='../data/ggclib/spectra'))
     phot.append(ggcdata.ggc_phot(name, datadir='../data/ggclib/photometry'))
+    rc, rt, rh = ggcdata.gc_structural_params(name, datadir='../data/ggclib/photometry')
     status = np.isfinite(phot[-1]['maggies']).sum() == 7
     spec_snr = (spec[-1]['spectrum']/spec[-1]['unc']).max()
     spec_mags = np.array([f.ab_mag(spec[-1]['wavelength'], spec[-1]['spectrum'])
                           for f in phot[-1]['filters']])
     sdat.append([status, spec_snr, spec_mags])
-    out.write('{0} {1} {2:4.0f} {3}\n'.format(name, status, spec_snr, -2.5*np.log10(phot[-1]['maggies'][2])))
+    values = name, status, spec_snr, -2.5*np.log10(phot[-1]['maggies'][2]), rh
+    out.write('{0} {1} {2:4.0f} {3} {4:6.3f}\n'.format(*values))
     ngood += int(status)
     #w = np.array([p.wave_effective for p in phot[-1]['filters']])
     #f = phot[-1]['maggies']

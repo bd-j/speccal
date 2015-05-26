@@ -9,8 +9,12 @@ try:
 except:
     pass
 
-def ggc_spec(objname, exp='a', ext='1',
-             fluxtype=None, datadir='', **extras):
+ggcdir = os.path.join(os.environ['PROJECTS'], 'speccal',
+                      'data', 'ggclib')
+
+
+def ggc_spec(objname, exp='a', ext='1', fluxtype=None,
+             datadir=ggcdir+'/spectra/', **extras):
     """
     :param fluxtype: (default: None)
         Flag describing the the type of flux calibration:
@@ -99,7 +103,7 @@ def broaden_ggcspec(wave, flux, minsig=1e-6):
     newflux = observate.lsf_broaden(wave, flux, lsf=lsf)
     return newflux
 
-def ggc_phot(objname, datadir='', **extras):
+def ggc_phot(objname, datadir=ggcdir+'/photometry/', **extras):
     
     name = objname.upper().strip().replace(' ','')
     obs = {'object_name':name}
@@ -107,10 +111,11 @@ def ggc_phot(objname, datadir='', **extras):
     # Optical
     bands = ['g','r','i','z']
     obs['filternames'] = ['sdss_{0}0'.format(b) for b in bands]
-    maggies, mags_unc = optical_maggies(name, datadir=datadir, bands=bands)
+    maggies, mags_unc, tel = optical_maggies(name, datadir=datadir, bands=bands)
     obs['maggies'] = maggies
     obs['maggies_unc'] =  mags_unc * maggies / 1.086
     obs['maggies_unc'] = np.sqrt(obs['maggies_unc']**2 + (0.05*maggies)**2)
+    obs['optical_telescope'] = tel
     
     # NIR.  These are in Vega!!!
     obs['filternames'] += ['twomass_J', 'twomass_H', 'twomass_Ks']
@@ -135,7 +140,8 @@ def ggc_phot(objname, datadir='', **extras):
     
     return obs
     
-def optical_maggies(name, datadir='', bands=['g','r','i','z'], **extras):
+def optical_maggies(name,  bands=['g','r','i','z'],
+                    datadir=ggcdir+'/photometry/', **extras):
     """
     :returns maggies:
         g,r,i,z GC maggies within the half-light radius, on the AB
@@ -143,7 +149,7 @@ def optical_maggies(name, datadir='', bands=['g','r','i','z'], **extras):
     :returns mags_unc:
         g,r,i,z *magnitude* uncertainties
     """
-    found = False
+    tel = None
     # make more DRY
     try:
         # ctio catalog
@@ -152,9 +158,9 @@ def optical_maggies(name, datadir='', bands=['g','r','i','z'], **extras):
         opt = ctio[cnames.index(name)]
         mags = np.array([opt[b+'_mag'] for b in bands]).flatten()
         mags_unc = np.array([opt['e_{0}_mag'.format(b)] for b in bands]).flatten()
-        found = True
+        tel = 'ctio'
     except(ValueError):
-        found = False
+        pass
     try:
         # sdss catalog
         sdss = pyfits.getdata(os.path.join(datadir,'sdss.fits'))
@@ -162,17 +168,17 @@ def optical_maggies(name, datadir='', bands=['g','r','i','z'], **extras):
         opt = sdss[cnames.index(name)]
         mags = np.array([opt[b+'mag'] for b in bands]).flatten()
         mags_unc = np.array([opt['e_{0}mag'.format(b)] for b in bands]).flatten()
-        found = found or True
+        tel = 'sdss'
     except(ValueError):
-        found = found or False
+        pass
         
-    if not found:
+    if tel is None:
         mags = np.zeros(4) + np.nan
         mags_unc = np.zeros(4) + np.nan
         print('Warning: no optical photometry found for {0}'.format(name))
-    return 10**(-0.4*mags), mags_unc
+    return 10**(-0.4*mags), mags_unc, tel
 
-def twomass_maggies(name, datadir='', **extras):
+def twomass_maggies(name, datadir=ggcdir+'/photometry/', **extras):
     """
     :returns maggies:
         J,H,K integrated GC maggies, on the Vega system.
