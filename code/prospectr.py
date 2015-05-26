@@ -99,7 +99,7 @@ def lnprobfn(theta, model=None, obs=None, verbose=run_params['verbose']):
         t2 = time.time()
         lnp_spec = likefn.lnlike_spec(mu, obs=obs, gp=gp_spec,
                                       spec_noise_fractional=sf)
-        lnp_phot = likefn.lnlike_phot(phot, obs=obs, gp=None)
+        lnp_phot = likefn.lnlike_phot(phot, obs=obs, gp=gp_phot)
         d2 = time.time() - t2
         if verbose:
             write_log(theta, lnp_prior, lnp_spec, lnp_phot, d1, d2)

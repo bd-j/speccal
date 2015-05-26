@@ -45,6 +45,6 @@ mpirun -np 5 python prospectr.py \
 
 #real data
 mpirun -np 5 python prospectr.py --param_file=$PROJECTS/speccal/code/paramfiles/real_specphot.py \
-  --objname=NGC7089 --noisefactor=10.0 --calibrated=True
-  --outfile=$PROJECTS/speccal/code/results/ggc_ngc7089 \
+  --objname=NGC1851 --noisefactor=5.0 --calibrated=True
+  --outfile=$PROJECTS/speccal/code/results/ggc_ngc1851 \
   --nwalkers=126 --niter=1024 --do_powell=True
