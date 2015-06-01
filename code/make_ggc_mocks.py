@@ -197,7 +197,7 @@ model_params.append({'name': 'phot_jitter', 'N':1,
 if __name__ == "__main__":
 
      
-    info = {'objname': 'NGC7089',
+    info = {'objname': 'NGC1851',
             'datadir': os.path.join(sdir, 'data/ggclib/spectra/'),
             'outdir': os.path.join(sdir, 'data/ggclib/mocks/'),
             'apply_cal': True,
@@ -216,7 +216,8 @@ if __name__ == "__main__":
     #theta_default = np.array([1.0, 0.0, 0.5])
     model = sedmodel.SedModel(model_params)
     theta_default = model.initial_theta.copy()
-    
+
+    #make mocks with varied parameters
     for p, vals in vary_params.iteritems():
         ind = model.theta_labels().index(p)
         theta = theta_default.copy()
@@ -231,3 +232,17 @@ if __name__ == "__main__":
             print('writing to {0}'.format(filename))
             with open(filename, 'w') as f:
                 pickle.dump(mock, f)
+
+    #make mocks with different noise realizations
+    info['add_noise'] = True
+    theta = theta_default.copy()
+    nnoise = 10 #number of noise realizations
+    for i in range(nnoise):
+        mock = ggcdata.ggc_mock(model, theta, sps,
+                                phot_snr=10, **info)
+        filename = name_template.format(caltype[info['apply_cal']], i+1,
+                                        *theta)
+            print('writing to {0}'.format(filename))
+            with open(filename, 'w') as f:
+                pickle.dump(mock, f)
+        

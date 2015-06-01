@@ -221,3 +221,43 @@ def histfig(samples, parnames, truths=None, fax=None, truth_color='k', **kwargs)
         ax.set_yticklabels([])
         pl.setp(ax.get_xticklabels(), fontsize=6)
     return hfig, haxes
+
+def plot_delta_params(results, models, pnames,
+                      pmap={}, plabel_map={},
+                      sfraction=0.9, thin=10,
+                      ptile=[16, 50, 84], fax=None,
+                      colors=None, labels=None):
+    if fax is None:
+        pfig, pax = pl.subplots()
+    else:
+        pfig, pax = fax
+    if labels is None:
+        labels = len(results) * ['']
+    if colors is None:
+        colors = len(results) * ['k']
+
+    def identity(x):
+        return x
+        
+    for res, mod, label, clr in zip(results, models, labels, colors):
+        samples, pnames_ord = hist_samples(res, mod, pnames, start=sfraction, thin=thin)
+        truths = np.array([res['obs']['mock_params'][k][0] for k in pnames_ord])
+        pct = np.percentile(samples, ptile, axis=0)
+        
+        pct = np.array([pmap.get(k, identity)(pct[:,i])
+                        for i,k in enumerate(pnames_ord)])
+        truths = np.array([pmap.get(k, identity)(truths[i])
+                           for i,k in enumerate(pnames_ord)])
+            
+        delta = (pct - truths[:, None]) / truths[:, None]
+        print(delta)
+        pax.plot(delta[:,1], '-o', color=clr, label=label)
+        pax.fill_between(np.arange(len(pnames)), delta[:,0], delta[:,2],
+                         alpha=0.3, color=clr)
+
+    pretty_pname = [plabel_map.get(k, k) for k in pnames_ord]
+    pax.set_xticks(np.arange(len(pnames_ord)))
+    pax.set_xticklabels(pretty_pname)
+    pax.set_ylabel(r'(Post-True) / True')
+    return pfig, pax
+    

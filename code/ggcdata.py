@@ -297,7 +297,7 @@ def ggc_mock(model, theta, sps, objname='', apply_cal=True, mask=True,
     mock['mock_theta'] = model.theta.copy()
 
     mock['calibration'], noise = 1.0, 0.0
-    mock['added_noise'] = add_noise
+    mock['added_noise'] = None
     if apply_cal:
         s *= cal['calibration']
         mock['calibration'] = cal['calibration'].copy()
@@ -306,8 +306,10 @@ def ggc_mock(model, theta, sps, objname='', apply_cal=True, mask=True,
     if add_noise:
         noise = np.random.normal(0, 1, len(s)) * noise_sigma
         s += noise
+        mock['added_noise'] = noise
         pnoise = np.random.normal(0, 1, len(p)) * pnoise_sigma
         p += pnoise
+        mock['added_phot_noise'] = pnoise
         
     mock['spectrum'] = s
     mock['maggies'] = p
