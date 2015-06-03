@@ -50,6 +50,8 @@ def comp_samples(thetas, model, obs, sps=None, gp=None):
     return wave, mospec, unc, specvecs
 
 def comp_samples_phot(thetas, model, obs, sps=None):
+    """Different components of the model for a given set of thetas,
+    for the photometry """
     specvecs = []
     wave = np.array([f.wave_effective for f in obs['filters']])
     mask = obs['phot_mask']
@@ -63,6 +65,10 @@ def comp_samples_phot(thetas, model, obs, sps=None):
     return wave[mask], mospec, mounc, specvecs
 
 def comp_samples_fullspec(thetas, model, obs, sps=None, gp=None):
+    """Different components of the model for a given set of thetas,
+    for the full spectrum (not just the wavelengths in obs).
+    """
+    
     specvecs = []
     mospec, mounc = None, None
     fullobs = deepcopy(obs)
@@ -79,6 +85,9 @@ def comp_samples_fullspec(thetas, model, obs, sps=None, gp=None):
     return wave, mospec, mounc, specvecs
 
 def true_sed(model, obs, sps=None, fullspec=False):
+    """The true SED for something with known parameters (stored in
+    obs['mock_params'])
+    """
     fullobs = deepcopy(obs)
     mockpars = deepcopy(obs['mock_params'])
     model.params = mockpars
@@ -103,7 +112,7 @@ def theta_samples(res, samples=[1.0], start=0.0, thin=1):
 
 def calfig(wave, calvec, specvecs, norm=1.0,
            labelprefix='Mock', fax=None):
-    """Plot the calibration and posterior samples of it
+    """Plot the calibration and posterior samples of it.
     """
     if fax is None:
         cfig, cax = pl.subplots()
@@ -125,7 +134,7 @@ def calfig(wave, calvec, specvecs, norm=1.0,
 
 def obsfig(wave, obsvec, specvecs, unc=None,
            labelprefix='Mock Observed', fax=None):
-    """Plot the observed spectrum and posterior samples of it
+    """Plot the observed spectrum and posterior samples of it.
     """
     if fax is None:
         ofig, oax = pl.subplots()
@@ -184,7 +193,8 @@ def sedfig(wave, specvecs, phot, photvecs, norm = 1.0,
 
 def hist_samples(res, model, showpars, start=0, thin=1,
                  return_lnprob=False, **extras):
-    
+    """Get samples for the parameters listed in showpars.
+    """
     nw, niter = res['chain'].shape[:-1]
     parnames = np.array(model.theta_labels())
     start_index = np.floor(start * (niter-1)).astype(int)
@@ -199,7 +209,10 @@ def hist_samples(res, model, showpars, start=0, thin=1,
     
     return flatchain, parnames[ind_show]
 
-def histfig(samples, parnames, truths=None, fax=None, truth_color='k', **kwargs):
+def histfig(samples, parnames, truths=None, fax=None,
+            truth_color='k', **kwargs):
+    """Plot a histogram of the given samples in each parameter.
+    """
     npar = len(parnames)
 
     if fax is None:
@@ -222,11 +235,13 @@ def histfig(samples, parnames, truths=None, fax=None, truth_color='k', **kwargs)
         pl.setp(ax.get_xticklabels(), fontsize=6)
     return hfig, haxes
 
-def plot_delta_params(results, models, pnames,
-                      pmap={}, plabel_map={},
-                      sfraction=0.9, thin=10,
-                      ptile=[16, 50, 84], fax=None,
-                      colors=None, labels=None):
+def deltafig(results, models, pnames, pmap={}, plabel_map={},
+             sfraction=0.9, thin=10, ptile=[16, 50, 84],
+             fax=None, colors=None, labels=None, verbose=False,
+             fractional=False, **kwargs):
+    """Make plots of the fractional uncertainty in parameters for
+    different runs.
+    """
     if fax is None:
         pfig, pax = pl.subplots()
     else:
@@ -240,7 +255,8 @@ def plot_delta_params(results, models, pnames,
         return x
         
     for res, mod, label, clr in zip(results, models, labels, colors):
-        samples, pnames_ord = hist_samples(res, mod, pnames, start=sfraction, thin=thin)
+        samples, pnames_ord = hist_samples(res, mod, pnames,
+                                           start=sfraction, thin=thin)
         truths = np.array([res['obs']['mock_params'][k][0] for k in pnames_ord])
         pct = np.percentile(samples, ptile, axis=0)
         
@@ -249,7 +265,9 @@ def plot_delta_params(results, models, pnames,
         truths = np.array([pmap.get(k, identity)(truths[i])
                            for i,k in enumerate(pnames_ord)])
             
-        delta = (pct - truths[:, None]) / truths[:, None]
+        delta = (pct - truths[:, None])
+        if fractional:
+            delta /= truths[:, None]
         pax.plot(delta[:,1], '-o', color=clr, label=label)
         pax.fill_between(np.arange(len(pnames)), delta[:,0], delta[:,2],
                          alpha=0.3, color=clr)
@@ -260,3 +278,43 @@ def plot_delta_params(results, models, pnames,
     pax.set_ylabel(r'(Post-True) / True')
     return pfig, pax
     
+def deltafig_vspar(results, models, pname, pvary, pmap={},
+                   sfraction=0.9, thin=10, ptile=[16, 50, 84],
+                   fax=None, color='k', label='', xlims=None,
+                   fractional=False, verbose=False, **kwargs):
+    """Make plots of the (fractional) uncertainty in a certain
+    parameter for different runs.
+    """
+    if fax is None:
+        pfig, pax = pl.subplots()
+    else:
+        pfig, pax = fax
+    
+    def identity(x):
+        return x
+
+    pct = np.zeros([ len(results), len(ptile)])
+    truths = np.zeros( len(results) )
+    vary_param = np.zeros( len(results) )
+    for ir, (res, mod) in enumerate(zip(results, models)):
+        samples, pname_o = hist_samples(res, mod, pname,
+                                        start=sfraction, thin=thin)
+        if verbose:
+            print(pname, ir)
+        truths[ir] = res['obs']['mock_params'][pname][0]
+        vary_param[ir] = res['obs']['mock_params'][pvary][0]
+        pct[ir,:] = np.percentile(samples, ptile)
+        # Transform the values if pmap supplied for this param
+        pct[ir,:] = pmap.get(pname, identity)(pct[ir,:])
+        truths[ir] = pmap.get(pname, identity)(truths[ir])
+        
+    delta = (pct - truths[:, None])
+    if fractional:
+        delta /= truths[:, None]
+        #title += '$/$Truth'
+    pax.plot(vary_param, delta[:,1], '-o', color=color, label=label)
+    pax.fill_between(vary_param, delta[:,0], delta[:,2],
+                     alpha=0.3, color=color)
+    pax.set_xlim(xlims)
+    
+    return pfig, pax
