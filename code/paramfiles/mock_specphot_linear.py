@@ -31,6 +31,8 @@ def load_obs(filename=None, noisefactor=1.0, **extras):
         obs = pickle.load(f)
     #obs['phot_mask'] = np.array(['sdss' in filt.name for filt in obs['filters']])
     obs['unc'] *= noisefactor
+    if obs['added_noise'] is not None:
+        obs['spectrum'] += (noisefactor - 1) * obs['added_noise'] 
     obs['noisefactor'] = noisefactor
     return obs
 

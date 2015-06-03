@@ -305,11 +305,11 @@ def ggc_mock(model, theta, sps, objname='', apply_cal=True, mask=True,
     pnoise_sigma = p/phot_snr
     if add_noise:
         noise = np.random.normal(0, 1, len(s)) * noise_sigma
-        s += noise
-        mock['added_noise'] = noise
+        s += noise.copy()
+        mock['added_noise'] = noise.copy()
         pnoise = np.random.normal(0, 1, len(p)) * pnoise_sigma
-        p += pnoise
-        mock['added_phot_noise'] = pnoise
+        p += pnoise.copy()
+        mock['added_phot_noise'] = pnoise.copy()
         
     mock['spectrum'] = s
     mock['maggies'] = p

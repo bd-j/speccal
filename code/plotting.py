@@ -250,7 +250,6 @@ def plot_delta_params(results, models, pnames,
                            for i,k in enumerate(pnames_ord)])
             
         delta = (pct - truths[:, None]) / truths[:, None]
-        print(delta)
         pax.plot(delta[:,1], '-o', color=clr, label=label)
         pax.fill_between(np.arange(len(pnames)), delta[:,0], delta[:,2],
                          alpha=0.3, color=clr)

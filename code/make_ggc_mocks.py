@@ -242,7 +242,7 @@ if __name__ == "__main__":
                                 phot_snr=10, **info)
         filename = name_template.format(caltype[info['apply_cal']], i+1,
                                         *theta)
-            print('writing to {0}'.format(filename))
-            with open(filename, 'w') as f:
-                pickle.dump(mock, f)
+        print('writing to {0}'.format(filename))
+        with open(filename, 'w') as f:
+            pickle.dump(mock, f)
         
