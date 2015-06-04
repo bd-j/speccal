@@ -66,12 +66,13 @@ if __name__ == "__main__":
         ytitle=r'$\Delta$'
         fig = pl.figure(figsize=(15,5))
         gs = [gridspec.GridSpec(2, 2) for i in range(len(runs))]
-        width, leftpad, rightpad = 1.0/len(gs), 0.08, 0.02
-        
+        leftpad, rightpad, margin = 0.06, 0.00, 0.05
+        width = (1.0 - 2*margin)/len(gs)
         for ivp, (pruns, pvary, tgs) in enumerate(zip(runs, vary_params, gs)):
             results, models = read_results(pruns)
-            left = width * ivp + leftpad
-            right =  width * (ivp+1) - rightpad
+            left = margin + width * ivp + leftpad
+            right =  margin + width * (ivp+1) - rightpad 
+            print(left, right)
             tgs.update(left=left, right=right, hspace=0.0, wspace=0.0)
             paxes = [pl.Subplot(fig, spec) for spec in tgs]
             for ip, pname in enumerate(pnames):
@@ -80,7 +81,7 @@ if __name__ == "__main__":
                                            sfraction=sfraction, thin=thin,
                                            fax=(None, dax), pmap=pmap,
                                            xlims=vary_lims[ivp],
-                                           verbose=True, fractional=False)
+                                           verbose=False, fractional=False)
                 pretty_pname = plabel_map.get(pname, pname)
                 pretty_vpname = pvlabel_map.get(pvary, pvary)
                 dax.axhline(0.0, linestyle=':', color='k')
@@ -97,7 +98,8 @@ if __name__ == "__main__":
                 else:
                     dax.set_yticks([])
                 fig.add_subplot(dax)
-        fig.show()
+        fig.savefig('../tex/figures/vary_params.pdf')
+        pl.close(fig)
                 
     if oldstyle:
         labels = [['0.3 Gyr', '1.1  Gyr', '3 Gyr', '6 Gyr', '9 Gyr'],
