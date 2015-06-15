@@ -84,7 +84,7 @@ if __name__ == "__main__":
         hfig.show()
 
     else:
-        nfig, naxes = pl.subplots(2,2, figsize=(6, 4))
+        nfig, naxes = pl.subplots(2,2, figsize=(8, 5))
         res, pr, mod = bread.read_pickles(noiseless_run,
                                           model_file=noiseless_run.replace('_mcmc','_model'))
         samples, pord = hist_samples(res, mod, pnames, thin=thin,
@@ -92,9 +92,10 @@ if __name__ == "__main__":
         ptiles = np.percentile(samples,[16, 50, 84], axis=0)
         truths = [res['obs']['mock_params'][k] for k in pord]
         for i, (ax, name) in enumerate(zip(naxes.flatten(), pnames)):
-            ax.plot(np.arange(nreal+2)-1, np.zeros(nreal+2) + ptiles[1,i], color='r')
-            ax.fill_between(np.arange(nreal+2)-1, np.zeros(nreal+2) + ptiles[0,i],
-                            np.zeros(nreal+2) + ptiles[1,i], color='red', alpha=0.3)
+            x = np.arange(nreal+2)-1
+            ax.plot(x, x*0 + ptiles[1,i], color='r')
+            ax.fill_between(x, x*0 + ptiles[0,i], x*0 + ptiles[2,i],
+                            color='red', alpha=0.3)
             ax.axhline(truths[i], color=kwargs.get('truth_color','k'),
                        label='Mock Truth')
             ax.set_ylabel(name, fontsize=8)
@@ -112,3 +113,4 @@ if __name__ == "__main__":
                 ax.errorbar([j], [ptiles[1,i]], yerr, capthick=2, color='black')
                 ax.plot([j], [ptiles[1,i]], 'ok')
         nfig.show()
+        nfig.savefig('../tex/figures/noise_realizations.pdf')
