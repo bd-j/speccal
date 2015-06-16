@@ -32,6 +32,9 @@ def read_results(runs):
         models.append(mod)
     return results, models
 
+def identity(x):
+    return x
+
 
 if __name__ == "__main__":
 
@@ -91,27 +94,39 @@ if __name__ == "__main__":
         samples, pord = hist_samples(res, mod, pnames, thin=thin,
                                      start=sfraction)
         ptiles = np.percentile(samples,[16, 50, 84], axis=0)
+        ptiles = np.array([pmap.get(k, identity)(ptiles[:,i])
+                            for i,k in enumerate(pord)])
+
         truths = [res['obs']['mock_params'][k] for k in pord]
+        truths = np.array([pmap.get(k, identity)(truths[i])
+                           for i,k in enumerate(pord)])
+
+        delta = (ptiles - truths).T
         for i, (ax, name) in enumerate(zip(naxes.flatten(), pnames)):
             x = np.arange(nreal+2)-1
-            ax.plot(x, x*0 + ptiles[1,i], color=bcolor)
-            ax.fill_between(x, x*0 + ptiles[0,i], x*0 + ptiles[2,i],
+            ax.plot(x, x*0 + delta[1,i], color=bcolor)
+            ax.fill_between(x, x*0 + delta[0,i], x*0 + delta[2,i],
                             color=bcolor, alpha=0.3)
-            ax.axhline(truths[i], color=kwargs.get('truth_color','k'),
+            ax.axhline(0, linestyle=':', color=kwargs.get('truth_color','k'),
                        label='Mock Truth')
-            ax.set_ylabel(pvlabel_map[name], fontsize=8)
+            ax.set_ylabel('$\Delta$' + plabel_map[name], fontsize=8)
             ax.set_xticklabels([])
             pl.setp(ax.get_yticklabels(), fontsize=8)
             ax.set_xlim(-0.5, nreal - 0.5)
-            
+            ax.set_ylim(-0.1, 0.1)
+            if i > 1:
+                ax.set_xlabel('Noise realization #', fontsize=8)
         for j, (res, mod) in enumerate(zip(results, models)):
             samples, pord = hist_samples(res, mod, pnames, thin=thin,
                                          start=sfraction)
             ptiles = np.percentile(samples,[16, 50, 84], axis=0)
+            ptiles = np.array([pmap.get(k, identity)(ptiles[:,i])
+                            for i,k in enumerate(pord)])
+            delta = (ptiles - truths).T
             for i, (ax, name) in enumerate(zip(naxes.flatten(), pnames)):
-                yerr = np.array([[ptiles[2,i] - ptiles[1,i]],
-                                 [ ptiles[1,i] - ptiles[0,i]]])
-                ax.errorbar([j], [ptiles[1,i]], yerr, capthick=2, color='black')
-                ax.plot([j], [ptiles[1,i]], 'ok')
+                yerr = np.array([[delta[2,i] - delta[1,i]],
+                                 [ delta[1,i] - delta[0,i]]])
+                ax.errorbar([j], [delta[1,i]], yerr, capthick=2, color='black')
+                ax.plot([j], [delta[1,i]], 'ok')
         nfig.show()
         nfig.savefig('../tex/figures/noise_realizations.pdf')

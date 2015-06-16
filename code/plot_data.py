@@ -3,7 +3,7 @@ import matplotlib.pyplot as pl
 import ggcdata, os
 
 #The speccal directory
-sdir = os.path.join.(os.environ['PROJECTS'], 'speccal')
+sdir = os.path.join(os.environ['PROJECTS'], 'speccal')
 
 ##### OBSERVATIONAL DATA ######
 
@@ -12,7 +12,7 @@ if __name__ == "__main__":
     try:
         objname = sys.argv[1]
     except:
-        objname = 'NGC7089'
+        objname = 'NGC1851'
     try:
         noisefactor = float(sys.argv[2])
     except:
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     
     datadir = os.path.join(sdir, 'data/ggclib/spectra/')
     dat = ggcdata.ggc_spec(datadir+objname, 'a', '1', fluxtype=None)
-    mdat = ggcdata.ggc_mask(dat, thresh=3)
+    mdat = ggcdata.ggc_mask(dat, thresh=3, lsf=6)
     mask = mdat['mask']
     #skymask = ggcdata.make_skymask(dat['wavelength'],
     #                               dat['sky'], thresh=3, lsf=6)

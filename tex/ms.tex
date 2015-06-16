@@ -48,17 +48,17 @@
   Probabilistic spectrophotometric inference}
 \shorttitle{Combining Spectroscopy and Photometry}
 \author{
-  BDJ\altaffilmark{\lick},
-  DRW\altaffilmark{\lick},
-  DFM\altaffilmark{\ccpp},
-  DWH\altaffilmark{\ccpp, \cds, \mpia},
-  CC\altaffilmark{\lick},
-  others}
-\shortauthors{bdj et al}
-\altaffiltext{\lick}{University of California Lick Observatory}
-\altaffiltext{\ccpp}{Center for Cosmology and Particle Physics, Department of Physics, New York University}
-\altaffiltext{\cds}{Center for Data Science, New York University}
-\altaffiltext{\mpia}{Max-Planck-Institut f\"ur Astronomie}
+%  BDJ\altaffilmark{\lick},
+%  DRW\altaffilmark{\lick},
+%  DFM\altaffilmark{\ccpp},
+%  DWH\altaffilmark{\ccpp, \cds, \mpia},
+%  CC\altaffilmark{\lick},
+  AUTHORS}
+\shortauthors{BDJ et al}
+%\altaffiltext{\lick}{University of California Lick Observatory}
+%\altaffiltext{\ccpp}{Center for Cosmology and Particle Physics, Department of Physics, New York University}
+%\altaffiltext{\cds}{Center for Data Science, New York University}
+%\altaffiltext{\mpia}{Max-Planck-Institut f\"ur Astronomie}
 
 \begin{abstract}
 In a typical spectral-fitting project,
@@ -639,24 +639,17 @@ similar to the case of the \emph{calibrated} spectrum.
 
 \subsection{Real Data: \excluster} 
 We first infer the parameters of interest $\theta$ for a calibrated
-spectrum of one of the clusters, \excluster, using the full YY-band
-photometry. In Figure \ref{fig:inferred_spectrum} we show the spectra
+spectrum of one of the clusters, \excluster, using the $griz$-band
+photometry. In Figure \ref{fig:real_calibrated} we show the spectra
 that result from draws of the parameters $[\theta,\alpha]$ from the
 posterior distribution, as well as several of the individual
 components of the model constructed from each draw. Figure
-\ref{fig:inferred_spectrum} also shows the calibrated spectrum on
-which the priors were conditioned, and residuals between the posterior
-models and the observed data.  
-
-In Figure \ref{fig:inferred_sed} we show the corresponding SED for the
-posterior parameter draws, compared to the observed SED. There is some
-tension between the modeled and observed SEDs, I'm not quite sure
-why. Finally, In Figure \ref{fig:inferred_params} we show the
-marginalized and joint PDFs for a subset of the full model parameters.
+\ref{fig:real_calibrated} also shows the marginalized PDFs for a
+subset of the full model parameters.
 
 It is possible to reconstruct the inferred total multiplicative
 calibration vector for each draw of the model parameters (Equation
-\ref{eq:calibration}) If the spectrophotometric calibration were
+\ref{eq:calibration}). If the spectrophotometric calibration were
 perfect and we had correctly inferred it, then we would expect this
 vector to be constant as a function of wavelength.
 
@@ -678,7 +671,8 @@ on the calibration parameters of the model, inform the construction of
 the calibration model (including the form of the covariance kernel),
 or approximately remove gross features that are difficult to model
 parametrically or via a Gaussian Process.  {\color{blue} Discuss more
-complicated covariance kernels, multiple kernels.}
+complicated covariance kernels, multiple kernels, combining fractional
+and absolute covariance amplitudes.}
 
 {\color{blue} BDJ words (and experiments?) about the gains that might
 be made by including photometry over a large range in wavelength with
@@ -693,7 +687,7 @@ continuum normalization when fitting spectroscopy.}
 
 Our strategy is easily extensible to more complicated models, which
 include for example night sky-line emission in the spectroscopy
-\citep[e.g.,][]{gullikson14} or residuals from an intial sky-line
+\citep[e.g.,][]{gullikson14} or residuals from an initial sky-line
 subtraction and uncertainties in wavelength calibration
 \citep[e.g.,][]{walker15}. Furthermore, more complex physical models
 may be considered for the mean object model, for example including SFH
@@ -704,9 +698,11 @@ In a heirarchical modelling context it should be possible to use the
 inferred calibration parameters, along with additional information
 about the observations (e.g. airmass, instrument temperature), to in
 turn infer the parameters of a generative model for the calibration
-\citep[e.g.][]{spectrophot}. This generative model can then be used in
-the (probabilistic) calibration of objects where the spectra are
-difficult to model explicitly.
+parameters \citep[e.g.][]{spectrophot}. This generative model can then
+be used in the (probabilistic) calibration of objects where the
+spectra are difficult to model explicitly.  One aspect of such
+modelling might entail inferring the priors on the Gaussian Process
+parameters $a$ and $\ell$.
 
 Limitations.  The strategy we have advocated has several limitations.
 First, it requires a generative model for the spectrum of the object
@@ -722,11 +718,9 @@ differences between spectroscopic and photometric apertures often mean
 that the photometry and the spectroscopy are sampling slightly
 different physical regions.  The correct response to this situation is
 to explicitly model the differences, incorporating prior information
-about the spatial variation of physical properties.  Fourth, the
-method will break down at very low S/N due to the logarithmic
-formulation of the residual in equation~(\ref{eq:spectroscopicLF}).
-Finally, this method is computationally intensive and expensive, since
-we are constantly inverting largish matrices.
+about the spatial variation of physical properties.  Finally, this
+method is computationally intensive and expensive, since we are
+constantly inverting largish matrices.
 
 {\color{blue} BDJ - This paragraph is probably too calibration
 focused. We want to focus more on spec + phot combinations.  At least,
@@ -748,9 +742,10 @@ the object and the level of uncertainty in the observed object
 spectrum -- this is why calibration objects are typically bright and
 simple.  If one is interested in inferring parameters of interest of
 spectral models of astrophysical objects, then there is often no
-reason not to use those objects themselves as calibration objects,
+reason not to use those objects themselves as calibrators,
 especially if you expect your calibration to be spatially or 
-temporally variable, or to change with the brightness of the object.
+temporally variable, or to change with the brightness or other
+properties of the object.
 
 {\color{blue} BDJ misc issues, collected here in case we want to
 address them and to keep me from cluttering up the main text:} Model
@@ -768,11 +763,11 @@ This version of the paper was generated
   with git hash \texttt{\githash\,(\gitdate)}.
 
 \acknowledgements
-Thanks to X. for bringing us beer.
-DRW is supported by NASA through Hubble Fellowship grant
-  HST-HF-51331.01 awarded by the Space Telescope Science Institute.
-BDJ and DRW acknowledge the hospitality of Hans-Walter Rix and the MPIA. 
-CC is supported by Packard and Sloan Foundation Fellowships. 
+%Thanks to X. for bringing us beer.
+%DRW is supported by NASA through Hubble Fellowship grant
+%  HST-HF-51331.01 awarded by the Space Telescope Science Institute.
+%BDJ and DRW acknowledge the hospitality of Hans-Walter Rix and the MPIA. 
+%CC is supported by Packard and Sloan Foundation Fellowships. 
 This research made extensive use of NASA's Astrophysics Data System Bibliographic Services. 
 In large part, analysis and plots presented in this paper utilized
   iPython and packages from NumPy, SciPy, and Matplotlib
