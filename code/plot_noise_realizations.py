@@ -53,6 +53,7 @@ if __name__ == "__main__":
     nreal = len(runs)
     results, models = read_results(runs)
     noiseless_run = 'results/ggc_mock_specphot_linear.u0.t12.0_z0.0_a0.5_5313542_1432675345_mcmc'
+    bcolor = 'magenta'
 
     if as_hist:
         hfig, haxes = pl.subplots(2,2)
@@ -62,7 +63,7 @@ if __name__ == "__main__":
             for i, (ax, name) in enumerate(zip(haxes.flatten(), pnames)):
                 ax.hist(samples[:,i], bins=kwargs.get("bins", 50),
                         histtype="stepfilled",
-                        color=kwargs.get("color", "b"),
+                        color=kwargs.get("color", bcolor),
                         alpha=kwargs.get("alpha",0.3))
         
         res, pr, mod = bread.read_pickles(noiseless_run,
@@ -73,7 +74,7 @@ if __name__ == "__main__":
         for i, (ax, name) in enumerate(zip(haxes.flatten(), pnames)):
             ax.hist(samples[:,i], bins=kwargs.get("bins", 50),
                     histtype="stepfilled",
-                    color="r",
+                    color=bcolor,
                     alpha=kwargs.get("alpha",0.3))
             ax.axvline(truths[i], color=kwargs.get('truth_color','k'),
                        label='Mock Truth')
@@ -93,12 +94,12 @@ if __name__ == "__main__":
         truths = [res['obs']['mock_params'][k] for k in pord]
         for i, (ax, name) in enumerate(zip(naxes.flatten(), pnames)):
             x = np.arange(nreal+2)-1
-            ax.plot(x, x*0 + ptiles[1,i], color='r')
+            ax.plot(x, x*0 + ptiles[1,i], color=bcolor)
             ax.fill_between(x, x*0 + ptiles[0,i], x*0 + ptiles[2,i],
-                            color='red', alpha=0.3)
+                            color=bcolor, alpha=0.3)
             ax.axhline(truths[i], color=kwargs.get('truth_color','k'),
                        label='Mock Truth')
-            ax.set_ylabel(name, fontsize=8)
+            ax.set_ylabel(pvlabel_map[name], fontsize=8)
             ax.set_xticklabels([])
             pl.setp(ax.get_yticklabels(), fontsize=8)
             ax.set_xlim(-0.5, nreal - 0.5)

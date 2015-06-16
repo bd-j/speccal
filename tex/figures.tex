@@ -9,27 +9,20 @@ Bottom: The spectrophotometric calibration vector determined by
 \end{center}
 \end{figure}
 
-\begin{figure}[h!]
-%\includegraphics[width = 0.5 \textwidth]{figures/dfig_b192-g242_020.png}
-\caption{A mock spectrum for a star cluster with the fiducial
-parameters $10^5 M_\odot$ total stellar mass, an age of 9 Gyr, solar
-metallicity, and $A_V=0.5$ mag. \label{fig:mock_data}}
-\end{figure}
-
 
 \begin{figure*}[h!]
-\includegraphics[width=\textwidth]{figures/ideal.pdf}
+\includegraphics[width=0.5 \textwidth]{figures/ideal.pdf}
 \caption{Results of inference from a mock spectrum and a single
   photometric data point where the spectrophotometric calibration is
   assumed to be perfectly known. 
-Top Left: The mock observed spectrum ({\it black}) is shown as well as
-YY model spectra constructed from draws from the posterior PDFs of the
-model parameters.
-Bottom Right: Marginalized posterior PDFs for several of the physical
+Top: Model spectra ({\it green}) and photometry ({\it orange})
+constructed from draws from the posterior PDFs of the model
+parameters, compared to the true intrinsic spectroscopy and photomtry
+({\it black})
+Bottom: Marginalized posterior PDFs for several of the physical
 parameters of interest.  The input mock parameters are shown as
 vertical black lines.
-{\color{red} Remove calibration plot and intrinsic plot, since it is
-  the same as observed spectrum.  Show residuals.}
+{\color{red} Show residuals.}
 \label{fig:speconly_ideal}}
 \end{figure*}
 
@@ -39,16 +32,17 @@ vertical black lines.
 \caption{Results of inference from a \emph{perfectly calibrated} mock
   spectrum and a single photometric data point, where uncertainties in
   the calibration are modeled.
-Top Left: The mock observed spectrum ({\it black}) is shown as well as
-YY model spectra constructed from draws from the posterior PDFs of the
-model parameters, including calibration parameters {\it green}.
+Top Left: The uncertainty normalized residuals between the mock
+observed spectrum ({\it black}) and YY model spectra constructed from
+draws from the posterior PDFs of the model parameters, including
+calibration parameters {\it blue}.
 Bottom Left: In this case the true calibration vector ({\it black}) is a constant.
-Posterior samples of the inferred calibration vector ({\it green}) include both
+Posterior samples of the inferred calibration vector ({\it blue}) include both
 the polynomial and the Gaussian Process mean prediction (Equation
 \ref{eq:calibration}).
 Top Right: Samples of the posterior prediction for the
-\emph{intrinsic} spectrum ({\it green}) as well as for the photometry
-({\it magenta}).  The true mock photometry is also shown ({\it
+\emph{intrinsic} spectrum ({\it blue}) as well as for the photometry
+({\it orange}).  The true mock photometry is also shown ({\it
 black}).
 Bottom Right: Marginalized posterior PDFs for several of the physical
 parameters of interest.  The input mock parameters are shown as
@@ -74,8 +68,8 @@ vertical lines.
   redshift is fixed {\color{blue} (should just use a tight prior)} and
  spectroscopic calibration parameters are not modeled.
 Top: The intrinsic spectrum. Samples of the posterior prediction
-for the \emph{intrinsic} spectrum ({\it green}) and the
-photometry ({\it magenta}).  The mock photometry is also shown
+for the \emph{intrinsic} spectrum ({\it red}) and the
+photometry ({\it orange}).  The mock photometry is also shown
 ({\it black}).
 Right: Marginalized posterior PDFs for several of the physical
 parameters of interest.  The input mock parameters are shown as
@@ -86,20 +80,27 @@ vertical lines.
 \begin{figure*}[h!]
 \includegraphics[width=\textwidth]{figures/specphot_uncalibrated.pdf}
 \caption{Results of inference from the combination of
-  \emph{uncalibrated} spectroscopy and all the photometric data
-  points.  Panels and colors are as in Figure \ref{fig:speconly_calibrated}.
+\emph{uncalibrated} spectroscopy and all the photometric data points.
+Panels and are as in Figure \ref{fig:speconly_calibrated}.
 \label{fig:specphot_uncalibrated}}
 \end{figure*}
 
+\begin{figure*}[h!]
+%\includegraphics[width=\textwidth]{figures/specphot_uncalibrated.pdf}
+\caption{Joint Posterior PDFs for the calibration parameters inferred
+from the combination of \emph{uncalibrated} spectroscopy and all the
+photometric data points.
+\label{fig:cal_posterior}}
+\end{figure*}
 
 \begin{figure*}[h!]
 \includegraphics[width=\textwidth]{figures/combined_post.pdf}
-\caption{Joint posterior PDFs for several physical parameters. The
-posteriors obtained from photometry only are in {\it red}, from
-\emph{uncalibrated} spectroscopy and a single photometric point in
-{\it blue}, and from the photometry and spectroscopy combined in {\it
-magenta}.  The contours are 1 and 2-sigma contours. The true values
-are indicated by {\it black points}.
+\caption{Corner plot of joint and marginal posterior PDFs for several
+physical parameters. The posteriors obtained from photometry only are
+in {\it red}, from \emph{uncalibrated} spectroscopy and a single
+photometric point in {\it blue}, and from the photometry and
+spectroscopy combined in {\it magenta}.  The contours are 1 and
+2-sigma contours. The true values are indicated by {\it black points}.
 \label{fig:combined_posterior}}
 \end{figure*}
 
@@ -107,19 +108,24 @@ are indicated by {\it black points}.
 \begin{figure*}[h!]
 \includegraphics[width=\textwidth]{figures/noise_realizations.pdf}
 \caption{Percentiles of the posterior PDFs for four of the parameters,
-  obtained from multiple noise realizations of the
-  mock photometry and uncalibrated spectra.  The input mock parameters are shown as a 
- black horizontal line, The red shaded region gives the 16th to 84th percentile
- range for a noiseless mock.
+obtained from multiple noise realizations of the mock photometry and
+uncalibrated spectra.  The input mock parameters are shown as a black
+horizontal line, The green shaded region gives the 16th to 84th
+percentile range for a noiseless mock.
 \label{fig:noise_realizations}}
 \end{figure*}
 
 
 \begin{figure*}[h!]
 \includegraphics[width=\textwidth]{figures/vary_params.pdf}
-\caption{Offset from the input parameters of the medians of the
-posterior PDFs for  inference from mock spectra and
-photometry, as a function of the mock parameter that is varied.
+\caption{Offset of the posteriors from the input parameters for
+inference from mock spectra and photometry, as a function of the mock
+parameter that is varied.  The medians of the posterior PDFs are shown
+as connected black circles, the 16th and 84th percentile of the
+posteriors are indicated by the gray shaded region.
+Left: Results when varying age.
+Middle: Results when varying metallicity.
+Right: Results when varying dust attenuation.
  \label{fig:mock_parameter_space}}
 \end{figure*}
 
@@ -136,36 +142,39 @@ bands ({\it orange}).
 
 
 \begin{figure*}[h!]
-%\includegraphics[width=\textwidth]{figures/vary_nphot.png}
-\caption{Inference from a real, calibrated, spectrum.  Top left:
-  Observed spectrum and posterior samples thereof.  Bottom left:
-  residuals.  Top right: inferred calibration vector, samples.
-  Bottom right: posterior PDFs (corner plot?) for physical parameters.
+\includegraphics[width=\textwidth]{figures/real_calibrated.pdf}
+\caption{Inference from a real, \emph{calibrated}, spectrum. 
+ Top left: Residuals.  
+Bottom left: Inferred calibration vactor.  
+Top right: Inferred instrinsic SED.
+Bottom right: posterior PDFs for selected physical parameters.
 \label{fig:real_calibrated}}
 \end{figure*}
 
 \begin{figure*}[h!]
-%\includegraphics[width=\textwidth]{figures/vary_nphot.png}
-\caption{Inference from a real, uncalibrated, spectrum.  Top left:
-  Observed spectrum and posterior samples thereof.  Bottom left:
-  residuals.  Top right: inferred calibration vector, samples.
-  Bottom right: posterior PDFs (corner plot?) for physical parameters.
+\includegraphics[width=\textwidth]{figures/real_uncalibrated.pdf}
+\caption{Inference from a real, \emph{uncalibrated}, spectrum.   
+Top left: Residuals.  
+Bottom left: Inferred calibration vactor.  
+Top right: Inferred instrinsic SED.
+Bottom right: posterior PDFs for selected physical parameters.
 \label{fig:real_uncalibrated}}
 \end{figure*}
 
 \begin{figure*}[h!]
-%\includegraphics[width=\textwidth]{figures/vary_nphot.png}
-\caption{Ratio of the calibration vector inferred from the
+%\includegraphics[width=\textwidth]{figures/inferred_calibration.pdf}
+\caption{Left: Ratio of the calibration vector inferred from the
   real uncalibrated spectrum to that inferred from the real calibrated
   spectrum ({\it green}). Taking the ratio reduces the effects of model
   imperfections and shows how well we are able to infer the
   calibration vector of \citet{schiavon05} ({\it black}).  
+Right: Joint posterior PDFs for the inferred calibration parameters.
 \label{fig:real_calibration_ratio}}
 \end{figure*}
 
 
 \begin{figure*}[h!]
-%\includegraphics[width=\textwidth]{figures/vary_nphot.png}
+%\includegraphics[width=\textwidth]{figures/real_phys_posterior.png}
 \caption{Inferred parameters for \excluster.  We show the inference from the
   calibrated spectrum ({\it red}), from the uncalibrated spectrum
   ({\it blue}), and from the CMD ({\it black}).

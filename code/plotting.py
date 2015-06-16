@@ -111,7 +111,8 @@ def theta_samples(res, samples=[1.0], start=0.0, thin=1):
     return thetas, start_index, np.floor(np.array(samples) * (ns-1)).astype(int)
 
 def calfig(wave, calvec, specvecs, norm=1.0,
-           labelprefix='Mock', fax=None):
+           labelprefix='Mock', fax=None,
+           basecolor = 'green'):
     """Plot the calibration and posterior samples of it.
     """
     if fax is None:
@@ -128,7 +129,7 @@ def calfig(wave, calvec, specvecs, norm=1.0,
         else:
             label = None
         cax.plot(wave, norm * specs[1],
-                 color='green', alpha=0.3, label=label)
+                 color=basecolor, alpha=0.3, label=label)
     
     return cfig, cax
 
@@ -156,8 +157,36 @@ def obsfig(wave, obsvec, specvecs, unc=None,
              linewidth=1.0, alpha=1.0)
     return ofig, oax
 
+def residualfig(wave, obsvec, specvecs, unc=None, chi=False,
+                basecolor=None, fax=None):
+    if fax is None:
+        rfig, rax = pl.subplots()
+    else:
+        rfig, rax = fax
+
+    if chi:
+        #normalize residuals by the uncertainty
+        chi_unc = unc.copy()
+    else:
+        chi_unc = 1.0
+        if unc is not None:
+            x, y, e = wave, obsvec, unc
+            rax.fill_between(x, -e, e, facecolor='grey', alpha=0.3)
+    # Plot posterior samples of the observed spectrum as a residual
+    for i, specs in enumerate(specvecs):
+        if i==0:
+            label = 'Posterior samples'
+        else:
+            label = None
+        rax.plot(wave, (specs[3] - obsvec) / chi_unc,
+                 color=basecolor, alpha=0.3, label=label)
+    rax.axhline(0.0, linestyle=':', color='k')
+    return rfig, rax
+                
+        
 def sedfig(wave, specvecs, phot, photvecs, norm = 1.0,
-            labelprefix='Mock', fax=None, peraa=False):
+            labelprefix='Mock', fax=None, peraa=False,
+            basecolor='green', pointcolor='magenta', **kwargs):
     """Plot the photometric SED, posterior samples of it, and
     posterior samples of the intrinsic spectrum.
     """
@@ -181,9 +210,9 @@ def sedfig(wave, specvecs, phot, photvecs, norm = 1.0,
         else:
             label = None
         sax.plot(wave, specs[0] * sconv,
-                 color='green', alpha=0.3, label=label)
+                 color=basecolor, alpha=0.3, label=label)
         sax.plot(pwave, seds[0] * pconv, markersize=8.0, linestyle='',
-                 marker='o', color='magenta', label=label)
+                 marker='o', color=pointcolor, label=label)
 
     sax.errorbar(pwave, sed * pconv, yerr=sed_unc * pconv,
                  marker='o', markersize=8.0,
@@ -210,7 +239,7 @@ def hist_samples(res, model, showpars, start=0, thin=1,
     return flatchain, parnames[ind_show]
 
 def histfig(samples, parnames, truths=None, fax=None,
-            truth_color='k', **kwargs):
+            truth_color='k', basecolor='green', **kwargs):
     """Plot a histogram of the given samples in each parameter.
     """
     npar = len(parnames)
@@ -225,7 +254,7 @@ def histfig(samples, parnames, truths=None, fax=None,
     for i, (ax, name) in enumerate(zip(haxes.flatten(), parnames)):
         ax.hist(samples[:,i], bins=kwargs.get("bins", 50),
                 histtype="stepfilled",
-                color=kwargs.get("color", "k"),
+                color=basecolor,
                 alpha = 0.5,
                 label = 'posterior PDF')
         if truths is not None:

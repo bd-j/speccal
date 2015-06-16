@@ -13,7 +13,7 @@ sps = sps_basis.StellarPopBasis()
 import george
 kernel = (george.kernels.WhiteKernel(0.0) +
           0.0 * george.kernels.ExpSquaredKernel(0.0))
-gp = george.GP(kernel)#, solver=george.HODLRSolver)
+#gp = george.GP(kernel)#, solver=george.HODLRSolver)
 gp = ExpSquared(None, None)
 
 if __name__ == "__main__":
@@ -23,23 +23,28 @@ if __name__ == "__main__":
     else:
         resfile = 'results/ggc_mock.u0.t1.0_z0.0_a0.5_1426268715_mcmc'
     model_file = resfile.replace('_mcmc','_model')
+    bcolor='magenta'
+    pcolor='orange'
     nsample = 10
     
     res, pr, mod = bread.read_pickles(resfile, model_file=model_file)
     obsdat = res['obs']
     
+    # Get samples and component spectra
     fsamples = np.random.uniform(0,1,nsample)
     thetas, start, samples = theta_samples(res, samples=fsamples, start=0.95, thin=1)
     fwave, _, _, fspecvecs = comp_samples_fullspec(thetas, mod, obsdat,
                                                    sps=sps, gp=None)
-    mwave, mospec, mounc, specvecs = comp_samples(thetas, mod, obsdat, sps=sps,
-                                                  gp=gp)
+    mwave, mospec, mounc, specvecs = comp_samples(thetas, mod, obsdat,
+                                                  sps=sps, gp=gp)
     pwave, mosed, mosed_unc, pvecs = comp_samples_phot(thetas, mod, obsdat, sps=sps)
 
+    # Get truth spectrum and sed
     tspec, tphot, ttheta = true_sed(mod, obsdat, sps=sps, fullspec=True)
     twave = sps.ssp.wavelengths
     tspec /= obsdat['normalization_guess']
     
+    # Get calibration vector
     calvec = obsdat['calibration']
     if np.size(calvec) == 1:
         calvec = np.zeros(len(mwave)) + calvec
@@ -47,12 +52,13 @@ if __name__ == "__main__":
         calvec = calvec[obsdat['mask']]
     norm = obsdat['normalization_guess'] * obsdat['rescale']
 
-    # Set up left hand side
+    ### Build Figure ###
     fig = pl.figure(figsize=(10,8))
+    # Set up left hand side
     gs1 = gridspec.GridSpec(3, 1)
     gs1.update(left=0.05, right=0.48, wspace=0.05)
-    oax = pl.subplot(gs1[:-1,0])
-    cax = pl.subplot(gs1[-1,0])
+    oax = pl.subplot(gs1[0,0])
+    cax = pl.subplot(gs1[1:,0])
 
     # Set up right hand side
     gs2 = gridspec.GridSpec(4, 2)
@@ -61,30 +67,33 @@ if __name__ == "__main__":
     haxes = np.array([pl.subplot(gs2[i, j]) for i in [2,3] for j in [0,1]])
 
     # Calibration figure
-    cfig, cax = calfig(mwave, calvec, specvecs, norm=norm, fax=(None, cax))
+    cfig, cax = calfig(mwave, calvec, specvecs, norm=norm, fax=(None, cax),
+                       basecolor=bcolor)
     cax.set_ylabel(r'Calibration $F_{{obs}}/F_{{\lambda, intrinsic}}$')
     cax.legend(loc=0, prop={'size':8})
-
+    cax.set_ylim(0.2, 1.6)
     # Intrinsic SED figure
     sfig, sax = sedfig(fwave, fspecvecs, [pwave, mosed, mosed_unc], pvecs,
                        norm=1/obsdat['normalization_guess'], fax=(None,sax),
-                       peraa=True)
+                       peraa=True, basecolor=bcolor, pointcolor=pcolor)
     sax.plot(twave, tspec, color='black', label='True spectrum', alpha=0.6)
     sax.set_xscale('log')
     sax.set_xlim(2.5e3, 1.6e4)
     sax.legend(loc=0, prop={'size':12})
 
     # Observed spectrum figure
-    ofig, oax = obsfig(mwave, mospec, specvecs, unc=mounc, fax=(None,oax))
-    oax.set_ylabel(r'Observed Spectrum $F_{{obs}}$ (unknown units)')
+    ofig, oax = residualfig(mwave, mospec, specvecs, unc=mounc,
+                            fax=(None,oax), chi=True, basecolor=bcolor)
+    oax.set_ylabel(r'$\chi$')
     oax.legend(loc=0, prop={'size':8})
+    oax.set_ylim(-1,1)
 
     # Posterior parameter histograms
     pnames = ['mass', 'tage', 'dust2', 'zmet']
     samples, pnames_ord = hist_samples(res, mod, pnames, start=0.5, thin=10)
     truths = [obsdat['mock_params'][k] for k in pnames_ord]
     hfig, haxes = histfig(samples, pnames_ord, truths = truths,
-                          color='green', fax=(None, haxes))
+                          basecolor=bcolor, fax=(None, haxes))
     haxes[0].legend(loc=0, prop={'size':8})
 
     # Save
