@@ -11,10 +11,14 @@ from plotting import *
 
 sps = sps_basis.StellarPopBasis()
 #gp = GaussianProcess(None, None)
-import george
-kernel = (george.kernels.WhiteKernel(0.0) +
-          0.0 * george.kernels.ExpSquaredKernel(0.0))
-gp = george.GP(kernel)#, solver=george.HODLRSolver)
+try:
+    import george
+    kernel = (george.kernels.WhiteKernel(0.0) +
+            0.0 * george.kernels.ExpSquaredKernel(0.0))
+    gp = george.GP(kernel)#, solver=george.HODLRSolver)
+except:
+    pass
+
 gp = ExpSquared(None, None)
 
 if __name__ == "__main__":

@@ -13,7 +13,7 @@ run_params = {'verbose':True,
               'ftol':0.5e-4, 'maxfev':5000,
               'nwalkers':64,
               'nburn':[64, 64, 128, 128, 256], 'niter':512,
-              'initial_disp':0.1,
+              'initial_disp':0.3,
               'debug':False,
               'logify_spectrum':False,
               'normalize_spectrum':True,
@@ -82,10 +82,10 @@ model_params.append({'name': 'mass', 'N': 1,
 
 model_params.append({'name': 'tage', 'N': 1,
                         'isfree': True,
-                        'init': 5.0,
+                        'init': 10.0,
                         'units': 'Gyr',
                         'prior_function': priors.tophat,
-                        'prior_args':{'mini':1.0, 'maxi':15.0}})
+                        'prior_args':{'mini':5.0, 'maxi':15.0}})
 
 model_params.append({'name': 'zmet', 'N': 1,
                         'isfree': True,
@@ -207,24 +207,26 @@ model_params.append({'name': 'spec_norm', 'N':1,
 
 model_params.append({'name': 'gp_jitter', 'N':1,
                         'isfree': True,
-                        'init': 0.0001,
+                        'init': 0.05,
                         'units': 'spec units',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.0, 'maxi':0.2}})
+                        'prior_args': {'mini':0.01, 'maxi':0.1}})
 
 model_params.append({'name': 'gp_amplitude', 'N':1,
                         'isfree': True,
-                        'init': 0.0001,
+                        'init': 0.04,
                         'units': 'spec units',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.0, 'maxi':0.2}})
+                        'prior_args': {'mini':0.02, 'maxi':0.1}})
 
 model_params.append({'name': 'gp_length', 'N':1,
                         'isfree': True,
-                        'init': 200.0,
+                        'init': 300.0,
                         'units': r'$\AA$',
-                        'prior_function': priors.lognormal,
-                        'prior_args': {'log_mean':np.log(200.0)+0.5**2, 'sigma':0.5}})
+#                        'prior_function': priors.lognormal,
+#                        'prior_args': {'log_mean':np.log(200.0)+0.5**2, 'sigma':0.5}})
+                        'prior_function': priors.tophat,
+                        'prior_args': {'mini':250.0, 'maxi':350.0}})
 
 model_params.append({'name': 'phot_jitter', 'N':1,
                         'isfree': True,

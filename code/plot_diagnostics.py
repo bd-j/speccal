@@ -20,14 +20,14 @@ if __name__ == '__main__':
 
     showpars_phys = ['mass', 'tage', 'zmet', 'dust2', 'zred', 'sigma_smooth']
     showpars_cal = ['poly_coeffs_1', 'poly_coeffs_2', 'spec_norm',
-                    'gp_length', 'gp_amplitude', 'gp_jitter']
+                    'gp_length', 'gp_amplitude', 'gp_jitter', 'phot_jitter']
 
     showpars_pc = ['mass', 'tage', 'dust2', 'zmet',
                    'spec_norm', 'poly_coeffs_1', 'poly_coeffs_2']
     
     result, pr, model = bread.read_pickles(resfile, model_file=model_file)
     ns = result['chain'].shape[0] * result['chain'].shape[1]
-    start = int(result['chain'].shape[1]/2)
+    start = int(result['chain'].shape[1]*0.75)
     thin = 2
     
     #sys.exit()
