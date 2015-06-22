@@ -1,6 +1,6 @@
 #!bin/sh
 
-# First we make the mocks
+# First we make the mocks with fiducial parameters
 ft="9.0"
 fz="0.0"
 fa="0.5"
