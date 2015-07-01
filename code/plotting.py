@@ -55,9 +55,9 @@ def comp_samples(thetas, model, obs, sps=None, gp=None):
             full_cal = cal + delta/mu
             mod = cal * mu + delta
             residual  = mospec - mod
-            chi = (mospec - mod) / mounc
+            chi = residual / mounc
         specvecs += [ [mu, full_cal, delta, mod,
-                       residual, chi]]
+                       residual, chi, cal]]
             
     return wave, mospec, unc, specvecs
 
@@ -122,26 +122,41 @@ def theta_samples(res, samples=[1.0], start=0.0, thin=1):
     thetas = [flatchain[s,:] for s in np.floor(np.array(samples) * (ns-1)).astype(int)]
     return thetas, start_index, np.floor(np.array(samples) * (ns-1)).astype(int)
 
-def calfig(wave, calvec, specvecs, norm=1.0,
-           labelprefix='Mock', fax=None,
-           basecolor = 'green'):
+def calfig(wave, calvec, specvecs, obsvec=None, norm=1.0,
+           mlabel='Mock Truth', fax=None,
+           basecolor='green', caltype='full', **extras):
     """Plot the calibration and posterior samples of it.
+
+    :param caltype: (default: 'full')
+        The calibration type to plot.  One of 'full'|'gp'|'poly'|'total'
+           
     """
-    if fax is None:
-        cfig, cax = pl.subplots()
-    else:
-        cfig, cax = fax
-    #plot the calibration vector 
-    cax.plot(wave, calvec, color='black', label=labelprefix+' Truth',
-             linewidth=3.0)
+    cfig, cax = fax
+    if caltype == 'full':
+        samples = [norm * spec[1] for spec in specvecs]
+        cplot = True
+    elif caltype == 'gp':
+        samples = [norm * spec[2]/spec[0] for spec in specvecs]
+        cplot = False
+    elif caltype == 'poly':
+        samples = [norm * spec[6] for spec in specvecs]
+        cplot = True
+    elif caltype == 'total':
+        samples = [norm * obsvec/spec[0] for spec in specvecs]
+        cplot = True
+
+    if cplot:
+        #plot the calibration vector 
+        cax.plot(wave, calvec, color='black', label=mlabel,
+                 linewidth=3.0)
     # and posterior samples of it
-    for i, specs in enumerate(specvecs):
+    for i, specs in enumerate(samples):
         if i==0:
             label = 'Posterior sample'
         else:
             label = None
-        cax.plot(wave, norm * specs[1],
-                 color=basecolor, alpha=0.3, label=label)
+        cax.plot(wave, specs, label=label,
+                 color=basecolor, alpha=0.3)
     
     return cfig, cax
 
