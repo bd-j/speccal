@@ -2,6 +2,18 @@ import numpy as np
 import matplotlib.pyplot as pl
 import bsfh.read_results as bread
 from copy import deepcopy
+import matplotlib
+
+newcolors = {'blue':u'#5DA5DA',
+             'orange': u'#FAA43A',
+             'green': u'#60BD68',
+             'red': u'#F15854',
+             'magenta':u'#FF70B1',
+             'cyan': u'#39CCCC',
+             'yellow': u'#FFDC00',
+             'maroon': u'#85144B',
+            }
+matplotlib.colors.cnames.update(newcolors)
 
 def comp_samples(thetas, model, obs, sps=None, gp=None):
     """Different components of the model for a given set of thetas.
@@ -215,8 +227,9 @@ def sedfig(wave, specvecs, phot, photvecs, norm = 1.0,
                  marker='o', color=pointcolor, label=label)
 
     sax.errorbar(pwave, sed * pconv, yerr=sed_unc * pconv,
-                 marker='o', markersize=8.0,
-                 color='black', linestyle='', label=labelprefix+' Photometry')
+                 marker='o', markersize=5.0,
+                 color='white', alpha=0.5, mec='black', mew=2,
+                 linestyle='', label=labelprefix+' Photometry')
     sax.set_ylabel(ylabel)
     return sfig, sax
 
@@ -239,7 +252,8 @@ def hist_samples(res, model, showpars, start=0, thin=1,
     return flatchain, parnames[ind_show]
 
 def histfig(samples, parnames, truths=None, fax=None,
-            truth_color='k', basecolor='green', **kwargs):
+            truth_color='k', basecolor='green', pname_map={},
+            **kwargs):
     """Plot a histogram of the given samples in each parameter.
     """
     npar = len(parnames)
@@ -252,14 +266,18 @@ def histfig(samples, parnames, truths=None, fax=None,
         hfig, haxes = fax
         
     for i, (ax, name) in enumerate(zip(haxes.flatten(), parnames)):
-        ax.hist(samples[:,i], bins=kwargs.get("bins", 50),
+        if name == 'mass':
+            rescale = 1e5
+        else:
+            rescale = 1
+        ax.hist(samples[:,i]/rescale, bins=kwargs.get("bins", 50),
                 histtype="stepfilled",
                 color=basecolor,
                 alpha = 0.5,
                 label = 'posterior PDF')
         if truths is not None:
-            ax.axvline(truths[i], color=truth_color, label='Mock Truth')
-        ax.set_xlabel(name, fontsize=6)
+            ax.axvline(truths[i]/rescale, color=truth_color, label='Mock Truth', linestyle='--')
+        ax.set_xlabel(pname_map.get(name, name), fontsize=6)
         ax.set_yticklabels([])
         pl.setp(ax.get_xticklabels(), fontsize=6)
     return hfig, haxes

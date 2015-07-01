@@ -9,10 +9,10 @@ python make_ggc_mocks #$ft $fz $fa
 
 ### Then we fit the mocks and assign output names to variables
 ./runjobs.sh
-specphot_ideal= ""
-speconly_cal=""
-speconly_uncal=""
-specphot_uncal=""
+specphot_ideal="results/ggc_mock_ideal.c0.t9.0_z0.0_a0.5_1430261146_mcmc"
+speconly_cal="results/ggc_mock_speconly.c0.t9.0_z0.0_a0.5_1430808300_mcmc"
+speconly_uncal="results/ggc_mock_speconly.u0.t9.0_z0.0_a0.5_1431313829_mcmc"
+specphot_uncal="results/ggc_mock_specphot_linear.u0.t9.0_z0.0_a0.5_5280432_1431898211_mcmc"
 photonly=""
 
 noise_runs="ls results/ggc_mock_specphot_linear.u[1-9]*.${fall}_*_mcmc"
@@ -29,10 +29,10 @@ python plot_data.py
 python plot_ideal_dashboard.py $specphot_ideal green
 cp "${specphot_ideal%_mcmc}_dashboard.pdf" ../tex/figures/ideal.pdf
 #fig 3
-python plot_speconly_dashboard.py $speconly_cal blue
+python plot_dashboard.py $speconly_cal blue
 cp "${speconly_cal%_mcmc}_dashboard.pdf" ../tex/figures/speconly_calibrated.pdf
 #fig 4
-python plot_speconly_dashboard.py $speconly_uncal blue
+python plot_dashboard.py $speconly_uncal blue
 cp "${speconly_uncal%_mcmc}_dashboard.pdf" ../tex/figures/speconly_uncalibrated.pdf
 #fig 5
 python plot_photonly_dashboard.py $photonly red
