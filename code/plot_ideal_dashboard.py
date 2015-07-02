@@ -31,20 +31,6 @@ param_name_map = {'tage':'Age (Gyr)',
 
 pnmap = param_name_map
 
-def format_sedax(sax):
-    sax.set_xscale('log')
-    sax.set_xlim(3e3, 1.6e4)
-    ticks = list(sax.get_xlim()) + [4e3, 6e3, 10e3]
-    sax.set_xticks(ticks)
-    sax.set_xticklabels(['{:4.0f}'.format(t) for t in ticks], fontsize=8)
-    sax.set_xlabel('$\lambda (\AA)$', fontsize=12)
-    sax.set_yscale('log')
-    sax.tick_params(axis='both', which='major', labelsize=8)
-    #sax.set_yticklabels(sax.get_yticklabels(), fontsize=8)
-    sax.set_ylabel(sax.get_ylabel(), fontsize=12)
-    sax.set_ylim(3e-14, 1e-12)
-    sax.legend(loc=0, prop={'size':12})
-    return sax
 
 if __name__ == "__main__":
 

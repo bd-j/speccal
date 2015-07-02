@@ -22,36 +22,6 @@ param_name_map = {'tage':'Age (Gyr)',
                   }
 pnmap = param_name_map
 
-def format_sedax(sax):
-    sax.set_xscale('log')
-    sax.set_xlim(3e3, 1.6e4)
-    ticks = list(sax.get_xlim()) + [4e3, 6e3, 10e3]
-    sax.set_xticks(ticks)
-    sax.set_xticklabels(['{:4.0f}'.format(t) for t in ticks], fontsize=8)
-    sax.set_xlabel('$\lambda (\AA)$', fontsize=12)
-    sax.set_yscale('log')
-    sax.tick_params(axis='both', which='major', labelsize=8)
-    sax.set_ylabel(sax.get_ylabel(), fontsize=12)
-    sax.set_ylim(3e-14, 1e-12)
-    sax.legend(loc=0, prop={'size':12})
-    return sax
-
-def format_calax(cax, norm):
-    cax.set_ylabel(r'Calibration $F_{{obs}}/F_{{\lambda, intrinsic}}$',
-                   fontsize=12)
-    cax.legend(loc=0, prop={'size':8})
-    cax.set_ylim(0.2*norm, 1.6*norm)
-
-    #cax.set_xlim(3e3, 1.6e4)
-    #ticks = list(cax.get_xlim()) + [4e3, 6e3, 10e3]
-    #cax.set_xticks(ticks)
-    #cax.set_xticklabels(['{:4.0f}'.format(t) for t in ticks], fontsize=8)
-    cax.set_xlabel('$\lambda (\AA)$', fontsize=12)
-    cax.tick_params(axis='both', which='major', labelsize=8)
-    cax.set_ylabel(cax.get_ylabel(), fontsize=12)
-    cax.legend(loc=0, prop={'size':12})
-    return cax
-
 if __name__ == "__main__":
 
     bcolor='magenta'
@@ -61,6 +31,10 @@ if __name__ == "__main__":
             bcolor = sys.argv[2]
         except:
             pass
+        try:
+            suptitle = sys.argv[3]
+        except:
+            suptitle=''
     else:
         resfile = 'results/ggc_mock.u0.t1.0_z0.0_a0.5_1426268715_mcmc'
     model_file = resfile.replace('_mcmc','_model')
@@ -94,23 +68,36 @@ if __name__ == "__main__":
 
     ### Build Figure ###
     fig = pl.figure(figsize=(10,8))
-    # Set up left hand side
+    # Set up right hand side
     gs1 = gridspec.GridSpec(3, 1)
-    gs1.update(left=0.05, right=0.45, wspace=0.05)
+    gs1.update(left=0.55, right=0.98, wspace=0.05, hspace=0.01)
+    
     oax = pl.subplot(gs1[0,0])
     cax = pl.subplot(gs1[1:,0])
 
-    # Set up right hand side
+    # Set up left hand side
     gs2 = gridspec.GridSpec(4, 2)
-    gs2.update(left=0.55, right=0.98, hspace=0.5)
+    gs2.update(left=0.05, right=0.45, hspace=0.5)
     sax = pl.subplot(gs2[0:2,:])
     haxes = np.array([pl.subplot(gs2[i, j]) for i in [2,3] for j in [0,1]])
 
     # Calibration figure
-    cfig, cax = calfig(mwave, calvec, specvecs, norm=norm, fax=(None, cax),
-                       basecolor=bcolor)
-    cax = format_calax(cax, norm)
+    rescale=1e18
+    cfig, cax = calfig(mwave, calvec, specvecs, norm=norm, rescale=rescale,
+                       fax=(None, cax), caltype='full', basecolor=bcolor)
+    cax = format_calax(cax, norm, rescale=rescale)
+
+    # Residual Figure    
+    ofig, oax = residualfig(mwave, mospec, specvecs, unc=mounc,
+                            basecolor=bcolor,fax=(None, oax), chi=True)
+    oax.set_ylabel(r'$\chi$')
+    oax.legend(loc=0, prop={'size':8})
+    oax.tick_params(axis='both', which='major', labelsize=8)
+    oax.set_xticklabels([''])
+    oax.set_ylabel(cax.get_ylabel(), fontsize=12)
+    oax.set_ylim(-3,3)
     
+        
     # Intrinsic SED figure
     sfig, sax = sedfig(fwave, fspecvecs, [pwave, mosed, mosed_unc], pvecs,
                        norm=1/obsdat['normalization_guess'], fax=(None,sax),
@@ -134,4 +121,5 @@ if __name__ == "__main__":
     haxes[0].legend(loc=0, prop={'size':8})
 
     # Save
+    fig.suptitle(suptitle)
     fig.savefig(resfile.replace('_mcmc','.dashboard.pdf'))

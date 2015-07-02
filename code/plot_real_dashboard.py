@@ -10,25 +10,28 @@ from bsfh.gp import ExpSquared
 from plotting import *
 
 sps = sps_basis.StellarPopBasis()
-#gp = GaussianProcess(None, None)
-try:
-    import george
-    kernel = (george.kernels.WhiteKernel(0.0) +
-            0.0 * george.kernels.ExpSquaredKernel(0.0))
-    gp = george.GP(kernel)#, solver=george.HODLRSolver)
-except:
-    pass
-
 gp = ExpSquared(None, None)
+param_name_map = {'tage':'Age (Gyr)',
+                  'mass': '$M_*$ $(M_\odot/10^{5})$',
+                  'dust2':'$A_V$ (mag)',
+                  'zmet': '$\log Z/Z_\odot$',
+                  'sigma_smooth': '$\sigma_{{LSF}}$',
+                  'zred': '${\it z}$',
+                  }
+pnmap = param_name_map
 
 if __name__ == "__main__":
 
+    bcolor='green'
     if len(sys.argv) > 1:
         resfile=sys.argv[1]
+        try:
+            bcolor = sys.argv[2]
+        except:
+            pass
     else:
         resfile = 'results/ggc_mock.u0.t1.0_z0.0_a0.5_1426268715_mcmc'
     model_file = resfile.replace('_mcmc','_model')
-    bcolor='green'
     pcolor='orange'
     nsample = 10
     
@@ -74,29 +77,28 @@ if __name__ == "__main__":
 
     # Calibration figure
     cfig, cax = calfig(mwave, calvec, specvecs, norm=norm,
-                       labelprefix='Schiavon ', fax=(None, cax), basecolor=bcolor)
-    cax.set_ylabel(r'Calibration $F_{{obs}}/F_{{\lambda, intrinsic}}$')
-    cax.legend(loc=0, prop={'size':8})
-    #cax.set_ylim(0.2, 1.6)
+                       mlabel='Schiavon', caltype='full',
+                       fax=(None, cax), basecolor=bcolor)
+    cax = format_calax(cax, norm)
+    
     # Intrinsic SED figure
     sfig, sax = sedfig(fwave, fspecvecs, [pwave, mosed, mosed_unc], pvecs,
                        norm=1/obsdat['normalization_guess'], fax=(None,sax),
                        labelprefix='Observed', peraa=True, basecolor=bcolor, pointcolor=pcolor)
-    sax.set_xscale('log')
-    sax.set_xlim(2.5e3, 1.6e4)
-    sax.legend(loc=0, prop={'size':12})
-
+    sax = format_sedax(sax)
+    sax.set_ylim(3e-13, 1e-11)
+    
     # Residual Figure    
     ofig, oax = residualfig(mwave, mospec, specvecs, unc=mounc,
                             basecolor=bcolor,fax=(None,oax), chi=True)
     oax.set_ylabel(r'$\chi$')
     oax.legend(loc=0, prop={'size':8})
-    oax.set_ylim(-1,1)
+    oax.set_ylim(-3,3)
 
     # Posterior parameter histograms
     pnames = ['mass', 'tage', 'dust2', 'zmet']
     samples, pnames_ord = hist_samples(res, mod, pnames, start=0.75, thin=10)
-    hfig, haxes = histfig(samples, pnames_ord, truths=None,
+    hfig, haxes = histfig(samples, pnames_ord, truths=None, pname_map=pnmap,
                           basecolor=bcolor, fax=(None, haxes))
     haxes[0].legend(loc=0, prop={'size':8})
 

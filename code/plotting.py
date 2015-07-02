@@ -8,8 +8,8 @@ newcolors = {'blue':u'#5DA5DA',
              'orange': u'#FAA43A',
              'green': u'#60BD68',
              'red': u'#F15854',
-             'magenta':u'#FF70B1',
-             'cyan': u'#39CCCC',
+             'magenta':u'#FF70B1', #actually pink
+             'cyan': u'#39CCCC', #actually teal
              'yellow': u'#FFDC00',
              'maroon': u'#85144B',
             }
@@ -123,7 +123,7 @@ def theta_samples(res, samples=[1.0], start=0.0, thin=1):
     return thetas, start_index, np.floor(np.array(samples) * (ns-1)).astype(int)
 
 def calfig(wave, calvec, specvecs, obsvec=None, norm=1.0,
-           mlabel='Mock Truth', fax=None,
+           mlabel='Mock Truth', fax=None, rescale=1,
            basecolor='green', caltype='full', **extras):
     """Plot the calibration and posterior samples of it.
 
@@ -147,7 +147,7 @@ def calfig(wave, calvec, specvecs, obsvec=None, norm=1.0,
 
     if cplot:
         #plot the calibration vector 
-        cax.plot(wave, calvec, color='black', label=mlabel,
+        cax.plot(wave, calvec/rescale, color='black', label=mlabel,
                  linewidth=3.0)
     # and posterior samples of it
     for i, specs in enumerate(samples):
@@ -155,7 +155,7 @@ def calfig(wave, calvec, specvecs, obsvec=None, norm=1.0,
             label = 'Posterior sample'
         else:
             label = None
-        cax.plot(wave, specs, label=label,
+        cax.plot(wave, specs/rescale, label=label,
                  color=basecolor, alpha=0.3)
     
     return cfig, cax
@@ -205,7 +205,7 @@ def residualfig(wave, obsvec, specvecs, unc=None, chi=False,
             label = 'Posterior samples'
         else:
             label = None
-        rax.plot(wave, (specs[3] - obsvec) / chi_unc,
+        rax.plot(wave, (specs[3] - obsvec) / chi_unc, linewidth=0.5,
                  color=basecolor, alpha=0.3, label=label)
     rax.axhline(0.0, linestyle=':', color='k')
     return rfig, rax
@@ -236,14 +236,15 @@ def sedfig(wave, specvecs, phot, photvecs, norm = 1.0,
             label = 'Posterior samples'
         else:
             label = None
-        sax.plot(wave, specs[0] * sconv,
+        sax.plot(wave, specs[0] * sconv, linewidth=0.5,
                  color=basecolor, alpha=0.3, label=label)
         sax.plot(pwave, seds[0] * pconv, markersize=8.0, linestyle='',
-                 marker='o', color=pointcolor, label=label)
+                 marker='o', alpha=0.5, mec=pointcolor, color=pointcolor,
+                 label=label)
 
     sax.errorbar(pwave, sed * pconv, yerr=sed_unc * pconv,
-                 marker='o', markersize=5.0,
-                 color='white', alpha=0.5, mec='black', mew=2,
+                 marker='o', markersize=5.0, ecolor='black',
+                 color='white', alpha=1.0, mec='black', mew=2,
                  linestyle='', label=labelprefix+' Photometry')
     sax.set_ylabel(ylabel)
     return sfig, sax
@@ -380,3 +381,38 @@ def deltafig_vspar(results, models, pname, pvary, pmap={},
     pax.set_xlim(xlims)
     
     return pfig, pax
+
+
+def format_sedax(sax):
+    sax.set_xscale('log')
+    sax.set_xlim(3e3, 1.6e4)
+    ticks = list(sax.get_xlim()) + [4e3, 6e3, 10e3]
+    sax.set_xticks(ticks)
+    sax.set_xticklabels(['{:4.0f}'.format(t) for t in ticks], fontsize=8)
+    sax.set_xlabel('$\lambda (\AA)$', fontsize=12)
+    sax.set_yscale('log')
+    sax.tick_params(axis='both', which='major', labelsize=8)
+    #sax.set_yticklabels(sax.get_yticklabels(), fontsize=8)
+    sax.set_ylabel(sax.get_ylabel(), fontsize=12)
+    sax.set_ylim(3e-14, 1e-12)
+    sax.legend(loc=0, prop={'size':12})
+    return sax
+
+def format_calax(cax, norm, rescale=1):
+    if rescale == 1:
+        label = r'Calibration [Counts/Flux (cgs)]'
+    else:
+        label = r'Calibration [Counts/Flux (cgs)]' + '($\\times 10^{{{0:2.0f}}}$)'.format(np.log10(1/rescale))
+    cax.set_ylabel(label, fontsize=12)
+    cax.legend(loc=0, prop={'size':8})
+    cax.set_ylim(0.2*norm/rescale, 1.6*norm/rescale)
+
+    #cax.set_xlim(3e3, 1.6e4)
+    #ticks = list(cax.get_xlim()) + [4e3, 6e3, 10e3]
+    #cax.set_xticks(ticks)
+    #cax.set_xticklabels(['{:4.0f}'.format(t) for t in ticks], fontsize=8)
+    cax.set_xlabel('$\lambda (\AA)$', fontsize=12)
+    cax.tick_params(axis='both', which='major', labelsize=8)
+    cax.set_ylabel(cax.get_ylabel(), fontsize=12)
+    cax.legend(loc=0, prop={'size':12})
+    return cax

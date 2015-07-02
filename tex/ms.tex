@@ -261,36 +261,6 @@ Nuisance parameters $c_m$ set the shape of the large-scale calibration
 issues, while $a^2$ and $\ell^2$ set the variance and correlation
 length of the remaining covariant calibration noise.
 
-%XXX logarithmic Alternative XXX
-%In this case we define the residual of the data from the model in
-%terms of the logarithmic differences.  This logarithmic formulation
-%requires that $d$ be everywhere positive, and distorts the
-%uncertainties, especially at low S/N ratio.  The advantages of
-%defining the residual in this way are that the model remains linear
-%(and therefore fast) and the calibration vector is forced to be
-%positive everywhere.  Additionally, at high signal to noise the
-%distortion of the uncertainties will be minimal.
-
-%The calibration-vector and Gaussian-Process modified log-likelihood is
-%\begin{eqnarray}\label{eq:spectroscopicLF}
-%\ln p(d\given\theta,\alpha) &=&
-%                                -\frac{1}{2}\,\left[\transpose{\Delta}\,C^{-1}\,\Delta
-%                                + \ln([2\pi]^N\,\det{C}) \right]
-%\\
-%\Delta &\equiv& \ln d - \ln \mu(\theta) - \ln f(\alpha) 
-%\\
-%C_{nn'} &\equiv& [\hat{\sigma}_n^2 + s^2]\,\delta_{nn'} +
-%K_\alpha(\lambda_n - \lambda_{n'})
-%\\
-%\hat{\sigma_n} & = &\sigma_n/d
-%\quad ,
-%\end{eqnarray}
-%where $\hat{\sigma}_n$ are the fractional uncertainties of the data.
-%The residual column vector is defined in terms of the logarithmic
-%difference between the data and the mean model $\mu$ since we are
-%taking the calibration vector to be multiplicative with respect to the
-%mean model $\mu$. In this formulation the the mean model $\mu$ will be
-%effectively multiplied by $e ^{f(\alpha)}$
 
 \section{Data and Experiments}
 
@@ -437,17 +407,17 @@ use the Padova 2007 isochrones \citep{girardi00, bertilli94, marigo07}
 and the MILES stellar spectral library \citep{miles_I, miles_II,
 miles_III}.
 
-Nebular emission lines (which may arise from HII regions around the
-clusters or from diffuse ionized gas) and interstellar absorption
-lines are modeled as a sum of $\delta$-functions of unknown amplitude
-$a_\ell$, and with known central wavelengths $\lambda_\ell$, broadened
-by the gas velocity profile, $\sigma_{gas}$.  For emission lines the
-amplitudes are constrained to be positive, while for interstellar
-absorption (e.g. NaD and CaK) the amplitudes are constrained to be
-negative. This framework can be easily extended to include more
-complex models for the nebular emission, such as allowing line
-dependent widths and velocities, and using Voight profiles for the
-line shapes.
+%Nebular emission lines (which may arise from HII regions around the
+%clusters or from diffuse ionized gas) and interstellar absorption
+%lines are modeled as a sum of $\delta$-functions of unknown amplitude
+%$a_\ell$, and with known central wavelengths $\lambda_\ell$, broadened
+%by the gas velocity profile, $\sigma_{gas}$.  For emission lines the
+%amplitudes are constrained to be positive, while for interstellar
+%absorption (e.g. NaD and CaK) the amplitudes are constrained to be
+%negative. This framework can be easily extended to include more
+%complex models for the nebular emission, such as allowing line
+%dependent widths and velocities, and using Voight profiles for the
+%line shapes.
 
 The model spectra $f_{\theta_s}$ are smoothed by convolution with
 the line-spread function of the spectrograph and are interpolated to
@@ -686,9 +656,9 @@ range.
 continuum normalization when fitting spectroscopy.}
 
 Our strategy is easily extensible to more complicated models, which
-include for example night sky-line emission in the spectroscopy
-\citep[e.g.,][]{gullikson14} or residuals from an initial sky-line
-subtraction and uncertainties in wavelength calibration
+include for example nebular or night sky-line emission in the
+spectroscopy \citep[e.g.,][]{gullikson14} or residuals from an initial
+sky-line subtraction and uncertainties in wavelength calibration
 \citep[e.g.,][]{walker15}. Furthermore, more complex physical models
 may be considered for the mean object model, for example including SFH
 parameters so as to model galaxies. {\color{blue} Discuss background
@@ -711,9 +681,10 @@ care must be taken to avoid absorbing interesting model deficiencies
 into the calibration model. For example, in the model we have
 described, it is possible that broad shallow features (for example due
 to molecular bands or absorption line complexes) will be absorbed into
-the Gaussian process if not properly included in the mean
-model. Third, we have made the assumption that the spectroscopy and
-the photometry are sampling the same populations.  In practice,
+the Gaussian Process if not properly included in the mean model. The
+Gaussian process will also absorb incorrectly modeled attenuation
+curve shapes. Third, we have made the assumption that the spectroscopy
+and the photometry are sampling the same populations.  In practice,
 differences between spectroscopic and photometric apertures often mean
 that the photometry and the spectroscopy are sampling slightly
 different physical regions.  The correct response to this situation is
