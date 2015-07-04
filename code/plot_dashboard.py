@@ -82,7 +82,10 @@ if __name__ == "__main__":
     haxes = np.array([pl.subplot(gs2[i, j]) for i in [2,3] for j in [0,1]])
 
     # Calibration figure
-    rescale=1e18
+    if norm < 1e10:
+        rescale = 1
+    else:
+        rescale = 1e18
     cfig, cax = calfig(mwave, calvec, specvecs, norm=norm, rescale=rescale,
                        fax=(None, cax), caltype='full', basecolor=bcolor)
     cax = format_calax(cax, norm, rescale=rescale)

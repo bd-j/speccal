@@ -1,4 +1,4 @@
-import sys, pickle
+import sys, pickle, matplotlib
 import numpy as np
 import matplotlib.pyplot as pl
 from matplotlib import gridspec
@@ -8,23 +8,37 @@ from bsfh import sps_basis
 from bsfh.gp import ExpSquared
 
 from plotting import *
+matplotlib.colors.cnames.update(newcolors)
 
 sps = sps_basis.StellarPopBasis()
-import george
-kernel = (george.kernels.WhiteKernel(0.0) +
-          0.0 * george.kernels.ExpSquaredKernel(0.0))
-#gp = george.GP(kernel, solver=george.HODLRSolver)
 gp = ExpSquared(None, None)
 
+param_name_map = {'tage':'Age (Gyr)',
+                  'mass': '$M_*$ $(M_\odot/10^{5})$',
+                  'dust2':'$A_V$ (mag)',
+                  'zmet': '$\log Z/Z_\odot$',
+                  'sigma_smooth': '$\sigma_{{LSF}}$',
+                  'zred': '${\it z}$',
+                  }
+pnmap = param_name_map
 
 if __name__ == "__main__":
 
+    basecolor = 'red'
+    suptitle = "Photometry Only"
     if len(sys.argv) > 1:
         resfile=sys.argv[1]
+        try:
+            basecolor = sys.argv[2]
+        except:
+            pass
+        try:
+            suptitle = sys.argv[3]
+        except:
+            pass
     else:
         resfile = 'results/ggc_mock_photonly.c0.t9.0_z0.0_a0.5_1430274922_mcmc'
     model_file = resfile.replace('_mcmc','_model')
-    basecolor = 'red'
     pointcolor='orange'
     nsample = 10
     
@@ -55,18 +69,15 @@ if __name__ == "__main__":
                        norm=1/obsdat['normalization_guess'], fax=(None,sax),
                        peraa=True, basecolor=basecolor, pointcolor=pointcolor)
     sax.plot(twave, tspec, color='black', label='True spectrum', alpha = 0.75)
-
-    sax.set_xscale('log')
-    sax.set_xlim(2.5e3, 1.6e4)
-    sax.legend(loc=0, prop={'size':12})
+    sax = format_sedax(sax)
     
     # Posterior parameter histograms
     pnames = ['mass', 'tage', 'dust2', 'zmet']
     samples, pnames_ord = hist_samples(res, mod, pnames, start=0.75, thin=10)
     truths = [obsdat['mock_params'][k] for k in pnames_ord]
-    hfig, haxes = histfig(samples, pnames_ord, truths = truths,
+    hfig, haxes = histfig(samples, pnames_ord, truths = truths, pname_map=pnmap,
                           basecolor=basecolor, fax=(None, haxes))
     haxes[0].legend(loc=0, prop={'size':8})
 
-
+    fig.suptitle(suptitle)
     fig.savefig(resfile.replace('_mcmc','.dashboard.pdf'))

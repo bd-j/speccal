@@ -2,17 +2,17 @@ import numpy as np
 import matplotlib.pyplot as pl
 import bsfh.read_results as bread
 from copy import deepcopy
-import matplotlib
 
 newcolors = {'blue':u'#5DA5DA',
              'orange': u'#FAA43A',
              'green': u'#60BD68',
              'red': u'#F15854',
-             'magenta':u'#FF70B1', #actually pink
+#             'magenta':u'#FF70B1', #actually pink
              'cyan': u'#39CCCC', #actually teal
              'yellow': u'#FFDC00',
              'maroon': u'#85144B',
             }
+import matplotlib
 matplotlib.colors.cnames.update(newcolors)
 
 def comp_samples(thetas, model, obs, sps=None, gp=None):
@@ -257,7 +257,7 @@ def hist_samples(res, model, showpars, start=0, thin=1,
     parnames = np.array(model.theta_labels())
     start_index = np.floor(start * (niter-1)).astype(int)
     flatchain = res['chain'][:,start_index::thin,:]
-    dims = flatchain.shape[0], flatchain.shape[1], flatchain.shape[2]
+    dims = flatchain.shape
     flatchain = flatchain.reshape(dims[0]*dims[1], dims[2])
     ind_show = np.array([p in showpars for p in parnames], dtype= bool)
     flatchain = flatchain[:, ind_show]
@@ -414,5 +414,5 @@ def format_calax(cax, norm, rescale=1):
     cax.set_xlabel('$\lambda (\AA)$', fontsize=12)
     cax.tick_params(axis='both', which='major', labelsize=8)
     cax.set_ylabel(cax.get_ylabel(), fontsize=12)
-    cax.legend(loc=0, prop={'size':12})
+    cax.legend(loc='lower right', prop={'size':12})
     return cax

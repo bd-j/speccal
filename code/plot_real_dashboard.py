@@ -1,4 +1,4 @@
-import sys, pickle
+import sys, pickle, matplotlib
 import numpy as np
 import matplotlib.pyplot as pl
 from matplotlib import gridspec
@@ -8,6 +8,7 @@ from bsfh import sps_basis
 from bsfh.gp import ExpSquared
 
 from plotting import *
+matplotlib.colors.cnames.update(newcolors)
 
 sps = sps_basis.StellarPopBasis()
 gp = ExpSquared(None, None)
@@ -64,14 +65,15 @@ if __name__ == "__main__":
         
     ### Build Figure ###
     fig = pl.figure(figsize=(10,8))
-    # Set up left hand side
-    gs1 = gridspec.GridSpec(3, 1)
-    gs1.update(left=0.05, right=0.48, wspace=0.05)
-    oax = pl.subplot(gs1[0,0])
-    cax = pl.subplot(gs1[1:,0])    
     # Set up right hand side
+    gs1 = gridspec.GridSpec(3, 1)
+    gs1.update(left=0.55, right=0.98, wspace=0.05, hspace=0.01)
+    oax = pl.subplot(gs1[0,0])
+    cax = pl.subplot(gs1[1:,0])
+
+    # Set up left hand side
     gs2 = gridspec.GridSpec(4, 2)
-    gs2.update(left=0.55, right=0.98, hspace=0.5)
+    gs2.update(left=0.05, right=0.45, hspace=0.5)
     sax = pl.subplot(gs2[0:2,:])
     haxes = np.array([pl.subplot(gs2[i, j]) for i in [2,3] for j in [0,1]])
 
@@ -91,8 +93,10 @@ if __name__ == "__main__":
     # Residual Figure    
     ofig, oax = residualfig(mwave, mospec, specvecs, unc=mounc,
                             basecolor=bcolor,fax=(None,oax), chi=True)
-    oax.set_ylabel(r'$\chi$')
+    oax.set_ylabel(r'$\chi$', fontsize=12)
     oax.legend(loc=0, prop={'size':8})
+    oax.tick_params(axis='both', which='major', labelsize=8)
+    oax.set_xticklabels([''])
     oax.set_ylim(-3,3)
 
     # Posterior parameter histograms

@@ -1,13 +1,29 @@
-import sys, pickle
+import sys, pickle, matplotlib
 import numpy as np
 import matplotlib.pyplot as pl
 from matplotlib import gridspec
 
 from bsfh import read_results as bread
 from plotting import *
+nc = newcolors.copy()
+#nc.pop('magenta')
+matplotlib.colors.cnames.update(nc)
+
+param_name_map = {'tage':'Age (Gyr)',
+                  'mass': '$M_*$ $(M_\odot/10^{5})$',
+                  'dust2':'$A_V$ (mag)',
+                  'zmet': '$\log Z/Z_\odot$',
+                  'sigma_smooth': '$\sigma_{{LSF}}$',
+                  'zred': '${\it z}$',
+                  }
+pnmap = param_name_map
 
 def joint_pdf(res, p1, p2, **kwargs):
     trace, pars = hist_samples(res, res['model'], [p1, p2], **kwargs)
+    if p1 == 'mass':
+        trace[:,1] /= 1e5
+    if p2 == 'mass':
+        trace[:,0] /= 1e5
     trace = trace.copy().T
     xbins, ybins, sigma = compute_sigma_level(trace[0], trace[1])
     return xbins, ybins, sigma.T
@@ -38,14 +54,14 @@ def compute_sigma_level(trace1, trace2, nbins=30):
 if __name__ == "__main__":
     photonly = 'results/ggc_mock_photonly.c0.t9.0_z0.0_a0.5_1430274922_mcmc'
     speconly = 'results/ggc_mock_speconly.u0.t9.0_z0.0_a0.5_1431313829_mcmc'
-    specphot = 'results/ggc_mock_specphot.u0.t9.0_z0.0_a0.5_1430380402_mcmc'
+    specphot = 'results/ggc_mock_specphot_linear.u0.t9.0_z0.0_a0.5_5280432_1431898211_mcmc'
     resfiles = [photonly, speconly, specphot]
     clr = ['red','blue', 'magenta']
     results = [bread.read_pickles(rfile, model_file=rfile.replace('mcmc','model'))[0]
                for rfile in resfiles]
     obsdat = results[0]['obs']
     showpars = np.array(['mass', 'tage', 'zmet', 'dust2'])
-    parlims = np.array([[0.4e5, 4e5],
+    parlims = np.array([[0.4, 4],
                         [None, None],
                         [-1.0, 0.19],
                         [0, 1.5]])
@@ -58,21 +74,19 @@ if __name__ == "__main__":
         dax = pl.subplot(gs[i,i])
         for n, res in enumerate(results):
             trace, p = hist_samples(res, res['model'], [p1], start=0.5)
+            if p1 == 'mass':
+                trace /= 1e5
             dax.hist(trace, bins = 30, color=clr[n], normed=True,
                      alpha=0.5, histtype='stepfilled')
         # Axis label foo
-        if i == 0:
-            dax.set_ylabel(p1)
-        else:
-            dax.set_yticklabels('')
+#        if i == 0:
+#            dax.set_ylabel(pnmap.get(p1, p1))
+#        else:
+        dax.set_yticklabels('')
         if i == (npar-1):
-            dax.set_xlabel(p2)
+            dax.set_xlabel(pnmap.get(p2, p2))
         else:
             dax.set_xticklabels('')
-        #xcur = dax.get_xlim()
-        #xlims = max([parlims[i,0], xcur[0]]), min([parlims[i,1], xcur[1]])
-        #dax.set_xlim(*xlims)
-                
         for j, p2 in enumerate(showpars[(i+1):]):
             k = j+i+1
             ax = pl.subplot(gs[k, i])
@@ -83,11 +97,11 @@ if __name__ == "__main__":
                 
             # Axis label foo
             if i == 0:
-                ax.set_ylabel(p2)
+                ax.set_ylabel(pnmap.get(p2, p2))
             else:
                 ax.set_yticklabels('')
             if k == (npar-1):
-                ax.set_xlabel(p1)
+                ax.set_xlabel(pnmap.get(p1,p1))
                 dax.set_xlim(ax.get_xlim())
             else:
                 ax.set_xticklabels('')
@@ -101,8 +115,15 @@ if __name__ == "__main__":
             ax.set_xlim(*xlims)
             ax.set_ylim(*ylims)
             dax.set_xlim(*xlims)
-                    
-            truths = [obsdat['mock_params'][k] for k in [p1, p2]]
+            dax.tick_params(axis='both', which='major', labelsize=8)
+            ax.tick_params(axis='both', which='major', labelsize=8)
+            
+            truths = np.squeeze(np.copy([obsdat['mock_params'][k] for k in [p1, p2]]))
+            if p1 == 'mass':
+                truths[0] /= 1e5
+            if p2 == 'mass':
+                truths[1] /= 1e5
+                
             ax.plot(truths[0], truths[1], 'ok')
     fig.savefig('../tex/figures/combined_post.pdf')
     pl.show()

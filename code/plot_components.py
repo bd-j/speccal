@@ -53,75 +53,71 @@ if __name__ == "__main__":
     else:
         calvec = calvec[obsdat['mask']]
     norm = obsdat['normalization_guess'] * obsdat['rescale']
+    if norm < 1e10:
+        rescale = 1
+    else:
+        rescale = 1e18
 
+    
     ### Build Figure ###
     fig = pl.figure(figsize=(10,8))
 
     # Set up left hand side
-    gs1 = gridspec.GridSpec(3, 1)
+    gs1 = gridspec.GridSpec(2, 1)
     gs1.update(left=0.05, right=0.45, wspace=0.1)
-    sax = pl.subplot(gs1[0,0])
-    pax = pl.subplot(gs1[1,0])
-    gax = pl.subplot(gs1[2,0])
+    pax = pl.subplot(gs1[0,0])
+    gax = pl.subplot(gs1[1,0])
     
     # Set up right hand side
-    gs2 = gridspec.GridSpec(3, 1)
+    gs2 = gridspec.GridSpec(2, 1)
     gs2.update(left=0.55, right=0.98, wspace=0.1)
     fax = pl.subplot(gs2[0,0])
-    tax = pl.subplot(gs2[1,0])
-    rax = pl.subplot(gs2[2,0])
+    rax = pl.subplot(gs2[1,0])
 
-    #Instrinsic
-    sfig, sax = sedfig(fwave, fspecvecs, [pwave, mosed, mosed_unc], pvecs,
-                       norm=1/obsdat['normalization_guess'], fax=(None,sax),
-                       peraa=True, basecolor=bcolor, pointcolor=pcolor)
-    sax.plot(twave, tspec, color='black', label='True spectrum', alpha=0.6)
-    sax = format_sedax(sax)
-    sax.text(0.1, 0.8, r'Intrinsic ($\mu$)', transform=sax.transAxes,
-             fontsize=12, color='red')
 
     # Polynomial
     pfig, pax = calfig(mwave, calvec, specvecs, norm=norm, obsvec=mospec,
-                       mlabel='Input calibration curve',
+                       mlabel='Input calibration curve', rescale=rescale,
                        fax=(None, pax), basecolor=bcolor, caltype='poly')
-    pax.text(0.1, 0.8, r'Polynomial ($e^{f(\alpha)}$)', transform=pax.transAxes,
-             fontsize=12, color='red')
     pax.set_ylabel('$F_{obs}/F_{intrinsic}$')
-    sax.set_xlim(pax.get_xlim())
     pax.legend(loc='lower right', prop={'size':12})
-    
+    pax = format_calax(pax, norm=norm, rescale=rescale)
+    pax.text(0.1, 0.8, r'Smooth ($e^{f(\alpha)}$)', transform=pax.transAxes,
+             fontsize=12, color='red')
+        
     # GP
     gfig, gax = calfig(mwave, calvec, specvecs, norm=norm, obsvec=mospec,
+                       rescale=rescale,
                        fax=(None, gax), basecolor=bcolor, caltype='gp')
-    gax.text(0.1, 0.8, r'GP ($\tilde{\Delta}/\mu$)', transform=gax.transAxes,
+    gax.text(0.1, 0.2, r'GP ($\tilde{\Delta}/\mu$)', transform=gax.transAxes,
              fontsize=12, color='red')
     gax.set_ylabel('$\delta(F_{obs}/F_{intrinsic})$')
+    #gax = format_calax(gax, norm=norm, rescale=rescale)
+    gax.set_xlabel('$\lambda (\AA)$', fontsize=12)
+    gax.tick_params(axis='both', which='major', labelsize=8)
+    gax.set_ylabel(gax.get_ylabel(), fontsize=12)
     
     # Full
     ffig, fax = calfig(mwave, calvec, specvecs, norm=norm, obsvec=mospec,
-                       mlabel='Input calibration curve',
+                       mlabel='Input calibration curve', rescale=rescale,
                        fax=(None, fax), basecolor=bcolor, caltype='full')
-    fax.text(0.1, 0.8, r'Full ($e^{f(\alpha)} + \tilde{\Delta}/\mu$)',
+    fax = format_calax(fax, norm=norm, rescale=rescale)
+    fax.text(0.1, 0.8, r'Sum ($e^{f(\alpha)} + \tilde{\Delta}/\mu$)',
              transform=fax.transAxes, fontsize=12, color='red')
-    fax.set_ylabel('$F_{obs}/F_{intrinsic}$')
+    #fax.set_ylabel('$F_{obs}/F_{intrinsic}$')
     
-    # Total
-    tfig, tax = calfig(mwave, calvec, specvecs, norm=norm, obsvec=mospec,
-                       mlabel='Input calibration curve',
-                       fax=(None, tax), basecolor=bcolor, caltype='total')
-    #cax = format_calax(cax, norm)
-    tax.text(0.1, 0.8, r'Total ($F_{obs}/\mu$)',
-             transform=tax.transAxes, fontsize=12, color='red')
-    tax.set_ylabel('$F_{obs}/F_{intrinsic}$')
-
     # Residual
-    rfig, rax = residualfig(mwave, mospec, specvecs, unc=mounc,
-                            fax=(None, rax), chi=True, basecolor=bcolor)
-    rax.set_ylabel(r'$\chi$')
-    rax.legend(loc=0, prop={'size':8})
-    rax.set_ylim(-1,1)
-    rax.text(0.1, 0.8, r'Residual $(F_{obs} - [\mu e^{f(\alpha)} + \tilde{\Delta}])/\sigma$',
+    for spec in specvecs:
+        sfull = norm * spec[1]
+        rax.plot(mwave, calvec / sfull, color=bcolor, alpha=0.3)
+    rax.axhline(1.0, linestyle=':', color='black')
+    rax.text(0.1, 0.2, r'$[e^{f(\alpha)} + \tilde{\Delta}/\mu]/Truth$',
              transform=rax.transAxes, fontsize=12, color='red')
+    rax.set_ylim(0.8, 1.2)
+    rax.set_xlabel('$\lambda (\AA)$', fontsize=12)
+    rax.tick_params(axis='both', which='major', labelsize=8)
+    rax.set_ylabel(rax.get_ylabel(), fontsize=12)
 
-    #fig.show()
+
+        #fig.show()
     fig.savefig(resfile.replace('_mcmc','.components.pdf'))

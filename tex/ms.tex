@@ -202,6 +202,9 @@ non-parameteric model of the calibration.  We do this using a Gaussian
 Process: BDJ: prior over functions, analytically marginalizable,
 covariant fractional uncertainties the same as multiplying by a
 function (covariant uncertainties the same as adding a function.)
+Using a polynomial can result in degeneracies between model and
+polynomial parameters, whereas GP is only for things that {\it can't}
+be fit by model.
 
 The calibration-vector and Gaussian-Process modified log-likelihood is
 \begin{eqnarray}\label{eq:spectroscopicLF_v2}
@@ -485,15 +488,17 @@ distribution of the population from which a given cluster is drawn.
   photometric band, assuming no calibration uncertainty.  This is as
   good as we could get given the data and its uncertainties.}
 
-\item \sout{Mock perfectly calibrated data: inference using spectroscopy and one
-  photometric band, with the full calibration model.  This is how much
-  including additional calibration flexibility hurts the posterior
-  PDFs compared to perfectly known calibration.}
+\item \sout{Mock perfectly calibrated data: inference using
+spectroscopy and one photometric band, with the full calibration
+model.  This is how much including additional calibration flexibility
+hurts the posterior PDFs compared to perfectly known calibration.}
+Make sure this is run for the linear model, make sure it is converged.
 
 \item \sout{Mock uncalibrated data:  inference using spectroscopy and one
   photometric band, with full calibration model.  This is how well we
   can get the calibration \emph{and} the physical parameters with
   spectroscopy only.}
+Make sure this is run for the linear model.
 
 \item \sout{Mock data: inference using photometry only.  This is how well we
   can get the physical parameters using photometry only.}
@@ -518,14 +523,16 @@ distribution of the population from which a given cluster is drawn.
   and the model (which could either be due to calibration problems or
   model problems)
 
-\item Real uncalibrated spectrum:   Inference using spectroscopy and all
-  photometry, with full calibration model. 
+\item \sout{Real uncalibrated spectrum:   Inference using spectroscopy and all
+  photometry, with full calibration model. } Make sure this is
+converged, make sure priors and jitter make sense.
 
 \item Compare the physical parameters inferred from from the real
   calibrated and uncalibrated spectrum with each other and with CMD
   based parameters.
 
-\item how (some) of these things vary with S/N
+\item how parameter inference varies with photometric S/N.  Do for mag
+  uncertainties of 0.05.
 
 \end{enumerate}
 

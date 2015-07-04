@@ -1,13 +1,13 @@
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width = 0.5 \textwidth]{figures/data.pdf}
-\caption{Observational data. 
-Top: The calibrated spectrum for \excluster.
-Middle: The signal-to-noise ratio.
-Bottom: The spectrophotometric calibration vector determined by
-\citet{schiavon05}. Note the wiggles in the calibration vector\label{fig:ggc_data}}
-\end{center}
-\end{figure}
+%\begin{figure}[h!]
+%\begin{center}
+%\includegraphics[width = 0.5 \textwidth]{figures/data.pdf}
+%\caption{Observational data. 
+%Top: The calibrated spectrum for \excluster.
+%Middle: The signal-to-noise ratio.
+%Bottom: The spectrophotometric calibration vector determined by
+%\citet{schiavon05}. Note the wiggles in the calibration vector\label{fig:ggc_data}}
+%\end{center}
+%\end{figure}
 
 
 \begin{figure*}[h!]
@@ -61,6 +61,26 @@ vertical lines.
   calibration vector is not a constant with wavelength.
 \label{fig:speconly_uncalibrated}}
 \end{figure*}
+
+
+\begin{figure*}[h!]
+\includegraphics[width=\textwidth]{figures/components.pdf}
+\caption{Components of the spectroscopic calibration.  
+Top Left: Posterior samples of the smooth component of the calibration
+vector, the exponential of a polynomial.  The input true calibration
+vector is shown in {\it black}.
+Bottom Left: The Gaussian Process prediction conditioned on the residual
+between the data and posterior samples of the mean model including the
+smooth calibration component.
+Top Right: Posterior samples of the sum of the smooth calibration
+component and the Gaussian Process prediction, compared to the input
+true calibration vector ({\it black}).
+Bottom Right: Ratio of the sum of the smooth calibration component and
+the Gaussian Process prediction to the input
+calibration vector ({\it black}).
+\label{fig:components}}
+\end{figure*}
+
 
 \begin{figure*}[h!]
 \includegraphics[width=0.5 \textwidth]{figures/photonly.pdf}

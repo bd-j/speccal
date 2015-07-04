@@ -12,14 +12,8 @@ from bsfh.gp import ExpSquared
 from plotting import *
 matplotlib.colors.cnames.update(newcolors)
 
-
 sps = sps_basis.StellarPopBasis()
-import george
-kernel = (george.kernels.WhiteKernel(0.0) +
-          0.0 * george.kernels.ExpSquaredKernel(0.0))
-#gp = george.GP(kernel)#, solver=george.HODLRSolver)
 gp = ExpSquared(None, None)
-
 
 param_name_map = {'tage':'Age (Gyr)',
                   'mass': '$M_*$ $(M_\odot)$',
@@ -31,15 +25,23 @@ param_name_map = {'tage':'Age (Gyr)',
 
 pnmap = param_name_map
 
-
 if __name__ == "__main__":
 
+    basecolor = 'green'
+    suptitle = 'Ideal, Perfectly Known Calibration'
     if len(sys.argv) > 1:
         resfile=sys.argv[1]
+        try:
+            basecolor = sys.argv[2]
+        except:
+            pass
+        try:
+            suptitle = sys.argv[3]
+        except:
+            pass
     else:
         resfile = 'results/ggc_mock_ideal.c0.t9.0_z0.0_a0.5_1430261146_mcmc'
     model_file = resfile.replace('_mcmc','_model')
-    basecolor = 'green'
     pointcolor='orange'
     nsample = 10
 
@@ -87,5 +89,5 @@ if __name__ == "__main__":
     haxes[0].legend(loc=0, prop={'size':8})
 
     # Save
-    fig.suptitle('Ideal Case')
+    fig.suptitle(suptitle)
     fig.savefig(resfile.replace('_mcmc','.dashboard.pdf'))
