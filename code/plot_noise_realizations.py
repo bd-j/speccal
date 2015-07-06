@@ -56,7 +56,7 @@ if __name__ == "__main__":
     nreal = len(runs)
     results, models = read_results(runs)
     noiseless_run = 'results/ggc_mock_specphot_linear.u0.t12.0_z0.0_a0.5_5313542_1432675345_mcmc'
-    bcolor = 'magenta'
+    bcolor = 'maroon'
 
     if as_hist:
         hfig, haxes = pl.subplots(2,2)

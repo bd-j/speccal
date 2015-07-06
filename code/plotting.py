@@ -365,13 +365,16 @@ def deltafig_vspar(results, models, pname, pvary, pmap={},
         if verbose:
             print(pname, ir)
         truths[ir] = res['obs']['mock_params'][pname][0]
-        vary_param[ir] = res['obs']['mock_params'][pvary][0]
+        if type(pvary) is str:
+            vary_param[ir] = res['obs']['mock_params'][pvary][0]
         pct[ir,:] = np.percentile(samples, ptile)
         # Transform the values if pmap supplied for this param
         pct[ir,:] = pmap.get(pname, identity)(pct[ir,:])
         truths[ir] = pmap.get(pname, identity)(truths[ir])
         
     delta = (pct - truths[:, None])
+    if type(pvary) is not str:
+        vary_param = pvary
     if fractional:
         delta /= truths[:, None]
         #title += '$/$Truth'

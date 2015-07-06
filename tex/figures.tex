@@ -64,25 +64,6 @@ vertical lines.
 
 
 \begin{figure*}[h!]
-\includegraphics[width=\textwidth]{figures/components.pdf}
-\caption{Components of the spectroscopic calibration.  
-Top Left: Posterior samples of the smooth component of the calibration
-vector, the exponential of a polynomial.  The input true calibration
-vector is shown in {\it black}.
-Bottom Left: The Gaussian Process prediction conditioned on the residual
-between the data and posterior samples of the mean model including the
-smooth calibration component.
-Top Right: Posterior samples of the sum of the smooth calibration
-component and the Gaussian Process prediction, compared to the input
-true calibration vector ({\it black}).
-Bottom Right: Ratio of the sum of the smooth calibration component and
-the Gaussian Process prediction to the input
-calibration vector ({\it black}).
-\label{fig:components}}
-\end{figure*}
-
-
-\begin{figure*}[h!]
 \includegraphics[width=0.5 \textwidth]{figures/photonly.pdf}
 \caption{Results of inference from the photometric data only.  The
   redshift is fixed {\color{blue} (should just use a tight prior)} and
@@ -105,13 +86,35 @@ Panels and are as in Figure \ref{fig:speconly_calibrated}.
 \label{fig:specphot_uncalibrated}}
 \end{figure*}
 
+
+
 \begin{figure*}[h!]
-%\includegraphics[width=\textwidth]{figures/specphot_uncalibrated.pdf}
+\includegraphics[width=\textwidth]{figures/components.pdf}
+\caption{Components of the spectroscopic calibration.  
+Top Left: Posterior samples of the smooth component of the calibration
+vector, the exponential of a polynomial.  The input true calibration
+vector is shown in {\it black}.
+Bottom Left: The Gaussian Process prediction conditioned on the residual
+between the data and posterior samples of the mean model including the
+smooth calibration component.
+Top Right: Posterior samples of the sum of the smooth calibration
+component and the Gaussian Process prediction, compared to the input
+true calibration vector ({\it black}).
+Bottom Right: Ratio of the sum of the smooth calibration component and
+the Gaussian Process prediction to the input
+calibration vector ({\it black}).
+\label{fig:components}}
+\end{figure*}
+
+
+\begin{figure*}[h!]
+%\includegraphics[width=\textwidth]{figures/calibration_posterior.pdf}
 \caption{Joint Posterior PDFs for the calibration parameters inferred
 from the combination of \emph{uncalibrated} spectroscopy and all the
 photometric data points.
 \label{fig:cal_posterior}}
 \end{figure*}
+
 
 \begin{figure*}[h!]
 \includegraphics[width=\textwidth]{figures/combined_post.pdf}
@@ -151,7 +154,7 @@ Right: Results when varying metallicity.
 
 
 \begin{figure*}[h!]
-%\includegraphics[width=\textwidth]{figures/vary_nphot.png}
+\includegraphics[width=\textwidth]{figures/vary_nphot.pdf}
 \caption{The value of more photometry. Marginalized posterior PDFs
 obtained from mock spectra and photometry, for different numbers of
 photometric bands.  The pdfs $g$-band only ({\it red}), $g$- and $i-$
@@ -181,16 +184,16 @@ Bottom right: posterior PDFs for selected physical parameters.
 \label{fig:real_uncalibrated}}
 \end{figure*}
 
-\begin{figure*}[h!]
+%\begin{figure*}[h!]
 %\includegraphics[width=\textwidth]{figures/inferred_calibration.pdf}
-\caption{Left: Ratio of the calibration vector inferred from the
-  real uncalibrated spectrum to that inferred from the real calibrated
-  spectrum ({\it green}). Taking the ratio reduces the effects of model
-  imperfections and shows how well we are able to infer the
-  calibration vector of \citet{schiavon05} ({\it black}).  
-Right: Joint posterior PDFs for the inferred calibration parameters.
-\label{fig:real_calibration_ratio}}
-\end{figure*}
+%\caption{Left: Ratio of the calibration vector inferred from the
+%  real uncalibrated spectrum to that inferred from the real calibrated
+%  spectrum ({\it green}). Taking the ratio reduces the effects of model
+%  imperfections and shows how well we are able to infer the
+%  calibration vector of \citet{schiavon05} ({\it black}).  
+%Right: Joint posterior PDFs for the inferred calibration parameters.
+%\label{fig:real_calibration_ratio}}
+%\end{figure*}
 
 
 \begin{figure*}[h!]

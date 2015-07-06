@@ -1,4 +1,4 @@
-import sys, pickle
+import sys, pickle, matplotlib
 import numpy as np
 import matplotlib.pyplot as pl
 from matplotlib import gridspec
@@ -8,6 +8,7 @@ from matplotlib import rcParams
         
 from bsfh import read_results as bread
 from plotting import *
+matplotlib.colors.cnames.update(newcolors)
 
 pnames = ['mass','tage','zmet','dust2']
 pmap = {'mass': lambda x: np.log10(x),
@@ -48,11 +49,12 @@ if __name__ == "__main__":
              ]
     aruns = ['results/ggc_mock_specphot_linear.u0.t12.0_z0.0_a0.0_5313557_1432675536_mcmc',
              'results/ggc_mock_specphot_linear.u0.t12.0_z0.0_a0.5_5313542_1432675345_mcmc',
-             'results/ggc_mock_specphot_linear.u0.t12.0_z0.0_a1.0_5313614_1432675422_mcmc'
+             'results/ggc_mock_specphot_linear.u0.t12.0_z0.0_a1.0_5313614_1432675422_mcmc',
+             'results/ggc_mock_specphot_linear.u0.t12.0_z0.0_a2.0_5391265_1434182123_mcmc'
              ]
-    zruns = ['results/ggc_mock_specphot_linear.u0.t12.0_z-1.5_a2.0_5354872_1433350381_mcmc',
-             'results/ggc_mock_specphot_linear.u0.t12.0_z-1.0_a2.0_5354866_1433350364_mcmc',
-             'results/ggc_mock_specphot_linear.u0.t12.0_z-0.5_a2.0_5354863_1433350639_mcmc',
+    zruns = ['results/ggc_mock_specphot_linear.u0.t12.0_z-1.5_a0.5_5391259_1434126258_mcmc',
+             'results/ggc_mock_specphot_linear.u0.t12.0_z-1.0_a0.5_5391258_1434122880_mcmc',
+             'results/ggc_mock_specphot_linear.u0.t12.0_z-0.5_a0.5_5391256_1434100928_mcmc',
              'results/ggc_mock_specphot_linear.u0.t12.0_z0.0_a0.5_5313542_1432675345_mcmc'
              ]
         
