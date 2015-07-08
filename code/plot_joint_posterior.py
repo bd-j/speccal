@@ -25,6 +25,8 @@ def joint_pdf(res, p1, p2, **kwargs):
     if p2 == 'mass':
         trace[:,0] /= 1e5
     trace = trace.copy().T
+    if pars[0] == p1:
+        trace = trace[::-1, :]
     xbins, ybins, sigma = compute_sigma_level(trace[0], trace[1])
     return xbins, ybins, sigma.T
 
@@ -78,13 +80,14 @@ if __name__ == "__main__":
                 trace /= 1e5
             dax.hist(trace, bins = 30, color=clr[n], normed=True,
                      alpha=0.5, histtype='stepfilled')
+            dax.tick_params(axis='both', which='major', labelsize=8)
         # Axis label foo
 #        if i == 0:
 #            dax.set_ylabel(pnmap.get(p1, p1))
 #        else:
         dax.set_yticklabels('')
         if i == (npar-1):
-            dax.set_xlabel(pnmap.get(p2, p2))
+            dax.set_xlabel(pnmap.get(p2, p2), fontsize=12)
         else:
             dax.set_xticklabels('')
         for j, p2 in enumerate(showpars[(i+1):]):
@@ -97,11 +100,11 @@ if __name__ == "__main__":
                 
             # Axis label foo
             if i == 0:
-                ax.set_ylabel(pnmap.get(p2, p2))
+                ax.set_ylabel(pnmap.get(p2, p2), fontsize=12)
             else:
                 ax.set_yticklabels('')
             if k == (npar-1):
-                ax.set_xlabel(pnmap.get(p1,p1))
+                ax.set_xlabel(pnmap.get(p1,p1), fontsize=12)
                 dax.set_xlim(ax.get_xlim())
             else:
                 ax.set_xticklabels('')

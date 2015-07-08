@@ -141,13 +141,11 @@ calibration of the spectral data.
 
 \section{Model generalities}
 
-THIS SECTION NEEDS WORK; THIS IS JUST AN EQUATION DUMP.
-
-HOGG: A model is a parameterized likelihood function, with prior PDFs
-on the nuisance parameters (at least)...  There is a likelihood for
+A model is a parameterized likelihood function, with prior PDFs
+on the nuisance parameters (at least).  There is a likelihood for
 the photometry and for the spectroscopy...  Each of these penalizes
 the difference between a column vector of data and a column vector of
-model expectation value...
+model expectation value.
 
 The standard chi-squared or log-Gaussian log-likelihood is
 \begin{eqnarray}
@@ -199,12 +197,13 @@ parameters required to model the calibration can become quite large
 (e.g. very high order polynomials) and the correct parameterization
 may be unknown.  It is therefore desirable to introduce a
 non-parameteric model of the calibration.  We do this using a Gaussian
-Process: BDJ: prior over functions, analytically marginalizable,
-covariant fractional uncertainties the same as multiplying by a
-function (covariant uncertainties the same as adding a function.)
+Process: 
+BDJ: prior over functions, analytically marginalizable, covariant
+fractional uncertainties the same as multiplying by a function
+(covariant absolute uncertainties the same as adding a function.)
 Using a polynomial can result in degeneracies between model and
-polynomial parameters, whereas GP is only for things that {\it can't}
-be fit by model.
+polynomial parameters, whereas GP only reduces the penalty for
+residuals that {\it can't} be fit by the mean model.
 
 The calibration-vector and Gaussian-Process modified log-likelihood is
 \begin{eqnarray}\label{eq:spectroscopicLF_v2}
@@ -214,8 +213,8 @@ The calibration-vector and Gaussian-Process modified log-likelihood is
 \\
 \Delta &\equiv& d - \mu(\theta) \ast f(\alpha) 
 \\
-C_{nn'} &\equiv& [\sigma_n^2 + (\hat{s} \, \mu)^2]\,\delta_{nn'} +
- K_\alpha(\lambda_n - \lambda_{n'}) \ast \mu \, \transpose{\mu}
+C_{nn'} &\equiv& [\sigma_n^2 + (\hat{s} \, \mu_n)^2]\,\delta_{nn'} +
+ K_\alpha(\lambda_n - \lambda_{n'}) 
 \quad ,
 \end{eqnarray}
 where $\ast$ denotes element-wise multiplication,
@@ -229,9 +228,6 @@ made up of $N^2$ values $C_{nn'}$,
 $K_\alpha$ is a kernel function that sets the wavelength scale and
 amplitude of the residual calibration issues,
 and each $\lambda_n$ is the wavelength of spectral pixel $n$.
-The multiplication of $\hat{s}$ and $K_\alpha$ by $\mu$ and
-$\mu\,\transpose{\mu}$ respectively in the construction of $C_{nn'}$
-signifies that they are defined in \emph{fractional} terms.
 The calibration vector $f(\alpha)$ is going to take care of the
 large-scale calibration residual; the Gaussian Process is going to
 pick up smaller-scale residuals away from \emph{that}.
@@ -251,7 +247,7 @@ f(\alpha) &=& \exp\left(\sum_{m=o}^M c_m\,x^m\right)
 \\
 x &\equiv& \frac{\lambda}{\lambda_0} - 1
 \\
-K_\alpha(\lambda_n - \lambda_{n'}) &=& a^2\,\exp\left(-\frac{[\lambda_n - \lambda_{n'}]^2}{2\,\ell^2}\right)
+K_\alpha(\lambda_n - \lambda_{n'}) &=& \mu_n\,\mu_{n'}\, a^2\,\exp\left(-\frac{[\lambda_n - \lambda_{n'}]^2}{2\,\ell^2}\right)
 \\
 \transpose{\alpha} &\equiv& \left[ \{c_m\}_{m=0}^M, s^2, a^2, \ell^2 \right]
 \quad ,
@@ -262,10 +258,13 @@ scaled by a fiducial wavelength $\lambda_0$.  The exponentiation of
 the polynomial in ensures that $f(\alpha)$ is everywhere positive.
 Nuisance parameters $c_m$ set the shape of the large-scale calibration
 issues, while $a^2$ and $\ell^2$ set the variance and correlation
-length of the remaining covariant calibration noise.
+length of the remaining covariant calibration noise. The
+multiplication by $\mu_n\, \mu_{n'}$ in the kernel function signifies
+signifies that it is defined in \emph{fractional} terms.
 
 
-\section{Data and Experiments}
+
+\section{Data and Experimental Setup}
 
 We are now left to demonstrate that, by including photometry as well
 as spectroscopy, it is possible to infer the parameters of interest
@@ -281,7 +280,7 @@ about the physical parameters of the cluster is available from
 resolved stellar CMDs, providing an important check on our inference
 methodology and especially our models for star cluster spectra.  However,
 our methodology is applicable any spectral model: stars, galaxies or
-ISM emission.
+ISM emission or any object which can be modeled.
 
 This separate treatment of mock and real data allows us to address two
 separate issues.  The inference from mock data (with a realistic
@@ -329,10 +328,10 @@ wavelength-dependent kernel to bring it to an approximately constant
 dispersion in wavelength across the whole spectrum. This dispersion is
 a free parameter in our model.
 
-Optical photometry is available from \citep{vanderbeke14} based on
+Optical photometry is available from \citet{vanderbeke14} based on
 SDSS for objects in the northern hemisphere and on data from CTIO for
 southern hemisphere objects.  Briefly, total fluxes within the half-light radii
-of the clusters \citet{harris98} were calculated, with small
+of the clusters \citep{harris96} were calculated, with small
 corrections for stars unlikely to be cluster members based on their
 positions in the CMD. For this data the formal Poisson uncertainties
 are typically exceedingly small.  The dominant source of uncertainty
@@ -340,7 +339,7 @@ comes from the photometric calibration and from uncertainties in
 cluster membership.
 
 Near-Infrared photometry is available from \citet{cohen07}, who fit
-King profiles \citet{king65} to 2MASS data in the $J$, $H$, and $K_s$
+King profiles \citet{king62} to 2MASS data in the $J$, $H$, and $K_s$
 bands.  To produce NIR photometry consistent with the optical we
 integrated the King profiles to the half-light radii used by
 \citet{vanderbeke14}.
@@ -406,7 +405,7 @@ $d_L$ is known to high precision from independent methods and can
 therefore be treated as fixed.  In practice, $d_L$ is perfectly
 degenerate with $m_*$. We calculate $s(\lambda, t, Z)$ using the
 Flexible Stellar Population Synthesis code \citep[FSPS][]{fsps}.  We
-use the Padova 2007 isochrones \citep{girardi00, bertilli94, marigo07}
+use the Padova 2007 isochrones \citep{girardi00, bertelli94, marigo07}
 and the MILES stellar spectral library \citep{miles_I, miles_II,
 miles_III}.
 
@@ -770,6 +769,10 @@ Cardelli, J.~A., Clayton, G.~C., \& Mathis, J.~S.\ 1989, \apj, 345, 245
 Cenarro, A.~J., Peletier, R.~F., S{\'a}nchez-Bl{\'a}zquez, P., et al.\ 2007, \mnras, 374, 
 664 
 
+\bibitem[Cohen et al.(2007)]{cohen07} Cohen, J.~G., Hsieh, S., 
+Metchev, S., Djorgovski, S.~G., \& Malkan, M.\ 2007, \aj, 133, 99 
+
+
 \bibitem[Conroy \etal(2009)]{fsps} 
 Conroy, C., Gunn, J.~E., \& White, M.\ 2009, \apj, 699, 486 
 
@@ -795,7 +798,15 @@ Goodman,~J. \& Weare,\ J., 2010, Comm.\ App.\ Math.\ Comp.\ Sci., 5, 65
 \bibitem[Gullikson et al.(2014)]{gullikson14} Gullikson, K., 
 Dodson-Robinson, S., \& Kraus, A.\ 2014, \aj, 148, 53 
 
-\bibitem[Lee et al.(2011)]{xray_calunc} Lee, H., Kashyap, V.~L., 
+\bibitem[Harris(1996)]{harris96} Harris, W.~E.\ 1996, \aj, 112, 
+1487 
+
+\bibitem[King(1962)]{king62} King, I.\ 1962, \aj, 67, 471 
+
+\bibitem[Koleva et al.(2009)]{koleva09} Koleva, M., 
+Prugniel, P., Bouchard, A., \& Wu, Y.\ 2009, \aap, 501, 1269 
+
+\bibitem[Lee et al.(2011)]{lee11} Lee, H., Kashyap, V.~L., 
 van Dyk, D.~A., et al.\ 2011, \apj, 731, 126 
 
 \bibitem[Marigo \& Girardi(2007)]{marigo07} 
@@ -810,6 +821,9 @@ J.~A., Courteau, S., \& MacArthur, L.~A.\ 2005, \apjs, 160, 163
 
 \bibitem[Sch{\"o}nrich 
 \& Bergemann(2014)]{schonrich14} Sch{\"o}nrich, R., \& Bergemann, M.\ 2014, \mnras, 443, 698 
+
+\bibitem[Vanderbeke et al.(2014)]{vanderbeke14} Vanderbeke, J., 
+West, M.~J., De Propris, R., et al.\ 2014, \mnras, 437, 1725 
 
 \bibitem[Walker et al.(2015)]{walker15} Walker, M.~G., 
 Olszewski, E.~W., \& Mateo, M.\ 2015, \mnras, 448, 2717 

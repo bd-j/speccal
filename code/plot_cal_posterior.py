@@ -15,6 +15,12 @@ param_name_map = {'tage':'Age (Gyr)',
                   'zmet': '$\log Z/Z_\odot$',
                   'sigma_smooth': '$\sigma_{{LSF}}$',
                   'zred': '${\it z}$',
+                  'gp_jitter': '${\it s}$',
+                  'gp_amplitude': '${\it a}$',
+                  'gp_length' : '$\ell (\AA)$',
+                  'spec_norm': '${\it c}_{0}$',
+                  'poly_coeffs_1': '${\it c}_{1}$',
+                  'poly_coeffs_2': '${\it c}_{2}$' 
                   }
 pnmap = param_name_map
 
@@ -54,23 +60,26 @@ def compute_sigma_level(trace1, trace2, nbins=30):
 
 
 if __name__ == "__main__":
-    truths = None # {'mass':, 'tage':, 'dust2':}
-    
-    real_cal="results/ggc_ngc1851_1432787257_mcmc"
-    real_uncal="results/ggc_ngc1851_uncal_tightprior_1433448554_mcmc"
-    resfiles = [real_cal, real_uncal]
-    clr = ['green', 'orange']
+    photonly = 'results/ggc_mock_photonly.c0.t9.0_z0.0_a0.5_1430274922_mcmc'
+    speconly = 'results/ggc_mock_speconly.u0.t9.0_z0.0_a0.5_1431313829_mcmc'
+    specphot = 'results/ggc_mock_specphot_linear.u0.t9.0_z0.0_a0.5_5280432_1431898211_mcmc'
+    resfiles = [specphot]
+    clr = ['maroon']
     results = [bread.read_pickles(rfile, model_file=rfile.replace('mcmc','model'))[0]
                for rfile in resfiles]
     obsdat = results[0]['obs']
-    showpars = np.array(['mass', 'tage', 'zmet', 'dust2'])
-    parlims = np.array([[0.4, 4],
+    showpars = np.array(['dust2', 'gp_jitter', 'gp_length', 'gp_amplitude',
+                         'spec_norm', 'poly_coeffs_1', 'poly_coeffs_2'])
+    parlims = np.array([[0.0, 1.5],
                         [None, None],
-                        [-2.0, 0.19],
-                        [0, 1.5]])
+                        [100, 1000],
+                        [0, 0.5],
+                        [-1, 1],
+                        [-10, 10],
+                        [-10, 10]])
     npar = len(showpars)
 
-    fig = pl.figure()
+    fig = pl.figure(figsize=(10,8))
     
     gs = gridspec.GridSpec(npar, npar)
     for i, p1 in enumerate(showpars):
@@ -82,6 +91,7 @@ if __name__ == "__main__":
             dax.hist(trace, bins = 30, color=clr[n], normed=True,
                      alpha=0.5, histtype='stepfilled')
             dax.tick_params(axis='both', which='major', labelsize=8)
+            dax.tick_params(axis='both', which='major', width=0.5, length=2.0)
         # Axis label foo
 #        if i == 0:
 #            dax.set_ylabel(pnmap.get(p1, p1))
@@ -103,28 +113,33 @@ if __name__ == "__main__":
             if i == 0:
                 ax.set_ylabel(pnmap.get(p2, p2), fontsize=12)
             else:
+                pass
                 ax.set_yticklabels('')
             if k == (npar-1):
-                ax.set_xlabel(pnmap.get(p1,p1))
+                ax.set_xlabel(pnmap.get(p1,p1), fontsize=12)
                 dax.set_xlim(ax.get_xlim())
             else:
+                pass
                 ax.set_xticklabels('')
 
             # Axis range foo
             xcur = ax.get_xlim()
             ycur = ax.get_ylim()
             xlims = max([parlims[i,0], xcur[0]]), min([parlims[i,1], xcur[1]])
-            ylims = max([parlims[j+i+1,0], ycur[0]]), min([parlims[j+i+1,1], ycur[1]])
-            
+            ylims = max([parlims[k,0], ycur[0]]), min([parlims[k,1], ycur[1]])
+                        
             ax.set_xlim(*xlims)
             ax.set_ylim(*ylims)
             dax.set_xlim(*xlims)
             dax.tick_params(axis='both', which='major', labelsize=8)
             ax.tick_params(axis='both', which='major', labelsize=8)
-            
-
-            if truths is not None:
-                ax.plot(truths[p1], truths[p2], 'ok')
+            ax.tick_params(axis='both', which='major', width=0.5, length=2.0)
+            #truths = np.squeeze(np.copy([obsdat['mock_params'][k] for k in [p1, p2]]))
+            #if p1 == 'mass':
+            #    truths[0] /= 1e5
+            #if p2 == 'mass':
+            #    truths[1] /= 1e5
                 
-    fig.savefig('../tex/figures/real_post.pdf')
+            #ax.plot(truths[0], truths[1], 'ok')
+    fig.savefig('../tex/figures/calibration_post.pdf')
     pl.show()
