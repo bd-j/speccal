@@ -143,7 +143,7 @@ calibration of the spectral data.
 
 A model is a parameterized likelihood function, with prior PDFs
 on the nuisance parameters (at least).  There is a likelihood for
-the photometry and for the spectroscopy...  Each of these penalizes
+the photometry and for the spectroscopy.  Each of these penalizes
 the difference between a column vector of data and a column vector of
 model expectation value.
 
@@ -172,7 +172,8 @@ This is a simple modification of the chi-squared log-likelihood:
 \quad .
 \end{eqnarray}
 This modification shows the necessity of including the log-variance
-term.
+term.  Large $s$ reduces the penalty for individual large residuals,
+but also reduces the reward for well-fit data.
 This---equation~(\ref{eq:photometricLF})---is in fact the
 log-likelihood function we are going to use for the photometric
 measurements in what follows.  For photometric data this ``jitter'' is
@@ -181,14 +182,13 @@ often best described as a fractional error, $s^2 \equiv
 magnitude zero-point uncertainty.  In this formulation, if $\theta$
 are the parameters of interest, the jitter variance $\hat{s} =
 s/\mu(\theta)$ is a nuisance noise-model parameter representing
-additonal fractional uncertainty in the flux.  The Gaussian Process
-will be a generalization of this modification.
+additonal fractional uncertainty in the flux.  
 
 {\color{blue} BDJ This paragraph should explain why we are using the
 GP, not just how it works.}
 For the spectroscopic measurements we are going to account for the
 spectrophotometric calibration in our likelihood function.  We take
-this calibration-vector that modifies the mean spectroscopic model to
+the calibration-vector that modifies the mean spectroscopic model to
 produce the observed spectrum to be multiplicative with respect to the
 mean model.  The multiplicative calibration vector can be explicitly
 modeled, for example using polynomials.  However, for complex
@@ -196,14 +196,15 @@ calibration vectors over large wavelength ranges, the number of
 parameters required to model the calibration can become quite large
 (e.g. very high order polynomials) and the correct parameterization
 may be unknown.  It is therefore desirable to introduce a
-non-parameteric model of the calibration.  We do this using a Gaussian
-Process: 
-BDJ: prior over functions, analytically marginalizable, covariant
-fractional uncertainties the same as multiplying by a function
-(covariant absolute uncertainties the same as adding a function.)
-Using a polynomial can result in degeneracies between model and
-polynomial parameters, whereas GP only reduces the penalty for
-residuals that {\it can't} be fit by the mean model.
+`non-parameteric' model of the calibration.  We do this using a
+Gaussian Process in the likelihood function.  The Gaussian Process is
+a generalization of the modified log-likelihood introduced in
+Equation \label{eq:photometricLF} that allows for correlated noise in
+the residuals, as would be introduced by inaccurate calibration.
+
+%BDJ: prior over functions, analytically marginalizable, covariant
+%fractional uncertainties the same as multiplying by a function
+%(covariant absolute uncertainties the same as adding a function.)
 
 The calibration-vector and Gaussian-Process modified log-likelihood is
 \begin{eqnarray}\label{eq:spectroscopicLF_v2}
@@ -230,12 +231,10 @@ amplitude of the residual calibration issues,
 and each $\lambda_n$ is the wavelength of spectral pixel $n$.
 The calibration vector $f(\alpha)$ is going to take care of the
 large-scale calibration residual; the Gaussian Process is going to
-pick up smaller-scale residuals away from \emph{that}.
-The flexibility of the Gaussian Process specified by $C$ will obviate
-the need for numerous high order polynomial terms in $f(\alpha)$ and
-thus reduce the number of free parameters required in the model.  The
-prior over functions implied by $C$ is analytically conditioned on the
-residuals $\Delta$.
+pick up smaller-scale residuals away from \emph{that}.  The
+flexibility of the Gaussian Process specified by $C$ will obviate the
+need for numerous high order polynomial terms in $f(\alpha)$ and thus
+reduce the number of free parameters required in the model.
 This---equation~(\ref{eq:spectroscopicLF})---is the log-likelihood we
 are going to use for the spectroscopic data in what follows.
 
@@ -255,13 +254,19 @@ K_\alpha(\lambda_n - \lambda_{n'}) &=& \mu_n\,\mu_{n'}\, a^2\,\exp\left(-\frac{[
 where $\lambda$ is a column vector made up of the wavelengths
 $\lambda_m$ and $x$ is a scaled and shifted version of the same,
 scaled by a fiducial wavelength $\lambda_0$.  The exponentiation of
-the polynomial in ensures that $f(\alpha)$ is everywhere positive.
+the polynomial ensures that $f(\alpha)$ is everywhere positive.
 Nuisance parameters $c_m$ set the shape of the large-scale calibration
 issues, while $a^2$ and $\ell^2$ set the variance and correlation
-length of the remaining covariant calibration noise. The
-multiplication by $\mu_n\, \mu_{n'}$ in the kernel function signifies
-signifies that it is defined in \emph{fractional} terms.
-
+length of the remaining covariant calibration noise. Structure in the
+residuals on the scale of $\ell$ and with amplitude $a$ will not be
+strongly penalized, but the determinant of $C$ becomes larger for
+larger $a$ and smaller $\ell$. The multiplication by $\mu_n\,
+\mu_{n'}$ in the kernel function signifies that it is defined in
+\emph{fractional} terms.  Using a high-order polynomial can result in
+strong degeneracies between model and polynomial parameters, whereas
+the GP {\color{blue} BDJ make this more precise and correct} only
+reduces the likelihood penalty for residuals on the scale of $\ell$
+with amplitude $a$ that {\it can't} be fit by the mean model.
 
 
 \section{Data and Experimental Setup}
@@ -372,7 +377,7 @@ We model the stellar cluster as a single age SSP. The spectrum of a
 star cluster under this assumption is given by a vector
 \begin{eqnarray} \label{eq:StarModel}\displaystyle
 f_{\theta_s}(\lambda_o) & = &
-L(\sigma_s, z) ,\, \frac{m_*}{4\pi d_L^2(1+z)} \, s(\lambda, t, Z , \beta) \, e^ {-k_\lambda\tau_V} \\
+L(\sigma_s, z) \, \frac{m_*}{4\pi d_L^2(1+z)} \, s(\lambda, t, Z , \beta) \, e^ {-k_\lambda\tau_V} \\
 \nonumber \\ 
 \lambda_o & = & (1+z)\,\lambda 
 \\
@@ -510,8 +515,8 @@ Make sure this is run for the linear model.
 \item \sout{Do this for a bunch of ages, metallicities, and dust
   attenuations, possibly compare to the ideal posteriors in each case.}
 
-\item Mock uncalibrated data:  vary the photometric bands to see how
-  much it changes the recovery of the parameters.
+\item \sout{Mock uncalibrated data:  vary the photometric bands to see how
+  much it changes the recovery of the parameters.}
 
 \item \sout{Mock uncalibrated data: do the inference with multiple noise
   realizations to see how the recovered PDFs cover the true value.}
@@ -581,12 +586,17 @@ show samples of the inferred calibration vector,
 \quad ,
 \end{eqnarray}
 where $\tilde{\Delta}$ is the Gaussian Process mean prediction for the
-logarithmic residual between the data and the model \citep{RW}.  For the
-perfectly calibrated spectrum the true calibration vector (shown in
-black) is one everywhere.  The spread of the inferred calibration
-vectors approximately indicates our uncertainty in the spectrophotometric
-calibration when no additional calibration information is available
-and only a single photometric point is available.
+residual between the data and the model \citep{RW},
+defined here as 
+\begin{eqnarray} \label{eq:calibration}
+\tilde{\Delta} & = & K \, C^{-1} \, \Delta
+\end{eqnarray}.  
+For the perfectly calibrated spectrum the true calibration vector
+(shown in black) is one everywhere.  The spread of the inferred
+calibration vectors approximately indicates our uncertainty in the
+spectrophotometric calibration when no additional calibration
+information is available and only a single photometric point is
+available.
 
 When the spectrophotometric calibration is assumed to be unknown,
 the posterior PDFs for stellar mass and especially $A_v$ become
@@ -610,7 +620,11 @@ total uncertainties.
 
 In Figure \ref{fig:speconly_uncalibrated} we show the results of
 inference on an \emph{uncalibrated} mock spectrum.  The results are
-similar to the case of the \emph{calibrated} spectrum.
+similar to the case of the \emph{calibrated} spectrum. An important
+difference is that the inferred calibration vector now contains numerous small scale wiggles,
+similar to the actual calibration vector.  The overall shape of the
+spectrum is still unconstrained, leading to large degeneracies between
+the polynomial terms and the dust attenuation.
 
 
 \subsection{Real Data: \excluster} 
@@ -646,9 +660,12 @@ information, if it exists, can be incorporated into informative priors
 on the calibration parameters of the model, inform the construction of
 the calibration model (including the form of the covariance kernel),
 or approximately remove gross features that are difficult to model
-parametrically or via a Gaussian Process.  {\color{blue} Discuss more
-complicated covariance kernels, multiple kernels, combining fractional
-and absolute covariance amplitudes.}
+parametrically or via a Gaussian Process. A Guassian Process can be
+used to model covaraint noise resulting from errors in an initial
+calibration (of an amplitude $a$) thus propogating calibration
+uncertainty into the model parameters $\theta$. 
+{\color{blue} Discuss more complicated covariance kernels, multiple
+kernels, combining fractional and absolute covariance amplitudes.}
 
 {\color{blue} BDJ words (and experiments?) about the gains that might
 be made by including photometry over a large range in wavelength with
@@ -684,12 +701,16 @@ Limitations.  The strategy we have advocated has several limitations.
 First, it requires a generative model for the spectrum of the object
 of interest, and is thus ill-suited to discovery projects.  Second,
 care must be taken to avoid absorbing interesting model deficiencies
-into the calibration model. For example, in the model we have
-described, it is possible that broad shallow features (for example due
-to molecular bands or absorption line complexes) will be absorbed into
-the Gaussian Process if not properly included in the mean model. The
-Gaussian process will also absorb incorrectly modeled attenuation
-curve shapes. Third, we have made the assumption that the spectroscopy
+into the calibration model, or interpreting features in the
+calibration vector as features of the mean model. For example, in the
+model we have described, it is possible that broad shallow features
+(for example due to molecular bands or absorption line complexes) will
+be absorbed into the Gaussian Process if not properly included in the
+mean model. The Gaussian process will also absorb incorrectly modeled
+attenuation curve shapes. On the other hand, the higher likelihood at
+zero residual means that calibration features that \emph{can} be
+mimicked by the mean model may influence the mean model
+parameters. Third, we have made the assumption that the spectroscopy
 and the photometry are sampling the same populations.  In practice,
 differences between spectroscopic and photometric apertures often mean
 that the photometry and the spectroscopy are sampling slightly
@@ -719,10 +740,9 @@ the object and the level of uncertainty in the observed object
 spectrum -- this is why calibration objects are typically bright and
 simple.  If one is interested in inferring parameters of interest of
 spectral models of astrophysical objects, then there is often no
-reason not to use those objects themselves as calibrators,
-especially if you expect your calibration to be spatially or 
-temporally variable, or to change with the brightness or other
-properties of the object.
+reason not to use those objects themselves as calibrators, especially
+if you expect your calibration to be spatially or temporally variable,
+or to change with the brightness or other properties of the object.
 
 {\color{blue} BDJ misc issues, collected here in case we want to
 address them and to keep me from cluttering up the main text:} Model

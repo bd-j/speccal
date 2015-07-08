@@ -13,12 +13,12 @@ pmap = {'mass': lambda x: np.log10(x),
 plabel_map = {'mass':r'log M$_*$',
               'tage': 'log Age',
               'zmet': r'log $Z/Z_\odot$',
-              'dust2':r'A$_V$'
+              'dust2':r'$\tau_V$'
               }
 pvlabel_map = {'mass':r'M$_*$',
               'tage': 'Age (Gyr)',
               'zmet': r'log $Z/Z_\odot$',
-              'dust2':r'A$_V$'
+              'dust2':r'$\tau_V$'
               }
 
 sfraction = 0.90
