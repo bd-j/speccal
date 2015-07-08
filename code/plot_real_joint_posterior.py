@@ -9,10 +9,10 @@ nc = newcolors.copy()
 #nc.pop('magenta')
 matplotlib.colors.cnames.update(nc)
 
-param_name_map = {'tage':'Age (Gyr)',
-                  'mass': '$M_*$ $(M_\odot/10^{5})$',
-                  'dust2':'$\tau_V$',
-                  'zmet': '$\log Z/Z_\odot$',
+param_name_map = {'tage':r'Age (Gyr)',
+                  'mass': r'$M_*$ $(M_\odot/10^{5})$',
+                  'dust2':r'$\tau_V$',
+                  'zmet': r'$\log Z/Z_\odot$',
                   'sigma_smooth': '$\sigma_{{LSF}}$',
                   'zred': '${\it z}$',
                   }
@@ -105,7 +105,7 @@ if __name__ == "__main__":
             else:
                 ax.set_yticklabels('')
             if k == (npar-1):
-                ax.set_xlabel(pnmap.get(p1,p1))
+                ax.set_xlabel(pnmap.get(p1,p1), fontsize=12)
                 dax.set_xlim(ax.get_xlim())
             else:
                 ax.set_xticklabels('')

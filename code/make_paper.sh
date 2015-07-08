@@ -1,14 +1,19 @@
 #!bin/sh
 
+# define a version
+version="v1.0"
+
 # First we make the mocks with fiducial parameters
 ft="9.0"
 fz="0.0"
 fa="0.5"
 fall="t${ft}_z${fz}_a${fa}"
-#python make_ggc_mocks #$ft $fz $fa
+#python make_ggc_mocks #$version $ft $fz $fa
 
-### Then we fit the mocks and assign output names to variables
+### Then we build jobsripts and fit the mocks 
 #./runjobs.sh
+
+# and assign output names to variables
 specphot_ideal="results/ggc_mock_ideal.c0.t9.0_z0.0_a0.5_1430261146_mcmc"
 speconly_cal="results/ggc_mock_speconly.c0.t9.0_z0.0_a0.5_1430808300_mcmc"
 speconly_uncal="results/ggc_mock_speconly.u0.t9.0_z0.0_a0.5_1431313829_mcmc"

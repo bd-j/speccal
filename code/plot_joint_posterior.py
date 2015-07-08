@@ -10,9 +10,9 @@ nc = newcolors.copy()
 matplotlib.colors.cnames.update(nc)
 
 param_name_map = {'tage':'Age (Gyr)',
-                  'mass': '$M_*$ $(M_\odot/10^{5})$',
-                  'dust2':'$\tau_V$',
-                  'zmet': '$\log Z/Z_\odot$',
+                  'mass': r'$M_*$ $(M_\odot/10^{5})$',
+                  'dust2':r'$\tau_V$',
+                  'zmet': r'$\log Z/Z_\odot$',
                   'sigma_smooth': '$\sigma_{{LSF}}$',
                   'zred': '${\it z}$',
                   }

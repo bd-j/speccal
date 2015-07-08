@@ -10,15 +10,15 @@ pnames = ['mass','tage','zmet','dust2']
 pmap = {'mass': lambda x: np.log10(x),
         'tage': lambda x: np.log10(x)
         }
-plabel_map = {'mass':r'log M$_*$',
+plabel_map = {'mass':'log M$_*$',
               'tage': 'log Age',
-              'zmet': r'log $Z/Z_\odot$',
-              'dust2':r'$\tau_V$'
+              'zmet': 'log $Z/Z_\odot$',
+              'dust2':'$\tau_V$'
               }
-pvlabel_map = {'mass':r'M$_*$',
+pvlabel_map = {'mass':'M$_*$',
               'tage': 'Age (Gyr)',
-              'zmet': r'log $Z/Z_\odot$',
-              'dust2':r'$\tau_V$'
+              'zmet': 'log $Z/Z_\odot$',
+              'dust2':'$\tau_V$'
               }
 
 sfraction = 0.90
@@ -43,12 +43,13 @@ if __name__ == "__main__":
     as_hist = False
     
     runs = ['results/ggc_mock_speconly.u0.t9.0_z0.0_a0.5_1431313829_mcmc', #g
+            'results/ggc_mock_gi_spec_linear.u0.t12.0_z0.0_a0.5_5486144_1436374818_mcmc', #gi
             'results/ggc_mock_griz_spec_linear.u0.t12.0_z0.0_a0.5_5429625_1435022619_mcmc', #griz
             #'results/ggc_mock_specphot_linear.u0.t9.0_z0.0_a0.5_5280432_1431898211_mcmc', #grizJHK
             'results/ggc_mock_specphot_linear.u0.t12.0_z0.0_a0.5_5313542_1432675345_mcmc', #grizJHK 
             ]
-    runlabel = ['$g$','$griz$', '$griz$\n$JHK_s$']
-    pvary = [1, 2, 3]
+    runlabel = ['$g$','$gi$','$griz$', '$griz$\n$JHK_s$']
+    pvary = [1, 2, 3, 4]
     nreal = len(runs)
     results, models = read_results(runs)
     ytitle=r'$\Delta$'
@@ -59,12 +60,12 @@ if __name__ == "__main__":
         dfig, dax = deltafig_vspar(results, models, pname, pvary,
                                    sfraction=sfraction, thin=thin,
                                    fax=(None, dax), pmap=pmap,
-                                   xlims=(0, 4),
+                                   xlims=(min(pvary)-0.5, max(pvary)+0.5),
                                    verbose=False, fractional=False)
         pretty_pname = plabel_map.get(pname, pname)
         #pretty_vpname = pvlabel_map.get(pvary, pvary)
         dax.axhline(0.0, linestyle=':', color='k')
-        dax.text(0.1, 0.95, ytitle+pretty_pname,
+        dax.text(0.6, 0.95, ytitle+pretty_pname,
                  transform=dax.transAxes, fontsize=14,
                  verticalalignment='top', bbox=None)#props)
         dax.set_ylim(-0.5, 0.5)
