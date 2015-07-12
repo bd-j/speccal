@@ -194,55 +194,83 @@ model_params.append({'name': 'phot_jitter', 'N':1,
                         'prior_args': {'mini':0.0, 'maxi':0.1}})
 
 
-if __name__ == "__main__":
+def main(versiondir='', do_vary=False, do_noise=False,
+         zmet=0.0, tage=12.0, dust2=0.5, **kwargs):
 
-     
+        
+    fiducial_params = {'tage':float(tage), 'zmet':float(zmet), 'dust2':float(dust2)}
+    vary_params = {'tage': [0.3, 1.1, 3.0, 6.0, 9.0, 12.0],
+                   'zmet': [-1.5, -1.0, -0.5, 0.0, 0.15],
+                   'dust2': [0, 0.5, 1.0, 2.0]}
+        
     info = {'objname': 'NGC1851',
             'datadir': os.path.join(sdir, 'data/ggclib/spectra/'),
             'outdir': os.path.join(sdir, 'data/ggclib/mocks/'),
             'apply_cal': True,
             'add_noise': False,
-            'mask': True
-            }
+            'mask': True,
+            'phot_snr':10}
+        
+    info.update(kwargs)
     caltype = ['c', 'u']
     noisetype = ['0','1']
     name_template = os.path.join(info['outdir'], lib,
                                  'ggc_mock.{0}{1}.t{2:3.1f}_z{3:3.1f}_a{4:3.1f}.pkl')
-    vary_params = {'tage': [0.3, 1.1, 3.0, 6.0, 9.0, 12.0],
-                   'zmet': [-1.5, -1.0, -0.5, 0.0, 0.15],
-                   'dust2': [0, 0.5, 1.0, 2.0]
-                   }
-    #vary_params = {'tage':[10.0]}
-    #theta_default = np.array([1.0, 0.0, 0.5])
     model = sedmodel.SedModel(model_params)
+    for k, v in fiducial_params.iteritems():
+        model.params[k] = np.atleast_1d(np.array(v))
     theta_default = model.initial_theta.copy()
 
-    #make mocks with varied parameters
-    for p, vals in vary_params.iteritems():
-        ind = model.theta_labels().index(p)
+    # Make calibrated mock
+    info['apply_cal'] = False
+    theta = theta_default.copy()
+    mock = ggcdata.ggc_mock(model, theta, sps, **info)
+    filename = name_template.format(caltype[info['apply_cal']], 0, *theta)
+    print('writing to {0}'.format(filename))
+    with open(filename, 'w') as f:
+        pickle.dump(mock, f)
+
+    # Make uncalibrated mock
+    info['apply_cal'] = True
+    theta = theta_default.copy()
+    mock = ggcdata.ggc_mock(model, theta, sps, **info)
+    filename = name_template.format(caltype[info['apply_cal']], 0, *theta)
+    print('writing to {0}'.format(filename))
+    with open(filename, 'w') as f:
+        pickle.dump(mock, f)
+   
+    
+    # Make uncalibrated mocks with varied parameters
+    info['apply_cal'] = True
+    if do_vary:
+        for p, vals in vary_params.iteritems():
+            ind = model.theta_labels().index(p)
+            theta = theta_default.copy()
+            for v in vals:
+                theta[ind] = v
+                mock = ggcdata.ggc_mock(model, theta, sps, **info)
+                filename = name_template.format(caltype[info['apply_cal']], 0,
+                                                *theta)
+                print('writing to {0}'.format(filename))
+                with open(filename, 'w') as f:
+                    pickle.dump(mock, f)
+    
+    # Make mocks with different noise realizations
+    info['apply_cal'] = False
+    if do_noise:
+        info['add_noise'] = True
         theta = theta_default.copy()
-        for v in vals:
-            theta[ind] = v
-            mock = ggcdata.ggc_mock(model, theta, sps,
-                                phot_snr=10,
-                                **info)
-            filename = name_template.format(caltype[info['apply_cal']],
-                                            noisetype[info['add_noise']],
+        nnoise = 10 #number of noise realizations
+        for i in range(nnoise):
+            mock = ggcdata.ggc_mock(model, theta, sps, **info)
+            filename = name_template.format(caltype[info['apply_cal']], i+1,
                                             *theta)
             print('writing to {0}'.format(filename))
             with open(filename, 'w') as f:
                 pickle.dump(mock, f)
-
-    #make mocks with different noise realizations
-    info['add_noise'] = True
-    theta = theta_default.copy()
-    nnoise = 10 #number of noise realizations
-    for i in range(nnoise):
-        mock = ggcdata.ggc_mock(model, theta, sps,
-                                phot_snr=10, **info)
-        filename = name_template.format(caltype[info['apply_cal']], i+1,
-                                        *theta)
-        print('writing to {0}'.format(filename))
-        with open(filename, 'w') as f:
-            pickle.dump(mock, f)
         
+    return fiducial_params['tage'], fiducial_params['zmet'], fiducial_params['dust2']
+
+if __name__ == "__main__":
+    fp = main()
+    print(fp)

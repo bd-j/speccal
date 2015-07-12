@@ -9,6 +9,7 @@ fz="0.0"
 fa="0.5"
 fall="t${ft}_z${fz}_a${fa}"
 #python make_ggc_mocks #$version $ft $fz $fa
+ft, fa, fz = make_ggc_mocks.main(tage=ft, zmet=fz, dust2=fa, do_noise=True, do_vary=True)
 
 ### Then we build jobsripts and fit the mocks 
 #./runjobs.sh

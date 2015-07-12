@@ -122,7 +122,7 @@ data will not flow entirely to the parameters of interest; instead,
 some will flow to the nuisance parameters.
 This will reduce the importance of the spectroscopy relative to the
 photometry.
-This amounts to propogating the uncertainties in the
+This amounts to propagating the uncertainties in the
 spectrophotometric calibration (or alternatively in the continuum
 normalization).
 In what follows, we provide an example of this kind of
@@ -162,26 +162,26 @@ We have included the $\ln(\sigma_n^2)$ term in the likelihood because
 in what follows we are going to be modifying the noise model.
 
 If you don't believe the reported data noise variances $\sigma_n^2$,
-it often makes sense to add in quadrature a ``jitter'' variance $s^2$.
+it often makes sense to add in quadrature a ``jitter'' variance $b^2$.
 This is a simple modification of the chi-squared log-likelihood:
 \begin{eqnarray}\label{eq:photometricLF}
-\ln p(d\given\theta,s^2) &=& -\frac{1}{2}\,\sum_{n=1}^N
+\ln p(d\given\theta,b^2) &=& -\frac{1}{2}\,\sum_{n=1}^N
                              \left[\frac{[d_n - \mu_n(\theta)]^2}
-                             {[\sigma_n^2 + s^2]} + 
-                             \ln(2\pi\,[\sigma_n^2 + s^2]) \right]
+                             {[\sigma_n^2 + b^2]} + 
+                             \ln(2\pi\,[\sigma_n^2 + b^2]) \right]
 \quad .
 \end{eqnarray}
 This modification shows the necessity of including the log-variance
-term.  Large $s$ reduces the penalty for individual large residuals,
+term.  Large $b$ reduces the penalty for individual large residuals,
 but also reduces the reward for well-fit data.
 This---equation~(\ref{eq:photometricLF})---is in fact the
 log-likelihood function we are going to use for the photometric
 measurements in what follows.  For photometric data this ``jitter'' is
-often best described as a fractional error, $s^2 \equiv
-\hat{s}^2\mu(\theta)^2$, corresponding for example to an additional
+often best described as a fractional error, $b^2 \equiv
+\hat{b}^2\mu(\theta)^2$, corresponding for example to an additional
 magnitude zero-point uncertainty.  In this formulation, if $\theta$
-are the parameters of interest, the jitter variance $\hat{s} =
-s/\mu(\theta)$ is a nuisance noise-model parameter representing
+are the parameters of interest, the jitter variance $\hat{b} =
+b/\mu(\theta)$ is a nuisance noise-model parameter representing
 additonal fractional uncertainty in the flux.  
 
 {\color{blue} BDJ This paragraph should explain why we are using the
@@ -199,7 +199,7 @@ may be unknown.  It is therefore desirable to introduce a
 `non-parameteric' model of the calibration.  We do this using a
 Gaussian Process in the likelihood function.  The Gaussian Process is
 a generalization of the modified log-likelihood introduced in
-Equation \label{eq:photometricLF} that allows for correlated noise in
+equation~\label{eq:photometricLF} that allows for correlated noise in
 the residuals, as would be introduced by inaccurate calibration.
 
 %BDJ: prior over functions, analytically marginalizable, covariant
@@ -264,10 +264,20 @@ larger $a$ and smaller $\ell$. The multiplication by $\mu_n\,
 \mu_{n'}$ in the kernel function signifies that it is defined in
 \emph{fractional} terms.  Using a high-order polynomial can result in
 strong degeneracies between model and polynomial parameters, whereas
-the GP {\color{blue} BDJ make this more precise and correct} only
-reduces the likelihood penalty for residuals on the scale of $\ell$
-with amplitude $a$ that {\it can't} be fit by the mean model.
+the Gaussian Process {\color{blue} BDJ make this more precise and
+correct} likelihood only reduces the penalty for residuals on the
+scale of $\ell$ with amplitude $a$ that {\it can't} be fit by the mean
+model.
 
+The two log-likelihoods, for photometry and spectroscopy, are combined
+into a single likelihood function,
+\begin{eqnarray}\displaystyle ln p(d_s, d_p\given \theta, \alpha, b) =
+ln p_{spec}(d_s\given \theta, alpha) + ln p_{phot}(d_p\given \theta,
+b) \quad .
+\end{eqnarray} where now $d_s$ is the spectroscopic data and $d_p$ is
+the photometric data.  The spectroscipc likelihood $p_{spec}$ is given
+by equation~(\ref{eq:spectroscopicLF}) and $p_{phot}$ is given by
+equation~(\ref{eq:photometricLF}).
 
 \section{Data and Experimental Setup}
 
@@ -599,14 +609,15 @@ spectrophotometric calibration when no additional calibration
 information is available and only a single photometric point is
 available.
 
-When the spectrophotometric calibration is assumed to be unknown,
-the posterior PDFs for stellar mass and especially $A_v$ become
-extremely large.  There is now no information about the overall shape
-of the SED (and hence the dust attenuation), and the overall
-normalization is constrained entirely by the single photometric point.
-The uncertainty in the stellar mass is somewhat broader than the
-uncertainty on the $g$-band flux because of the variation in
-mass-to-light ratio due to uncertainties in dust and, to a lesser
+When the spectrophotometric calibration is assumed to be unknown and
+is explicitly modeled, as in Figure \ref{fig:speconly_calibrated}, the
+posterior PDFs for stellar mass and especially $A_v$ become extremely
+large.  There is now no information about the overall shape of the SED
+(and hence the dust attenuation), and the overall normalization is
+constrained entirely by the single photometric point.  The fractional
+uncertainty in the stellar mass is somewhat broader than the
+fractional uncertainty on the $g$-band flux because of the variation
+in mass-to-light ratio due to uncertainties in dust and, to a lesser
 extent, age.
 
 On the other hand, age and metallicity remain well-constrained.  These
@@ -622,10 +633,12 @@ total uncertainties.
 In Figure \ref{fig:speconly_uncalibrated} we show the results of
 inference on an \emph{uncalibrated} mock spectrum.  The results are
 similar to the case of the \emph{calibrated} spectrum. An important
-difference is that the inferred calibration vector now contains numerous small scale wiggles,
-similar to the actual calibration vector.  The overall shape of the
-spectrum is still unconstrained, leading to large degeneracies between
-the polynomial terms and the dust attenuation.
+difference is that the inferred calibration vector now contains
+numerous small scale wiggles, similar to the actual calibration vector
+used to generate the mock.  The overall shape of the spectrum is still
+unconstrained, leading to large degeneracies between the polynomial
+terms and the dust attenuation, and a poor constraint on the dust
+attenuation and stellar mass.
 
 
 \subsection{Real Data: \excluster} 
@@ -781,7 +794,8 @@ J.~A., Vanderburg, A., \& Morton, T.~D.\ 2015, arXiv:1503.03874
 \bibitem[Beifiori \etal(2011)]{beifiori11} 
 Beifiori, A., Maraston, C., Thomas, D., \& Johansson, J.\ 2011, \aap, 531, A109 
 
-\bibitem[Bertelli et al.(1994)]{bertelli94} Bertelli, G., Bressan, A., Chiosi, C., Fagotto, F., \& Nasi, E.\ 1994, \aaps, 106, 275 
+\bibitem[Bertelli et al.(1994)]{bertelli94} Bertelli, G., Bressan, A., 
+Chiosi, C., Fagotto, F., \& Nasi, E.\ 1994, \aaps, 106, 275 
 
 \bibitem[Cardelli \etal(1989)]{CCM89} 
 Cardelli, J.~A., Clayton, G.~C., \& Mathis, J.~S.\ 1989, \apj, 345, 245 
@@ -792,7 +806,6 @@ Cenarro, A.~J., Peletier, R.~F., S{\'a}nchez-Bl{\'a}zquez, P., et al.\ 2007, \mn
 
 \bibitem[Cohen et al.(2007)]{cohen07} Cohen, J.~G., Hsieh, S., 
 Metchev, S., Djorgovski, S.~G., \& Malkan, M.\ 2007, \aj, 133, 99 
-
 
 \bibitem[Conroy \etal(2009)]{fsps} 
 Conroy, C., Gunn, J.~E., \& White, M.\ 2009, \apj, 699, 486 
@@ -840,8 +853,8 @@ J., et  al.\ 2006, \mnras, 371, 703
 \bibitem[Schiavon et al.(2005)]{schiavon05} Schiavon, R.~P., Rose, 
 J.~A., Courteau, S., \& MacArthur, L.~A.\ 2005, \apjs, 160, 163 
 
-\bibitem[Sch{\"o}nrich 
-\& Bergemann(2014)]{schonrich14} Sch{\"o}nrich, R., \& Bergemann, M.\ 2014, \mnras, 443, 698 
+\bibitem[Sch{\"o}nrich \& Bergemann(2014)]{schonrich14} Sch{\"o}nrich,
+  R., \& Bergemann, M.\ 2014, \mnras, 443, 698 
 
 \bibitem[Vanderbeke et al.(2014)]{vanderbeke14} Vanderbeke, J., 
 West, M.~J., De Propris, R., et al.\ 2014, \mnras, 437, 1725 
