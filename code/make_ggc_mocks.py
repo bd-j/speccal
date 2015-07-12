@@ -219,7 +219,7 @@ def main(versiondir='', do_vary=False, do_noise=False,
     model = sedmodel.SedModel(model_params)
     for k, v in fiducial_params.iteritems():
         model.params[k] = np.atleast_1d(np.array(v))
-    theta_default = model.initial_theta.copy()
+    theta_default = model.theta.copy()
 
     # Make calibrated mock
     info['apply_cal'] = False
