@@ -1,17 +1,56 @@
 #!bin/sh
 
 # define a version
-version="v1.0"
+version=""
 
 # First we make the mocks with fiducial parameters
-ft="9.0"
-fz="0.0"
-fa="0.5"
-fall="t${ft}_z${fz}_a${fa}"
-#python make_ggc_mocks #$version $ft $fz $fa
-ft, fa, fz = make_ggc_mocks.main(tage=ft, zmet=fz, dust2=fa, do_noise=True, do_vary=True)
+fiducial_params = {'tage':12.0, 'zmet':0.0, 'dust2':0.5}
+fall = "t{tage:3.1f}_z{zmet:3.1f}_a{dust2:3.1f}".format(**fiducial_params)
 
-### Then we build jobsripts and fit the mocks 
+ft, fa, fz = make_ggc_mocks.main(fiducial_params=fiducial+params,
+				 do_noise=True, do_vary=True,
+				 version=version)
+
+### Then we build jobsripts
+import make_jobscripts
+make_job = make_jobscripts.make_stampede_mock_job
+
+# speconly_ideal
+jobn, ideal_script = make_job(ncpu=64, niter=1024,
+  			      paramfile='mock_speconly_ideal',
+			      params='c0.{0}'.format(fall),
+			      do_powell=False, noisefactor=10)
+
+# speconly_calibrated, lo S/N
+jobn, sonlycal_script = make_job(ncpu=128, niter=6144,
+  			         param_file='mock_speconly_linear',
+			         params='c0.{0}'.format(fall),
+			         do_powell=False, noisefactor=10)
+
+# speconly_uncalibrated, lo S/N
+jobn, sonlycal_script = make_job(ncpu=128, niter=6144,
+  			         param_file='mock_speconly_linear',
+			         params='u0.{0}'.format(fall),
+			         do_powell=False, noisefactor=10)
+
+# photonly
+jobn, photonly_script = make_job(ncpu=128, niter=1024,
+  			         param_file='mock_photonly',
+			         params='c0.{0}'.format(fall),
+			         do_powell=False, noisefactor=10)
+
+# specphot uncalibrated
+jobn, specphot_script = make_job(ncpu=128, niter=2048,
+  			         param_file='mock_specphot_linear',
+			         params='c0.{0}'.format(fall),
+			         do_powell=False, noisefactor=10)
+# noise_runs
+
+# physical parameter variation runs
+
+# nphot runs
+
+# And run them
 #./runjobs.sh
 
 # and assign output names to variables
@@ -28,6 +67,8 @@ dust_runs="ls results/ggc_mock_specphot_linear.u0.t${ft}_z${fz}_a*_*_mcmc"
 
 real_cal="results/ggc_ngc1851_1432787257_mcmc"
 real_uncal="results/ggc_ngc1851_uncal_tightprior_1433448554_mcmc"
+
+
 ### Then we make figures for mocks ###
 #fig 1
 python plot_data.py

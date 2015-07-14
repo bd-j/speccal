@@ -193,12 +193,13 @@ model_params.append({'name': 'phot_jitter', 'N':1,
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':0.0, 'maxi':0.1}})
 
+fd = {'tage':12.0, 'zmet':0.0, 'dust2':0.5}
 
 def main(versiondir='', do_vary=False, do_noise=False,
-         zmet=0.0, tage=12.0, dust2=0.5, **kwargs):
+         fiducial_params=fd, **kwargs):
 
         
-    fiducial_params = {'tage':float(tage), 'zmet':float(zmet), 'dust2':float(dust2)}
+    
     vary_params = {'tage': [0.3, 1.1, 3.0, 6.0, 9.0, 12.0],
                    'zmet': [-1.5, -1.0, -0.5, 0.0, 0.15],
                    'dust2': [0, 0.5, 1.0, 2.0]}
