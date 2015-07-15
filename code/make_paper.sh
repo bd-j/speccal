@@ -16,26 +16,29 @@ import make_jobscripts
 make_job = make_jobscripts.make_stampede_mock_job
 
 # speconly_ideal
-jobn, ideal_script = make_job(ncpu=64, niter=1024,
+jobn, ideal_script = make_job(ncpu=128, niter=1024,
+			      walltime=3.0,
   			      paramfile='mock_speconly_ideal',
 			      params='c0.{0}'.format(fall),
 			      do_powell=False, noisefactor=10)
 
 # speconly_calibrated, lo S/N
 jobn, sonlycal_script = make_job(ncpu=128, niter=6144,
-  			         param_file='mock_speconly_linear',
+				 walltime=5.0,
+  			         paramfile='mock_speconly_linear',
 			         params='c0.{0}'.format(fall),
 			         do_powell=False, noisefactor=10)
 
 # speconly_uncalibrated, lo S/N
 jobn, sonlycal_script = make_job(ncpu=128, niter=6144,
-  			         param_file='mock_speconly_linear',
+  			         paramfile='mock_speconly_linear',
 			         params='u0.{0}'.format(fall),
 			         do_powell=False, noisefactor=10)
 
 # photonly
-jobn, photonly_script = make_job(ncpu=128, niter=1024,
-  			         param_file='mock_photonly',
+jobn, photonly_script = make_job(ncpu=64, niter=1024,
+				 walltime=2,
+  			         paramfile='mock_photonly',
 			         params='c0.{0}'.format(fall),
 			         do_powell=False, noisefactor=10)
 
