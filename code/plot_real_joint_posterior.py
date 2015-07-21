@@ -54,8 +54,11 @@ def compute_sigma_level(trace1, trace2, nbins=30):
 
 
 if __name__ == "__main__":
-    truths = None # {'mass':, 'tage':, 'dust2':}
     
+    truths = {'mass':1e5, 'zmet':-1.25, 'tage':10.0, 'dust2':0.12}
+    truth_references = {'zmet': ["Yong et al. (2015)", "Gratton et al. 2012"],
+                        'tage': ["Cassisi et al. (2008)"],
+                        'dust2': ["Cassisi et al. (2008)"]}
     real_cal="results/ggc_ngc1851_1432787257_mcmc"
     real_uncal="results/ggc_ngc1851_uncal_tightprior_1433448554_mcmc"
     resfiles = [real_cal, real_uncal]

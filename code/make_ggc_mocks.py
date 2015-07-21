@@ -198,7 +198,6 @@ fd = {'tage':12.0, 'zmet':0.0, 'dust2':0.5}
 def main(versiondir='', do_vary=False, do_noise=False,
          fiducial_params=fd, **kwargs):
 
-        
     
     vary_params = {'tage': [0.3, 1.1, 3.0, 6.0, 9.0, 12.0],
                    'zmet': [-1.5, -1.0, -0.5, 0.0, 0.15],
@@ -211,12 +210,15 @@ def main(versiondir='', do_vary=False, do_noise=False,
             'add_noise': False,
             'mask': True,
             'phot_snr':10}
-        
+
+    extras='.'
+    for k, v in kwargs.iteritems():
+        extras += '{}{}.'.format(k, v)
     info.update(kwargs)
     caltype = ['c', 'u']
     noisetype = ['0','1']
     name_template = os.path.join(info['outdir'], lib,
-                                 'ggc_mock.{0}{1}.t{2:3.1f}_z{3:3.1f}_a{4:3.1f}.pkl')
+                                 'ggc_mock.{1}{2}.t{3:3.1f}_z{4:3.1f}_a{5:3.1f}{0}pkl')
     model = sedmodel.SedModel(model_params)
     for k, v in fiducial_params.iteritems():
         model.params[k] = np.atleast_1d(np.array(v))
@@ -226,7 +228,7 @@ def main(versiondir='', do_vary=False, do_noise=False,
     info['apply_cal'] = False
     theta = theta_default.copy()
     mock = ggcdata.ggc_mock(model, theta, sps, **info)
-    filename = name_template.format(caltype[info['apply_cal']], 0, *theta)
+    filename = name_template.format(extras, caltype[info['apply_cal']], 0, *theta)
     print('writing to {0}'.format(filename))
     with open(filename, 'w') as f:
         pickle.dump(mock, f)
@@ -235,7 +237,7 @@ def main(versiondir='', do_vary=False, do_noise=False,
     info['apply_cal'] = True
     theta = theta_default.copy()
     mock = ggcdata.ggc_mock(model, theta, sps, **info)
-    filename = name_template.format(caltype[info['apply_cal']], 0, *theta)
+    filename = name_template.format(extras, caltype[info['apply_cal']], 0, *theta)
     print('writing to {0}'.format(filename))
     with open(filename, 'w') as f:
         pickle.dump(mock, f)
@@ -250,7 +252,7 @@ def main(versiondir='', do_vary=False, do_noise=False,
             for v in vals:
                 theta[ind] = v
                 mock = ggcdata.ggc_mock(model, theta, sps, **info)
-                filename = name_template.format(caltype[info['apply_cal']], 0,
+                filename = name_template.format(extras, caltype[info['apply_cal']], 0,
                                                 *theta)
                 print('writing to {0}'.format(filename))
                 with open(filename, 'w') as f:
@@ -264,7 +266,7 @@ def main(versiondir='', do_vary=False, do_noise=False,
         nnoise = 10 #number of noise realizations
         for i in range(nnoise):
             mock = ggcdata.ggc_mock(model, theta, sps, **info)
-            filename = name_template.format(caltype[info['apply_cal']], i+1,
+            filename = name_template.format(extras, caltype[info['apply_cal']], i+1,
                                             *theta)
             print('writing to {0}'.format(filename))
             with open(filename, 'w') as f:

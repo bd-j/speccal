@@ -207,7 +207,8 @@ the residuals, as would be introduced by inaccurate calibration.
 %(covariant absolute uncertainties the same as adding a function.)
 
 The calibration-vector and Gaussian-Process modified log-likelihood is
-\begin{eqnarray}\label{eq:spectroscopicLF_v2}
+\begin{eqnarray}
+\label{eq:spectroscopicLF}
 \ln p(d\given\theta,\alpha) &=&
                                 -\frac{1}{2}\,\left[\transpose{\Delta}\,C^{-1}\,\Delta
                                 + \ln([2\pi]^N\,\det{C}) \right]
@@ -271,11 +272,12 @@ model.
 
 The two log-likelihoods, for photometry and spectroscopy, are combined
 into a single likelihood function,
-\begin{eqnarray}\displaystyle ln p(d_s, d_p\given \theta, \alpha, b) =
-ln p_{spec}(d_s\given \theta, alpha) + ln p_{phot}(d_p\given \theta,
-b) \quad .
+\begin{eqnarray}\displaystyle 
+\ln p(d_s, d_p\given \theta, \alpha, b) =
+\ln p_{spec}(d_s\given \theta, \alpha) + \ln p_{phot}(d_p\given\theta, b) 
+\quad .
 \end{eqnarray} where now $d_s$ is the spectroscopic data and $d_p$ is
-the photometric data.  The spectroscipc likelihood $p_{spec}$ is given
+the photometric data.  The spectroscopic likelihood $p_{spec}$ is given
 by equation~(\ref{eq:spectroscopicLF}) and $p_{phot}$ is given by
 equation~(\ref{eq:photometricLF}).
 
@@ -500,7 +502,8 @@ distribution of the population from which a given cluster is drawn.
 
 \item \sout{Mock perfectly calibrated data: inference using spectroscopy and one
   photometric band, assuming no calibration uncertainty.  This is as
-  good as we could get given the data and its uncertainties.}
+  good as we could get given the data and its uncertainties.} 
+ Make sure this is run for the linear model.
 
 \item \sout{Mock perfectly calibrated data: inference using
 spectroscopy and one photometric band, with the full calibration
@@ -512,7 +515,7 @@ Make sure this is run for the linear model, make sure it is converged.
   photometric band, with full calibration model.  This is how well we
   can get the calibration \emph{and} the physical parameters with
   spectroscopy only.}
-Make sure this is run for the linear model.
+ Make sure this is run for the linear model.
 
 \item \sout{Mock data: inference using photometry only.  This is how well we
   can get the physical parameters using photometry only.}
@@ -541,8 +544,8 @@ Make sure this is run for the linear model.
   photometry, with full calibration model. } Make sure this is
 converged, make sure priors and jitter make sense.
 
-\item Compare the physical parameters inferred from from the real
-  calibrated and uncalibrated spectrum with each other and with CMD
+\item \sout{Compare the physical parameters inferred from from the real
+  calibrated and uncalibrated spectrum with each other} and with CMD
   based parameters.
 
 \item how parameter inference varies with photometric S/N.  Do for mag
@@ -678,16 +681,25 @@ parametrically or via a Gaussian Process. A Guassian Process can be
 used to model covaraint noise resulting from errors in an initial
 calibration (of an amplitude $a$) thus propogating calibration
 uncertainty into the model parameters $\theta$. 
+
 {\color{blue} Discuss more complicated covariance kernels, multiple
 kernels, combining fractional and absolute covariance amplitudes.}
+In the present study we have used a single, relatively simple kernel
+function to construct the covariance matrix.  It is possible to
+include multiple kernels by simply adding the resulting covariance
+kernels.  For example, one could add an additional kernel with a small
+amplitude and wavelength scale to account for model imperfections
+\citep[e.g.,][]{czekala15} or include covariance structure expected
+from the data reduction process \citep[e.g., ][]{bolton10} which
+would absolute (i.e. not a fraction of the mean model.)
 
 {\color{blue} BDJ words (and experiments?) about the gains that might
 be made by including photometry over a large range in wavelength with
 spectroscopy over relatively small ranges.}  In this case even with
 perfectly known spectrophotometric calibration, the photometry would
 in principle add information.  This would occur if models with very
-similar spectra in the observed range had differing SEDs outside that
-range.
+similar spectra in the observed range had widely differing SEDs
+outside that range.
 
 {\color{blue} BDJ discuss the relation of this technique to the typical use of
 continuum normalization when fitting spectroscopy.}
@@ -796,6 +808,9 @@ Beifiori, A., Maraston, C., Thomas, D., \& Johansson, J.\ 2011, \aap, 531, A109
 
 \bibitem[Bertelli et al.(1994)]{bertelli94} Bertelli, G., Bressan, A., 
 Chiosi, C., Fagotto, F., \& Nasi, E.\ 1994, \aaps, 106, 275 
+
+\bibitem[Bolton \& Schlegel(2010)]{bolton10} Bolton, A.~S., \& 
+Schlegel, D.~J.\ 2010, \pasp, 122, 248 
 
 \bibitem[Cardelli \etal(1989)]{CCM89} 
 Cardelli, J.~A., Clayton, G.~C., \& Mathis, J.~S.\ 1989, \apj, 345, 245 

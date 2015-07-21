@@ -200,13 +200,11 @@ def residualfig(wave, obsvec, specvecs, unc=None, chi=False,
             x, y, e = wave, obsvec, unc
             rax.fill_between(x, -e, e, facecolor='grey', alpha=0.3)
     # Plot posterior samples of the observed spectrum as a residual
-    for i, specs in enumerate(specvecs):
-        if i==0:
-            label = 'Posterior samples'
-        else:
-            label = None
+    label = 'Posterior samples'
+    for specs in specvecs:
         rax.plot(wave, (specs[3] - obsvec) / chi_unc, linewidth=0.5,
                  color=basecolor, alpha=0.3, label=label)
+        label = ''
     rax.axhline(0.0, linestyle=':', color='k')
     return rfig, rax
                 

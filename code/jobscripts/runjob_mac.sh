@@ -25,7 +25,7 @@ mpirun -np 5 python prospectr.py --param_file=$PROJECTS/speccal/code/paramfiles/
 mpirun -np 5 python prospectr.py --param_file=$PROJECTS/speccal/code/paramfiles/mock_photonly.py \
   --filename=$PROJECTS/speccal/data/ggclib/mocks/miles/ggc_mock.c0.t9.0_z0.0_a0.5.pkl \
   --outfile=$PROJECTS/speccal/code/results/ggc_mock_photonly.c0.t9.0_z0.0_a0.5 \
-  --nwalkers=126 --niter=2048 --do_powell=False 
+  --nwalkers=64 --niter=2048 --do_powell=False 
 
 # somephot linear
 mpirun -np 5 python prospectr.py \
