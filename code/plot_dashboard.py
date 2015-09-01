@@ -15,7 +15,7 @@ gp = ExpSquared(None, None)
 
 param_name_map = {'tage':'Age (Gyr)',
                   'mass': '$M_*$ $(M_\odot/10^{5})$',
-                  'dust2':'$\tau_V$',
+                  'dust2':r'$\tau_V$',
                   'zmet': '$\log Z/Z_\odot$',
                   'sigma_smooth': '$\sigma_{{LSF}}$',
                   'zred': '${\it z}$',
@@ -88,18 +88,7 @@ if __name__ == "__main__":
         rescale = 1e18
     cfig, cax = calfig(mwave, calvec, specvecs, norm=norm, rescale=rescale,
                        fax=(None, cax), caltype='full', basecolor=bcolor)
-    cax = format_calax(cax, norm, rescale=rescale)
-
-    # Residual Figure    
-    ofig, oax = residualfig(mwave, mospec, specvecs, unc=mounc,
-                            basecolor=bcolor,fax=(None, oax), chi=True)
-    oax.set_ylabel(r'$\chi$')
-    oax.legend(loc=0, prop={'size':8})
-    oax.tick_params(axis='both', which='major', labelsize=8)
-    oax.set_xticklabels([''])
-    oax.set_ylabel(cax.get_ylabel(), fontsize=12)
-    oax.set_ylim(-3,3)
-    
+    cax = format_calax(cax, norm, rescale=rescale)    
         
     # Intrinsic SED figure
     sfig, sax = sedfig(fwave, fspecvecs, [pwave, mosed, mosed_unc], pvecs,
@@ -108,12 +97,13 @@ if __name__ == "__main__":
     sax.plot(twave, tspec, color='black', label='True spectrum', alpha=0.6)
     sax = format_sedax(sax)
     
-    # Observed spectrum figure
+    # Residual figure
     ofig, oax = residualfig(mwave, mospec, specvecs, unc=mounc,
                             fax=(None,oax), chi=True, basecolor=bcolor)
     oax.set_ylabel(r'$\chi$')
     oax.legend(loc=0, prop={'size':8})
     oax.set_ylim(-1,1)
+    oax.set_xticklabels([''])
 
     # Posterior parameter histograms
     pnames = ['mass', 'tage', 'dust2', 'zmet']

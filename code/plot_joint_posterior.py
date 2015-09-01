@@ -54,9 +54,15 @@ def compute_sigma_level(trace1, trace2, nbins=30):
 
 
 if __name__ == "__main__":
-    photonly = 'results/ggc_mock_photonly.c0.t9.0_z0.0_a0.5_1430274922_mcmc'
-    speconly = 'results/ggc_mock_speconly.u0.t9.0_z0.0_a0.5_1431313829_mcmc'
-    specphot = 'results/ggc_mock_specphot_linear.u0.t9.0_z0.0_a0.5_5280432_1431898211_mcmc'
+    if len(sys.argv) > 1:
+        photonly = sys.argv[1]
+        speconly = sys.argv[2]
+        specphot = sys.argv[3]
+    else:
+        photonly = 'results/ggc_mock_photonly.c0.t9.0_z0.0_a0.5_1430274922_mcmc'
+        speconly = 'results/ggc_mock_speconly.u0.t9.0_z0.0_a0.5_1431313829_mcmc'
+        specphot = 'results/ggc_mock_specphot_linear.u0.t9.0_z0.0_a0.5_5280432_1431898211_mcmc'
+        
     resfiles = [photonly, speconly, specphot]
     clr = ['red','blue', 'magenta']
     results = [bread.read_pickles(rfile, model_file=rfile.replace('mcmc','model'))[0]
@@ -129,4 +135,4 @@ if __name__ == "__main__":
                 
             ax.plot(truths[0], truths[1], 'ok')
     fig.savefig('../tex/figures/combined_post.pdf')
-    pl.show()
+    #pl.show()

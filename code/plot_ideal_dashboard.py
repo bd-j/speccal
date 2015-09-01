@@ -17,8 +17,8 @@ gp = ExpSquared(None, None)
 
 param_name_map = {'tage':'Age (Gyr)',
                   'mass': '$M_*$ $(M_\odot)$',
-                  'dust2':'$\tau_V$',
-                  'zmet': '$\log Z/Z_\odot$',
+                  'dust2':r'$\tau_V$',
+                  'zmet': '$\log \, Z/Z_\odot$',
                   'sigma_smooth': '$\sigma_{{LSF}}$',
                   'zred': '${\it z}$',
                   }
