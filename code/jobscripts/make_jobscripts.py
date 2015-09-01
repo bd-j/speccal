@@ -52,8 +52,8 @@ def make_real_job(ncpu=8, niter=1024, nwalkers=32, do_powell=True,
     """Make a jobscript for real spectra.
     """
     
-    jobname = '{0}.{1}'.format(paramfile, objname)
-    scriptname = os.path.join(jobscriptdir, '{0}.cal{1}.sh'.format(jobname, calibrated))
+    jobname = '{0}.{1}.cal{2}'.format(paramfile, objname, calibrated)
+    scriptname = os.path.join(jobscriptdir, '{0}.sh'.format(jobname))
     out = open(scriptname, 'w')
     if machine =='stampede':
         hdr, outfile, nwalkers = stampede_header(ncpu=ncpu, account=account,
