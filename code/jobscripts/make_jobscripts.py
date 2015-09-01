@@ -53,7 +53,7 @@ def make_real_job(ncpu=8, niter=1024, nwalkers=32, do_powell=True,
     """
     
     jobname = '{0}.{1}'.format(paramfile, objname)
-    scriptname = os.path.join(jobscriptdir, '{0}.sh'.format(jobname))
+    scriptname = os.path.join(jobscriptdir, '{0}.cal{1}.sh'.format(jobname, calibrated))
     out = open(scriptname, 'w')
     if machine =='stampede':
         hdr, outfile, nwalkers = stampede_header(ncpu=ncpu, account=account,
