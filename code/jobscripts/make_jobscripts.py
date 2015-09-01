@@ -26,7 +26,7 @@ def make_mock_job(ncpu=8, niter=1024, nwalkers=32, do_powell=True,
         assert ncpu <= 8
         nwalkers -= np.mod(nwalkers, (ncpu-1) * 2)
         hdr = ("#!/bin/bash\n\n"
-               "mpirun -np {0} python prospectr.py \\\n".format(ncpu))
+               "mpirun -np {0} python $PROJECTS/speccal/code/prospectr.py \\\n".format(ncpu))
         outfile = "$PROJECTS/speccal/code/results/{}".format(jobname)
 
     
@@ -64,7 +64,7 @@ def make_real_job(ncpu=8, niter=1024, nwalkers=32, do_powell=True,
         assert ncpu <= 8
         nwalkers -= np.mod(nwalkers, (ncpu-1) * 2)
         hdr = ("#!/bin/bash\n\n"
-               "mpirun -np {0} python prospectr.py \\\n".format(ncpu))
+               "mpirun -np {0} python $PROJECTS/speccal/code/prospectr.py \\\n".format(ncpu))
         outfile = "$PROJECTS/speccal/code/results/{}".format(jobname)
 
     out.write(hdr)
@@ -96,7 +96,7 @@ def stampede_header(ncpu=16, account='TG-AST130057',
     hdr += ("### Requested computing time\n"
             "#SBATCH -t {0}\n\n").format(wt)
     hdr += ("### Account\n"
-            "#{0}\n\n").format(account)
+            "#SBATCH -A {0}\n\n").format(account)
     hdr += ("### Job name\n"
             "#SBATCH -J '{0}'\n\n").format(jobname)
     hdr += ("### output and error logs\n"
