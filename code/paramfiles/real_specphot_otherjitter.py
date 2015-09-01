@@ -206,7 +206,7 @@ model_params.append({'name': 'spec_norm', 'N':1,
                         'prior_args': {'mini':-1.0, 'maxi':1.0}})
 
 # This is for use with the matern branch for bsfh, where sqrt(jitter)
-# now multiplies the noise (instead of adding)
+# now multiplies the noise (instead of adding to it)
 model_params.append({'name': 'gp_jitter', 'N':1,
                         'isfree': True,
                         'init': 1.0,
@@ -217,18 +217,18 @@ model_params.append({'name': 'gp_jitter', 'N':1,
 model_params.append({'name': 'gp_amplitude', 'N':1,
                         'isfree': True,
                         'init': 0.04,
-                        'units': 'spec units',
+                        'units': 'fractional spec units',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.02, 'maxi':0.1}})
+                        'prior_args': {'mini':0.02, 'maxi':0.2}})
 
 model_params.append({'name': 'gp_length', 'N':1,
                         'isfree': True,
                         'init': 300.0,
                         'units': r'$\AA$',
-#                        'prior_function': priors.lognormal,
-#                        'prior_args': {'log_mean':np.log(200.0)+0.5**2, 'sigma':0.5}})
-                        'prior_function': priors.tophat,
-                        'prior_args': {'mini':250.0, 'maxi':350.0}})
+                        'prior_function': priors.lognormal,
+                        'prior_args': {'log_mean':np.log(300.0)+0.5**2, 'sigma':0.5}})
+#                        'prior_function': priors.tophat,
+#                        'prior_args': {'mini':250.0, 'maxi':350.0}})
 
 model_params.append({'name': 'phot_jitter', 'N':1,
                         'isfree': True,

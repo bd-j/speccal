@@ -22,7 +22,7 @@ def make_mock_job(ncpu=8, niter=1024, nwalkers=32, do_powell=True,
                                                  partition=partition,
                                                  walltime=walltime,
                                                  jobname=jobname)
-    elif machine = 'mac':
+    elif machine == 'mac':
         assert ncpu <= 8
         nwalkers -= np.mod(nwalkers, (ncpu-1) * 2)
         hdr = ("#!/bin/bash\n\n"
@@ -60,7 +60,7 @@ def make_real_job(ncpu=8, niter=1024, nwalkers=32, do_powell=True,
                                                  partition=partition,
                                                  walltime=walltime,
                                                  jobname=jobname)
-    elif machine = 'mac':
+    elif machine == 'mac':
         assert ncpu <= 8
         nwalkers -= np.mod(nwalkers, (ncpu-1) * 2)
         hdr = ("#!/bin/bash\n\n"
@@ -69,7 +69,7 @@ def make_real_job(ncpu=8, niter=1024, nwalkers=32, do_powell=True,
 
     out.write(hdr)
     out.write(" --param_file=$PROJECTS/speccal/code/paramfiles/{0}.py \\\n".format(paramfile))
-    out.write(" --objname={0} --calibrated={1}\\\n".format(objname, str(calibrated)))
+    out.write(" --objname={0} --calibrated={1} \\\n".format(objname, str(calibrated)))
     out.write(" --outfile={0} \\\n".format(outfile))
     out.write(" --nwalkers={0}"
               " --niter={1}"
@@ -89,19 +89,19 @@ def stampede_header(ncpu=16, account='TG-AST130057',
 
     hdr = ''
     hdr += "#!/bin/bash\n\n"
-    hdr += "###partition\n"
-              "#SBATCH -p {}\n\n".format(partition)
-    hdr += "### Requested number of nodes\n"
-              "#SBATCH -n {0}\n\n".format(ncpu)
-    hdr += "### Requested computing time\n"
-              "#SBATCH -t {0}\n\n".format(wt)
-    hdr += "### Account\n"
-              "#{0}\n\n".format(account)
-    hdr += "### Job name\n"
-              "#SBATCH -J '{0}'\n\n".format(jobname)
-    hdr += "### output and error logs\n"
-              "#SBATCH -o {0}_%j.out\n"
-              "#SBATCH -e {0}_%j.err\n\n".format(jobname)
+    hdr += ("###partition\n"
+            "#SBATCH -p {}\n\n").format(partition)
+    hdr += ("### Requested number of nodes\n"
+            "#SBATCH -n {0}\n\n").format(ncpu)
+    hdr += ("### Requested computing time\n"
+            "#SBATCH -t {0}\n\n").format(wt)
+    hdr += ("### Account\n"
+            "#{0}\n\n").format(account)
+    hdr += ("### Job name\n"
+            "#SBATCH -J '{0}'\n\n").format(jobname)
+    hdr += ("### output and error logs\n"
+            "#SBATCH -o {0}_%j.out\n"
+            "#SBATCH -e {0}_%j.err\n\n").format(jobname)
     hdr += "\n ibrun python-mpi $PROJECTS/speccal/code/prospectr.py \\\n"
 
     return hdr, outfile, nwalkers

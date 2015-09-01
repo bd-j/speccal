@@ -71,7 +71,7 @@ jobn, realcal_script = make_real_job(ncpu=128, niter=4096,
 				     objname='NGC1851', calibrated=True,
 				     noisefactor=5.0,
 				     machine='stampede', account='TG-AST130057',
-				     partition='normal', walltime=6.0):
+				     partition='normal', walltime=6.0)
 
 # real uncalibrated
 jobn, realuncal_script = make_real_job(ncpu=128, niter=4096,
@@ -79,7 +79,7 @@ jobn, realuncal_script = make_real_job(ncpu=128, niter=4096,
 				       objname='NGC1851', calibrated=False,
 				       noisefactor=5.0,
 				       machine='stampede', account='TG-AST130057',
-				       partition='normal', walltime=6.0):
+				       partition='normal', walltime=6.0)
 
 
 # -------------------
