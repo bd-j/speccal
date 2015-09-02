@@ -225,10 +225,10 @@ model_params.append({'name': 'gp_length', 'N':1,
                         'isfree': True,
                         'init': 300.0,
                         'units': r'$\AA$',
-                        'prior_function': priors.lognormal,
-                        'prior_args': {'log_mean':np.log(300.0)+0.5**2, 'sigma':0.5}})
-#                        'prior_function': priors.tophat,
-#                        'prior_args': {'mini':250.0, 'maxi':350.0}})
+#                        'prior_function': priors.lognormal,
+#                        'prior_args': {'log_mean':np.log(300.0)+0.5**2, 'sigma':0.5}})
+                        'prior_function': priors.tophat,
+                        'prior_args': {'mini':250.0, 'maxi':2000.0}})
 
 model_params.append({'name': 'phot_jitter', 'N':1,
                         'isfree': True,

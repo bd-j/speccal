@@ -323,7 +323,7 @@ def ggc_mock(model, theta, sps, objname='', apply_cal=True, mask=True,
     
     return mock
 
-def ggc_mask(obs, minwave=3602, maxwave=1e4, pad=6.0, **kwargs):
+def ggc_mask(obs, minwave=3602, maxwave=1e4, pad=10.0, **kwargs):
     """Generate a mask based on peaks in the sky spectrum, min and max
     wavelengths, and regions around ISM and sky lines.
     """
@@ -338,8 +338,11 @@ def ggc_mask(obs, minwave=3602, maxwave=1e4, pad=6.0, **kwargs):
                    (wave < (elines.wavelength[line] + pad)))
         mask = mask & ~inline
 
-    #mask one weird remaining line
-    inline = (wave > 6061.0) & (wave < 6075.0)
+    # mask weird remaining lines
+    inline = (wave > 6050.0) & (wave < 6075.0)
+    inline = inline | ((wave > 5036) & (wave < 5055.0))
+    inline = inline | ((wave > 4536) & (wave < 4556.0))
+    inline = inline | ((wave > 6212) & (wave < 6227.0))
     mask = mask & ~inline
     
     obs['mask'] = obs.get('mask', True) & mask

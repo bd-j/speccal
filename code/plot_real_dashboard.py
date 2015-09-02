@@ -14,7 +14,7 @@ sps = sps_basis.StellarPopBasis()
 gp = ExpSquared(None, None)
 param_name_map = {'tage':'Age (Gyr)',
                   'mass': '$M_*$ $(M_\odot/10^{5})$',
-                  'dust2':'$\tau_V$',
+                  'dust2':r'$\tau_V$',
                   'zmet': '$\log Z/Z_\odot$',
                   'sigma_smooth': '$\sigma_{{LSF}}$',
                   'zred': '${\it z}$',
