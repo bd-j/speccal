@@ -81,6 +81,14 @@ jobn, realuncal_script = make_real_job(ncpu=128, niter=4096,
 				       machine='stampede', account='TG-AST130057',
 				       partition='normal', walltime=6.0)
 
+# real phot
+jobn, realphot_script = make_real_job(ncpu=7, niter=1096,
+  			               paramfile='real_photonly',
+				       objname='NGC1851', calibrated=True,
+				       noisefactor=5.0, nwalkers=128,
+				       machine='mac', account='TG-AST130057',
+				       partition='normal', walltime=2.0)
+
 
 # -------------------
 # And run them
