@@ -1,0 +1,61 @@
+
+NGC 104	2003 Apr 28	5	E-W	48	\ldots	\ldots	\ldots	\pm 25
+NGC 1851	2003 Apr 25	5	N-S	9	5	20 W	\ldots	\pm 9
+NGC 1904	2003 Apr 26	15	E-W	20	15	15 E	\ldots	\pm 10
+NGC 1904	2003 Apr 27	15	E-W	20	15	15 E	\ldots	\pm 14
+NGC 2298	2003 Apr 27	15	E-W	36	15	15 E	\ldots	-24, +20
+NGC 2298	2003 Apr 28	15	E-W	36	15	15 E	\ldots	\pm 20
+NGC 2808	2003 Apr 25	10	E-W	30	5	15 E	\ldots	\pm 20
+NGC 2808	2003 Apr 27	10	E-W	30	10	15 W	5	-17, +15
+NGC 3201	2003 Apr 25	15	N-S	170	15	12 W	5	\pm 85
+NGC 3201	2003 Apr 26	15	N-S	170	15	12 N	5	\pm 85
+NGC 5286	2003 Apr 25	10	N-S	36	10	12\arcmin N	5	\pm 20
+NGC 5286	2003 Apr 27	10	E-W	36	10	12 W	5	\pm 20
+NGC 5286	2003 Apr 28	15	E-W	36	15	12 W	5	-20, +23
+NGC 5904	2003 Apr 27	15	E-W	54	15	20 W	5	-27, +30
+NGC 5904	2003 Apr 28	15	E-W	45	15	20 N	5	-27, +30
+NGC 5927	2003 Apr 25	15	N-S	50	15	20 W	10	\pm 29
+NGC 5927	2003 Apr 25	15	N-S	50	15	15 E	10	\pm 29
+NGC 5927	2003 Apr 28	15	E-W	46	15	15 E	10	\pm 25
+NGC 5946	2003 Apr 26	15	N-S	10	15	10 W	10	-6, +7
+NGC 5986	2003 Apr 25	15	N-S	76	15	12 N	5	-32, +42
+NGC 6121	2003 Apr 25	15	N-S	100	15	14 S, 14 W	10	\pm 50
+NGC 6171	2003 Apr 26	15	N-S	64	15	11 N, 11 W	10	-32, +36
+NGC 6171	2003 Apr 26	15	N-S	64	15	10 S	10	-32, +37
+NGC 6218	2003 Apr 27	15	E-W	90	15	20 W	10	\pm 45
+NGC 6235	2003 Apr 28	15	E-W	45	15	20 N	10	\pm 25
+NGC 6254	2003 Apr 27	15	E-W	108	15	15 N	10	\pm 54
+NGC 6266	2003 Apr 25	15	N-S	22	15	15 N	5	-12, +16
+NGC 6284	2003 Apr 25	15	N-S	9	15	15 N	5	-6, +7
+	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\pm 14
+NGC 6304	2003 Apr 26	15	N-S	26	15	10 N	5	\pm 17
+NGC 6316	2003 Apr 26	15	N-S	20	15	10 E	5	-10, +11
+NGC 6316	2003 Apr 28	15	E-W	18	15	10 W	5	-14, +11
+NGC 6333	2003 Apr 26	15	N-S	70	15	15 E	5	\pm 35
+NGC 6342	2003 Apr 25	10	N-S	12	10	10 S	5	\pm 4
+	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\pm 10
+NGC 6352	2003 Apr 27	15	E-W	99	\ldots	\ldots	\ldots	\pm 50
+NGC 6356	2003 Apr 26	15	N-S	28	15	15 E	5	\pm 22
+NGC 6362	2003 Apr 28	15	E-W	160	15	15 W	5	\pm 80
+NGC 6388	2003 Apr 26	10	N-S	18	10	10 E	5	\pm 10
+NGC 6441	2003 Apr 26	10	N-S	12	10	10 E	5	\pm 10
+	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\pm 18
+NGC 6522	2003 Apr 26	15	N-S	9	15	8 S	5	\pm 9
+NGC 6528	2003 Apr 27	15	E-W	9	15	8 N	5	\pm 8
+	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\pm 15
+NGC 6528	2003 Apr 28	15	E-W	5	15	15 W	5	\pm 7
+	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\pm 14
+NGC 6544	2003 Apr 26	15	N-S	18	15	15 E	10	-12, +6
+NGC 6553	2003 Apr 28	15	E-W	64	15	\ldots	\ldots	\pm 35
+NGC 6569	2003 Apr 28	15	E-W	45	15	8 W, 8 S	10	\pm 25
+NGC 6624	2003 Apr 27	15	E-W	9	15	15 S	5	-7, +5
+	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\pm 11
+NGC 6626	2003 Apr 25	10	N-S	28	10	15 S	5	\pm 16
+NGC 6637	2003 Apr 27	15	E-W	36	15	15 N	10	\pm 20
+NGC 6638	2003 Apr 27	15	E-W	27	15	15 N	5	\pm 15
+NGC 6652	2003 Apr 27	15	E-W	9	15	12 W	5	\pm 7
+NGC 6723	2003 Apr 27	10	E-W	108	5	12 W	5	\pm 54
+NGC 6752	2003 Apr 28	5	E-W	18	5	12 W	\ldots	-13, +11
+NGC 7078	2003 Apr 26	5	N-S	9	\ldots	\ldots	\ldots	\pm 5
+	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\ldots	\pm 20
+NGC 7089	2003 Apr 28	5	E-W	36	\ldots	\ldots	\ldots	\ldots \pm 22

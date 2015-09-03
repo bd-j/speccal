@@ -18,6 +18,7 @@
  \usepackage{apjfonts}
 % ----
 \usepackage{color, hyperref}
+\usepackage[normalem]{ulem}
 \bibliographystyle{apj}
 \input{vc}
 
@@ -35,7 +36,7 @@
 %figures
 \usepackage{graphicx}
 \DeclareGraphicsExtensions{.png,.pdf}
-\newcommand{\excluster}{B192-G242}
+\newcommand{\excluster}{NGC1851}
 
 %references
 \newcommand{\foreign}[1]{\emph{#1}}
@@ -44,20 +45,20 @@
 
 \begin{document}\sloppy\sloppypar
 \title{Combining information from photometric and spectroscopic data:\\
-  Don't waste your time in spectrophotometric calibration!}
-\shorttitle{don't waste your time in calibration!}
+  Probabilistic spectrophotometric inference}
+\shorttitle{Combining Spectroscopy and Photometry}
 \author{
-  BDJ\altaffilmark{\lick},
-  DRW\altaffilmark{\lick},
-  DFM\altaffilmark{\ccpp},
-  DWH\altaffilmark{\ccpp, \cds, \mpia},
-  CC\altaffilmark{\lick},
-  others}
-\shortauthors{bdj et al}
-\altaffiltext{\lick}{University of California Lick Observatory}
-\altaffiltext{\ccpp}{Center for Cosmology and Particle Physics, Department of Physics, New York University}
-\altaffiltext{\cds}{Center for Data Science, New York University}
-\altaffiltext{\mpia}{Max-Planck-Institut f\"ur Astronomie}
+%  BDJ\altaffilmark{\lick},
+%  DRW\altaffilmark{\lick},
+%  DFM\altaffilmark{\ccpp},
+%  DWH\altaffilmark{\ccpp, \cds, \mpia},
+%  CC\altaffilmark{\lick},
+  AUTHORS}
+\shortauthors{BDJ et al}
+%\altaffiltext{\lick}{University of California Lick Observatory}
+%\altaffiltext{\ccpp}{Center for Cosmology and Particle Physics, Department of Physics, New York University}
+%\altaffiltext{\cds}{Center for Data Science, New York University}
+%\altaffiltext{\mpia}{Max-Planck-Institut f\"ur Astronomie}
 
 \begin{abstract}
 In a typical spectral-fitting project,
@@ -79,8 +80,6 @@ In particular, for stellar population fitting, high signal-to-noise data,
   and good photometry,
   we show that raw counts are just as good as calibrated counts for making inferences about the
   parameters of interest.
-This obviation of calibration overheads will pay \emph{all yall mad cheddar},
-  at least if yall employ full cost accounting.
 \end{abstract}
 
 \keywords{
@@ -91,18 +90,6 @@ This obviation of calibration overheads will pay \emph{all yall mad cheddar},
 
 \section{Introduction}
 
-In probabilistic inference, all information flows from the data to the
-parameters of interest by means of a likelihood function, or an
-expression for the probability of the data conditioned on the
-parameters.
-If there are $N$ independent sources of data, for each of which there
-is a likelihood function, the full-data likelihood is the product of
-the $N$ individual likelihoods (or the log-likelihood is a sum of the
-$N$ individual log-likelihoods).
-There is no bespoke ``weighting'' of the data that is justifiable in
-this framework.
-This creates some apparent paradoxes!
-One is the following:
 
 Imagine you have three photometric bands through which you have
 observed some object (independently, say), and also a 2500-pixel
@@ -113,7 +100,7 @@ measurements if they are derived from disjoint sets of detector pixels
 in the spectrograph detector plane.
 Each photometric band and each spectroscopic pixel has a
 log-likelihood function, and these 2503 log-likelihood functions must
-be (by the Rules of Righteousness) coadded equally into one full-data
+be coadded equally into one full-data
 log-likelihood.
 The log-likelihood is therefore fully dominated by the spectral
 pixels!
@@ -124,30 +111,20 @@ That is, if the spectral pixels tend to prefer one model, or one set
 of parameters, and the photometry another, the spectra will almost
 always ``win'' just by their overwhelming numbers.
 
-What is a Righteous Probabilistic Investigator (RPI) to do?
-One option---fully unjustified---is to ``down-weight'' the
-log-likelihoods of the spectral pixels relative to the photometric
-measurements.
-This is equivalent to taking the likelihoods to some power, which has
-no justification in inference (though it is sometimes used in
-optimization and sampling as an ``annealing'' move).
-This down-weighting is not justified, but there is even more
-ad-hockery than this, because there is no principled way to choose the
-unprincipled weights.
-
-The Right Thing To Do is to express the \emph{reason} that the RPI
-believes the spectroscopic data to be less reliable \emph{within} the
+The Right Thing To Do is to express the \emph{reason} that the
+spectroscopic data are less reliable \emph{within} the
 likelihood function.
-That is, the RPI must add nuisance parameters to parameterize the
+That is, the one must add nuisance parameters to parameterize the
 unreliability of the spectroscopy, and infer those along with the
 parameters of interest.
 If this parameterization is good, the information in the spectroscopy
 data will not flow entirely to the parameters of interest; instead,
 some will flow to the nuisance parameters.
 This will reduce the importance of the spectroscopy relative to the
-photometry and the RPI will be well pleased with the dominance of the
-photometric data in the final inferences of the parameters of
-interest.
+photometry.
+This amounts to propagating the uncertainties in the
+spectrophotometric calibration (or alternatively in the continuum
+normalization).
 In what follows, we provide an example of this kind of
 parameterization and inference.
 
@@ -160,27 +137,15 @@ However, because the calibration adjustment is inferred along with the
 parameters of interest, the probabilistic inference that provides
 parameter estimates \emph{also} provides a spectrophotometric
 calibration of the spectral data.
-That is, the method we present has the potential to \emph{obviate
-spectrophotometric calibration}.
 
-We find that this potential---obviation of calibration---is realized.
-That is, if the procedures demonstrated below become widely adopted,
-some or perhaps most astronomical spectroscopic projects could
-potentially drop or dramatically reduce their spectrophotometric
-calibration programs.
-This would reduce telescope overheads and data-analysis time and
-complexity, delivering economic and sanity benefits to the whole
-community.
 
 \section{Model generalities}
 
-THIS SECTION NEEDS WORK; THIS IS JUST AN EQUATION DUMP.
-
-HOGG: A model is a parameterized likelihood function, with prior PDFs on the nuisance parameters (at least)...
-
-HOGG: There is a likelihood for the photometry and for the spectroscopy...
-
-HOGG: Each of these penalizes the difference between a column vector of data and a column vector of model expectation value...
+A model is a parameterized likelihood function, with prior PDFs
+on the nuisance parameters (at least).  There is a likelihood for
+the photometry and for the spectroscopy.  Each of these penalizes
+the difference between a column vector of data and a column vector of
+model expectation value.
 
 The standard chi-squared or log-Gaussian log-likelihood is
 \begin{eqnarray}
@@ -197,47 +162,66 @@ We have included the $\ln(\sigma_n^2)$ term in the likelihood because
 in what follows we are going to be modifying the noise model.
 
 If you don't believe the reported data noise variances $\sigma_n^2$,
-it often makes sense to add in quadrature a ``jitter'' variance $s^2$.
-This is a trivial modification of the chi-squared log-likelihood:
+it often makes sense to add in quadrature a ``jitter'' variance $b^2$.
+This is a simple modification of the chi-squared log-likelihood:
 \begin{eqnarray}\label{eq:photometricLF}
-\ln p(d\given\theta,s^2) &=& -\frac{1}{2}\,\sum_{n=1}^N \left[\frac{[d_n - \mu_n(\theta)]^2}{[\sigma_n^2 + s^2]} + \ln(2\pi\,[\sigma_n^2 + s^2]) \right]
+\ln p(d\given\theta,b^2) &=& -\frac{1}{2}\,\sum_{n=1}^N
+                             \left[\frac{[d_n - \mu_n(\theta)]^2}
+                             {[\sigma_n^2 + b^2]} + 
+                             \ln(2\pi\,[\sigma_n^2 + b^2]) \right]
 \quad .
 \end{eqnarray}
 This modification shows the necessity of including the log-variance
-term.
+term.  Large $b$ reduces the penalty for individual large residuals,
+but also reduces the reward for well-fit data.
 This---equation~(\ref{eq:photometricLF})---is in fact the
 log-likelihood function we are going to use for the photometric
-measurements ({\color{blue} BDJ: IS THIS TRUE?} {\color{red} Jitter
-will be added now with correct sign as I test increases in model
-complexity }) in what follows.  
-In this formulation, if $\theta$ are the parameters of interest, the
-jitter variance $s^2$ is a nuisance noise-model parameter.  The
-Gaussian Process will be a generalization of this modification.
+measurements in what follows.  For photometric data this ``jitter'' is
+often best described as a fractional error, $b^2 \equiv
+\hat{b}^2\mu(\theta)^2$, corresponding for example to an additional
+magnitude zero-point uncertainty.  In this formulation, if $\theta$
+are the parameters of interest, the jitter variance $\hat{b} =
+b/\mu(\theta)$ is a nuisance noise-model parameter representing
+additonal fractional uncertainty in the flux.  
 
-We take the calibration-vector that modifies the mean model to produce
-the observed spectrum as multiplicative with respect to the mean
-model.  In this case we define the residual of the data from the model
-in terms of the logarithmic differences.  This logarithmic formulation
-requires that $d$ be everywhere positive, and distorts the
-uncertainties, especially at low S/N ratio.  The advantages of
-defining the residual in this way are that the model remains linear
-(and therefore fast) and the calibration vector is forced to be
-positive everywhere.  However, at high signal to noise the distortion
-of the uncertainties will be minimal.
+{\color{blue} BDJ This paragraph should explain why we are using the
+GP, not just how it works.}
+For the spectroscopic measurements we are going to account for the
+spectrophotometric calibration in our likelihood function.  We take
+the calibration-vector that modifies the mean spectroscopic model to
+produce the observed spectrum to be multiplicative with respect to the
+mean model.  The multiplicative calibration vector can be explicitly
+modeled, for example using polynomials.  However, for complex
+calibration vectors over large wavelength ranges, the number of
+parameters required to model the calibration can become quite large
+(e.g. very high order polynomials) and the correct parameterization
+may be unknown.  It is therefore desirable to introduce a
+`non-parameteric' model of the calibration.  We do this using a
+Gaussian Process in the likelihood function.  The Gaussian Process is
+a generalization of the modified log-likelihood introduced in
+equation~\label{eq:photometricLF} that allows for correlated noise in
+the residuals, as would be introduced by inaccurate calibration.
+
+%BDJ: prior over functions, analytically marginalizable, covariant
+%fractional uncertainties the same as multiplying by a function
+%(covariant absolute uncertainties the same as adding a function.)
 
 The calibration-vector and Gaussian-Process modified log-likelihood is
-\begin{eqnarray}\label{eq:spectroscopicLF}
-\ln p(d\given\theta,\alpha) &=& -\frac{1}{2}\,\left[\transpose{\Delta}\,C^{-1}\,\Delta + \ln([2\pi]^N\,\det{C}) \right]
+\begin{eqnarray}
+\label{eq:spectroscopicLF}
+\ln p(d\given\theta,\alpha) &=&
+                                -\frac{1}{2}\,\left[\transpose{\Delta}\,C^{-1}\,\Delta
+                                + \ln([2\pi]^N\,\det{C}) \right]
 \\
-\Delta &\equiv& \ln d - \ln \mu(\theta) - f(\alpha) 
+\Delta &\equiv& d - \mu(\theta) \ast f(\alpha) 
 \\
-C_{nn'} &\equiv& [\hat{\sigma}_n^2 + s^2]\,\delta_{nn'} +
-K_\alpha(\lambda_n - \lambda_{n'})
-\\
-\hat{\sigma_n} & = &\sigma_n/d
+C_{nn'} &\equiv& [\sigma_n^2 + (\hat{s} \, \mu_n)^2]\,\delta_{nn'} +
+ K_\alpha(\lambda_n - \lambda_{n'}) 
 \quad ,
 \end{eqnarray}
-where $\alpha$ is a blob of nuisance parameters
+where $\ast$ denotes element-wise multiplication,
+$\theta$ are the physical parameters,
+$\alpha$ is a blob of nuisance parameters
 (which determine the jitter, the calibration vector and the kernel function),
 $\Delta$ is a residual column vector,
 $f(\alpha)$ is a calibration column vector,
@@ -245,208 +229,238 @@ $C$ is the Gaussian Process covariance matrix,
 made up of $N^2$ values $C_{nn'}$,
 $K_\alpha$ is a kernel function that sets the wavelength scale and
 amplitude of the residual calibration issues,
-$\hat{\sigma}_n$ are the fractional uncertainties of the data,
 and each $\lambda_n$ is the wavelength of spectral pixel $n$.
 The calibration vector $f(\alpha)$ is going to take care of the
-large-scale calibration residual; the Gaussian process is going to
-pick up smaller-scale residuals away from \emph{that}.
-The residual column vector is defined in terms of the logarithmic
-difference between the data and the mean model $\mu$ since we are
-taking the calibration vector to be multiplicative with respect to
-the mean model $\mu$. In this formulation the the mean model $\mu$ will be effectively
-multiplied by $e ^{f(\alpha)}$ 
+large-scale calibration residual; the Gaussian Process is going to
+pick up smaller-scale residuals away from \emph{that}.  The
+flexibility of the Gaussian Process specified by $C$ will obviate the
+need for numerous high order polynomial terms in $f(\alpha)$ and thus
+reduce the number of free parameters required in the model.
 This---equation~(\ref{eq:spectroscopicLF})---is the log-likelihood we
 are going to use for the spectroscopic data in what follows.
 
-In detail, we are going to choose a $M$th-order polynomial form for
-the calibration vector $f(\alpha)$ and a bell shape (Gaussian) for the
-kernel function $K_\alpha(\cdot)$:
+In detail, we are going to choose the exponential of a $M$th-order
+polynomial form for the calibration vector $f(\alpha)$ and a bell
+shape (Gaussian) for the kernel function $K_\alpha(\cdot)$:
 \begin{eqnarray}\displaystyle
-f(\alpha) &=& c_0\,[1 + \sum_{m=1}^M c_m\,x^m]
+f(\alpha) &=& \exp\left(\sum_{m=o}^M c_m\,x^m\right)
 \\
 x &\equiv& \frac{\lambda}{\lambda_0} - 1
 \\
-K_\alpha(\lambda_n - \lambda_{n'}) &=& a^2\,\exp(-\frac{[\lambda_n - \lambda_{n'}]^2}{2\,\ell^2})
+K_\alpha(\lambda_n - \lambda_{n'}) &=& \mu_n\,\mu_{n'}\, a^2\,\exp\left(-\frac{[\lambda_n - \lambda_{n'}]^2}{2\,\ell^2}\right)
 \\
 \transpose{\alpha} &\equiv& \left[ \{c_m\}_{m=0}^M, s^2, a^2, \ell^2 \right]
 \quad ,
 \end{eqnarray}
-where $\lambda$ is a column vector made up of the wavelengths $\lambda_m$
-and $x$ is a scaled and shifted version of the same,
-scaled by a fiducial wavelength $\lambda_0$.
+where $\lambda$ is a column vector made up of the wavelengths
+$\lambda_m$ and $x$ is a scaled and shifted version of the same,
+scaled by a fiducial wavelength $\lambda_0$.  The exponentiation of
+the polynomial ensures that $f(\alpha)$ is everywhere positive.
 Nuisance parameters $c_m$ set the shape of the large-scale calibration
 issues, while $a^2$ and $\ell^2$ set the variance and correlation
-length of the remaining covariant calibration noise.
+length of the remaining covariant calibration noise. Structure in the
+residuals on the scale of $\ell$ and with amplitude $a$ will not be
+strongly penalized, but the determinant of $C$ becomes larger for
+larger $a$ and smaller $\ell$. The multiplication by $\mu_n\,
+\mu_{n'}$ in the kernel function signifies that it is defined in
+\emph{fractional} terms.  Using a high-order polynomial can result in
+strong degeneracies between model and polynomial parameters, whereas
+the Gaussian Process {\color{blue} BDJ make this more precise and
+correct} likelihood only reduces the penalty for residuals on the
+scale of $\ell$ with amplitude $a$ that {\it can't} be fit by the mean
+model.
 
-\section{Experiments and Results}
+The two log-likelihoods, for photometry and spectroscopy, are combined
+into a single likelihood function,
+\begin{eqnarray}\displaystyle 
+\ln p(d_s, d_p\given \theta, \alpha, b) =
+\ln p_{spec}(d_s\given \theta, \alpha) + \ln p_{phot}(d_p\given\theta, b) 
+\quad .
+\end{eqnarray} where now $d_s$ is the spectroscopic data and $d_p$ is
+the photometric data.  The spectroscopic likelihood $p_{spec}$ is given
+by equation~(\ref{eq:spectroscopicLF}) and $p_{phot}$ is given by
+equation~(\ref{eq:photometricLF}).
+
+\section{Data and Experimental Setup}
 
 We are now left to demonstrate that, by including photometry as well
 as spectroscopy, it is possible to infer the parameters of interest
 $\theta$ while marginalizing over the calibration parameters $\alpha$.
 We will apply the methodology for spectrophotometric calibration
-described above to \emph{actual, real} optical spectra of a stellar
-clusters in M31.  Spectra of star clusters provide a good test case,
-as they are less complex than galaxy spectra (for which it is
-necessary to model the star formation history) but are by no means
-trivial. In this way the key features of the calibration model and
-methodology are not obscured.
+described above to both \emph{mock} and \emph{real} optical spectra of
+Galactic globular clusters.  Spectra of globular clusters provide a
+good test case, as they are less complex than galaxy spectra (for
+which it is necessary to model the star formation history) but are by
+no means trivial. In this way the key features of the calibration
+model and methodology are not obscured.  Additionally, information
+about the physical parameters of the cluster is available from
+resolved stellar CMDs, providing an important check on our inference
+methodology and especially our models for star cluster spectra.  However,
+our methodology is applicable any spectral model: stars, galaxies or
+ISM emission or any object which can be modeled.
+
+This separate treatment of mock and real data allows us to address two
+separate issues.  The inference from mock data (with a realistic
+calibration vector applied) provides a test of the methodology and the
+effect of calibration uncertainties on the inferred parameters in the
+case of a perfect mean model $\mu(\theta)$.  The inference from real
+data tests a combination of our methodology and the ability of the
+population synthesis models to recover parameters inferred from
+resolved star CMDs (i.e. some estimate of ground truth).
 
 To demonstrate the effectiveness of our strategy for combining
 spectroscopic and photometric information we will infer the parameters
 $\theta$ from a spectrum both \emph{before} and \emph{after} it has
-been spectrophotometrically calibrated using typical techniques and
-ancillary spectrophotometric calibration data.
+been spectrophotometrically calibrated using and ancillary
+spectrophotometric calibration data.
 
-\begin{figure}[h!]
-\includegraphics[width = 0.5 \textwidth]{figures/dfig_b192-g242_020.png}
-\caption{The calibrated (left) and uncalibrated (right) spectrum for
-\excluster, along with the uncertainties (bottom panel). The spectra
-have been renormalized to avoid floating point errors. {\color{blue}
-SHOULD THIS SHOW ALL THE CLUSTERS OR JUST ONE?.}\label{fig:data}}
-\end{figure}
 
-\subsection{List of Tests}
-
-\begin{enumerate}
-
-\item We should test on fake data, with known squiggly
-  calibration applied, to demonstrate that we can infer the
-  calibration vector and the physical parameters with no bias.  We
-  should use the squiggly calibration derived from one of Nelson's
-  calibrated/uncalibrated spectra.  We should also do this for
-  differnt S/N to find where the logarithmic residual formulation
-  breaks down.
-
-\item We infer the parameters of the spectrum of a real cluster that
-has been photometrically calibrated. Then, we infer the parameters of
-the spectrum of the same cluster \emph{without} spectrophotometric
-calibration, to see if we infer physical parameters consistent with
-the calibrated case.  How many/which figures to show?
-
-\item  Then, we show select marginalized or joint PDFs for many
-clusters calibrated/uncalibrated, to assess consistency.  Or we just
-show comparisons of confidence intervals for the parameters of a
-number of clusters, calibrated/uncalibrated.
-
-\item We infer the parameters of the calibrated spectrum without
-including the noise model, or presumably the photometry (since
-reconciling photometry and spectroscopy is done by our noise model).
-What changed, what did we get wrong without the noise model?
-{\color{blue} Should we keep the $f(\alpha)$ and the photometry?  This
-just has the potential to show shortcomings in the spectrophotometric
-calibration}
-
-\item Finally, we change the number of photometric bands and see what
-happens to the inferred parameters, using the full model.
-
-\end{enumerate}
-
-\subsection{Test Data}
+\subsection{Real Data}
 
 The data we use to test our method consist of optical spectroscopy of
-XX stellar clusters in M31 for which YY-band HST photometric data
-exist.  The optical spectra were obtained using the fiber-fed
-Hectoscpec intrument on MMT by \citet{caldwell}.  The wavelength range
-of the spectra is $3700-9100$\AA. The instrumental resolution is
-$\sim 5$\AA~ across the optical range \citep{fabricant13}.  {\color{blue} Wavelength
-calibration happened. Sky subtraction happened.} The data were
-approximately spectrophotometrically calibrated using an average
-calibration vector for the night constructed from {\color{blue} MORE
-HERE. Discuss S/N, sky subtraction.}
+of galactic globular clusters from \citet{schiavon05} for which
+optical and NIR photometry are available. The optical spectra were
+obtained by drift-scanning a long-slit spectrograph across the
+cluster.  The wavelength range of the spectra is $3500-6500$\AA. The
+instrumental resolution is $\sim 3.1$\AA~ at $\sim 4500\AA$ and varies
+with wavelength.  These spectra have been placed on the rest-frame,
+though in throughout our analysis we allow the redshift to vary as one
+of the model parameters. 
 
+An example spectrum (and the inferred spectrophotometric calibration
+vector) is shown in Figure \ref{fig:ggc_data}.  As stated by
+\citet{schiavon05}, the spectrophotometric calibration of these data
+are only approximate.  When fitting the spectra we mask the region
+around  several bright sky lines, and we fit only to the spectrum
+with $3550\AA < \lambda < 6500$\AA~ which are covered by the MILES
+spectral library (see \S\ref{sec:cluster_model}).  Absorption lines of
+the interstellar medium (ISM) can significantly affect the spectrum,
+so we additionally mask the Calcium H and K lines and the NaD doublet.
 
-An example spectrum, both after and before spectrophotometric
-calibration, is shown in Figure \ref{fig:data}.  When fitting the
-spectra we mask the region around the bright OI5577 sky line, and we
-fit only to the spectrum with $3750 < \lambda < 7200$\AA~ to avoid the low
-S/N edges and, on the red side, imperfect sky line subtraction in a
-region of the spectrum that has a paucity of informative spectral
-lines. Furthermore, the MILES spectral library (see
-\S\ref{sec:cluster_model}) only extends to $\lambda < 7500$\AA.
-{\color{red} Specify/Justify order of calibration polynomial here?}.
+The line-spread function of the data is not constant as a function of
+velocity or wavelength.  While a wavelength dependent line spread
+function can be included in the model, it is computationally
+intensive. Therefore, we have convolved the observed spectra with a
+wavelength-dependent kernel to bring it to an approximately constant
+dispersion in wavelength across the whole spectrum. This dispersion is
+a free parameter in our model.
 
-{\color{blue} DRW words about photometry}
+Optical photometry is available from \citet{vanderbeke14} based on
+SDSS for objects in the northern hemisphere and on data from CTIO for
+southern hemisphere objects.  Briefly, total fluxes within the half-light radii
+of the clusters \citep{harris96} were calculated, with small
+corrections for stars unlikely to be cluster members based on their
+positions in the CMD. For this data the formal Poisson uncertainties
+are typically exceedingly small.  The dominant source of uncertainty
+comes from the photometric calibration and from uncertainties in
+cluster membership.
+
+Near-Infrared photometry is available from \citet{cohen07}, who fit
+King profiles \citet{king62} to 2MASS data in the $J$, $H$, and $K_s$
+bands.  To produce NIR photometry consistent with the optical we
+integrated the King profiles to the half-light radii used by
+\citet{vanderbeke14}.
 
 \begin{table}[h!]
 \caption{List all the clusters, RA, Dec, photometry and individual exposures.}
 \end{table}
 
+
+\subsection{Mock Data}
+Our mock data are designed to mimic the actual data as much as
+possible.  Mock spectra and photometry are generated from the model
+described in below (\S\ref{sec:cluster_model}, equation
+\ref{eq:StarModel}) for a given set of parameters $\theta_s$.  We then
+convolve the spectrum with an instrumenal LSF, interpolate onto the
+observed wavelength scale and add noise according to the SNR of the
+real data.  We also mask the mock spectra at the location of
+significant sky lines and ISM lines that are present in the real data.
+For the mock photometry we assume a SNR of 10.
+
+We will refer to these spectra as the \emph{perfectly calibrated} mock
+spectrum. We also produce mock spectra by dividing the perfectly
+calibrated spectra by the spectrophotometric calibration vector taken
+from the real data \citep[][Fig\ref{fig:ggc_spectrum}]{schiavon05}.
+We refer to these as the \emph{uncalibrated} mock spectra.
+
 \subsection{Star Cluster Model}
+\label{sec:cluster_model}
 We model the stellar cluster as a single age SSP. The spectrum of a
-star cluster under this assumption is given by
-\begin{eqnarray}\displaystyle
-F_{\theta^\prime}(\lambda_o) & = &
-\frac{m_*}{4\pi d_L^2(1+z)} \, S(\lambda, t, Z , \beta) \, e^ {-k_\lambda\tau_V} \\
+star cluster under this assumption is given by a vector
+\begin{eqnarray} \label{eq:StarModel}\displaystyle
+f_{\theta_s}(\lambda_o) & = &
+L(\sigma_s, z) \, \frac{m_*}{4\pi d_L^2(1+z)} \, s(\lambda, t, Z , \beta) \, e^ {-k_\lambda\tau_V} \\
 \nonumber \\ 
 \lambda_o & = & (1+z)\,\lambda 
 \\
-\theta^\prime & \equiv & \left[ m_*, t, Z, \tau_V, z, d_L, \beta \right]
+\theta_s & \equiv & \left[ m_*, t, Z, \tau_V, z, d_L, \sigma_*, \beta \right]
 \quad ,
 \end{eqnarray} where the
-parameters $\theta^\prime$ include 
+parameters $\theta_s$ include 
 the stellar mass $m_*$, 
 effective optical depth to dust in the $V$-band $\tau_V$, 
 luminosity distance $d_L$,
-and redshift $z$.  
-The observed frame wavelengths $\lambda_o$ are related to the restframe
-wavelengths $\lambda$ in the usual way.
+and redshift $z$.
+Multiplication by the matrix $L(\sigma_s, z)$ represents a convolution
+with the stellar velocity profile,
+and $\sigma_s$ is the stellar velocity dispersion. 
+The shape of the dust attenuation curve is given by $k_\lambda \equiv
+\tau_\lambda/\tau_V$.  
+The observed frame wavelengths $\lambda_o$ are related to the
+restframe wavelengths $\lambda$ in the usual way.
 
 The spectrum of one solar mass of stars that formed at lookback time
-$t$ with metallicity $Z$ is given by $S(\lambda, t, Z [, \beta])$.
+$t$ with metallicity $Z$ is given by $s(\lambda, t, Z [, \beta])$.
 Here the additional parameters $\beta$ may include details of the
 population synthesis model, such as the IMF slope and adjustments to
 the stellar spectra or stellar evolutionary tracks. We will assume
 $\beta$ to be fixed for the purposes of this exercise, with no loss of
-generality {\color{blue} (KEEPING IMF SLOPE CONSTANT)}.  We will also
-fix the shape of the attenuation curve, $k_\lambda \equiv
-\tau_\lambda/\tau_V$, to the Milky way average of \citet{CCM89} with
-$R_V=3.1$ and assume that $d_L$ is known to high precision from
-independent methods and can therefore be treated as fixed.  In
-practice, $d_L$ is completely degenerate with $m_*$. We calculate
-$S(\lambda, t, Z)$ using the Flexible Stellar Population Synthesis
-code \citep[FSPS][]{fsps}.  We use the Padova 2007 isochrones
-\citep{girardi00, bertilli94, marigo07} and the MILES stellar spectral
-library \citep{miles_I, miles_II, miles_III}.
+generality but significant savings in computational time.  We will
+also fix the shape of the attenuation curve, $k_\lambda $, to the
+Milky way average of \citet{CCM89} with $R_V=3.1$ and assume that
+$d_L$ is known to high precision from independent methods and can
+therefore be treated as fixed.  In practice, $d_L$ is perfectly
+degenerate with $m_*$. We calculate $s(\lambda, t, Z)$ using the
+Flexible Stellar Population Synthesis code \citep[FSPS][]{fsps}.  We
+use the Padova 2007 isochrones \citep{girardi00, bertelli94, marigo07}
+and the MILES stellar spectral library \citep{miles_I, miles_II,
+miles_III}.
 
-The model spectra $F_{\theta^\prime}$ are smoothed by convolution
-with a Gaussian in wavelength space (in this case to model the MMT
-line-spread function) and are interpolated to the wavelength points of
-the of the observed spectrum while taking into account the
-redshift. The instrumental resolution is given by the parameter
-$\sigma$.  {\color{blue}Discuss intrinsic resolution of model spectra
-(MILES), what to do in situations where instrumental resolution is
-higher, lower or comparable (ouch) to intrinsic velocity broadening.}
+%Nebular emission lines (which may arise from HII regions around the
+%clusters or from diffuse ionized gas) and interstellar absorption
+%lines are modeled as a sum of $\delta$-functions of unknown amplitude
+%$a_\ell$, and with known central wavelengths $\lambda_\ell$, broadened
+%by the gas velocity profile, $\sigma_{gas}$.  For emission lines the
+%amplitudes are constrained to be positive, while for interstellar
+%absorption (e.g. NaD and CaK) the amplitudes are constrained to be
+%negative. This framework can be easily extended to include more
+%complex models for the nebular emission, such as allowing line
+%dependent widths and velocities, and using Voight profiles for the
+%line shapes.
 
-Nebular emission lines (which may arise from HII regions around the
-clusters or from diffuse ionized gas) and interstellar absorption
-lines are modeled as a sum of Gaussians of unknown amplitude $A_\ell$,
-all of the same width $\sigma_e$ (which need not be the same as
-stellar broadening $\sigma$) and with known central wavelengths
-$\lambda_\ell$.  For emission lines the amplitudes are constrained to
-be positive, while for interstellar absorption (e.g. Na D and Ca K)
-the amplitudes are constrained to be negative. This framework can be
-easily extended to include more complex models for the nebular
-emission, such as allowing line dependent widths and velocities, and
-using Voight profiles for the line shapes.  
+The model spectra $f_{\theta_s}$ are smoothed by convolution with
+the line-spread function of the spectrograph and are interpolated to
+the wavelength points of the of the observed spectrum while taking
+into account the redshift. For computational simplicity we assume that
+the internal velocity dispersion of the cluster is negligible compared
+to the instrumental broadening, though in principle it can and should
+also be modeled. The instrumental resolution is given by the parameter
+$\sigma_{inst}$. 
 
-The final mean model is then given by 
+The final mean model is then given by the convolution in wavelength
 \begin{eqnarray}\label{eq:MeanModel} 
-\mu(\theta) &  = & (G_\sigma  \otimes F_{\theta^\prime})(\lambda) +
-\sum_{\ell=0}^{N_\ell} S_\ell(\lambda) \\
-S_\ell (\lambda) & = & \frac{A_\ell}{\sigma_e\sqrt{2\pi}} \exp(-\frac{(\lambda -
- \lambda_\ell)^2}{2\sigma_e^2})\\
-\theta & \equiv & \left[ \{\theta^\prime\}, \sigma, \{A_\ell\}_{\ell=0}^{N_l},
-  \sigma_e \right]
+\mu(\theta) &  = & L(\sigma_{inst}) \, \left[ f_{\theta_s}(\lambda_o)
+                   + f_{\theta_g}(\lambda_o) \right]\\
+f_{\theta_g}(\lambda_o) & = & L(\sigma_{gas}, z) \,  \{a_\ell\delta(\lambda-\lambda_\ell)\}\\
+\theta & \equiv & \left[ \{\theta_s\}, \{\theta_{g}\}, \sigma_{inst} \right]
 \quad ,
 \end{eqnarray}
-where $G_\sigma$ represents a Gaussian of unit area 
-and standard deviation $\sigma$, 
-$\otimes$ indicates convolution, 
+where the matrix $L(\sigma_{inst})$ represents the convolution kernel
+for the instrumental linespread function parameterized by
+$\sigma_{inst}$,
 and the full parameter set $\theta$ now includes
-the instrumental wavelength broadening $\sigma$ 
-and the dispersion $\sigma_e$ and
-amplitudes $A_\ell$ of the $N_l$ nebular emission and interstellar
-absorption lines.
+this instrumental broadening $\sigma_{inst}$ 
+and the gas-phase parameters $\theta_g$.
 This is the mean model which appears in equation
 \ref{eq:spectroscopicLF}.
 
@@ -461,194 +475,276 @@ $f(\alpha)$ in this projection.
 We estimate the posterior through MCMC sampling after an initial round
 of optimization using Powell's method.  The specific sampling
 algorithm we use is the affine-invariant ensemble sampling scheme of
-\citet{goodman}, as implemented in the \texttt{emcee} package \citep{emcee}
-Unlike typical Metropolis-Hastings MCMC sampling, the affine-invariant
-sampler does not require the specification of step sizes in each
-dimension.  {\color{blue}ASSESSING SAMPLER CONVERGENCE}
+\citet{goodman}, as implemented in the \texttt{emcee} package
+\citep{emcee} Unlike typical Metropolis-Hastings MCMC sampling, the
+affine-invariant sampler does not require the specification of step
+sizes in each dimension.
  
+At each iteration of the sampler the photometric and spectroscopic
+likelihood are computed, multiplied together, and multiplied by the
+the prior probability of that parameter position to obtain an estimate
+of the posterior probability for those parameters given the
+data. {\color{blue}Assessing sampler convergence.}
+
 Our prior distributions are in all cases top-hat functions, described
 in Table \ref{tbl:priors}, though more informative prior distributions
 may be used.  Informative priors may be especially appropriate for the
 calibration parameters $\alpha$ if additional information about the
 instrument is available; or for the parameters of interest $\theta$,
-for example in the case that there is knowledge of the metallicity
+for example if there is knowledge of the metallicity
 distribution of the population from which a given cluster is drawn.
 
 \input{tables/priors.tbl}
 
-\begin{figure*}[h!]
-\includegraphics[width=\textwidth]{figures/sfig_b192-g242_225_cal.png}
-\caption{Spectra resulting from draws from the posterior parameter
-space conditioned on the calibrated \excluster~ spectrum and
-photometry.  Left: For each of 5 draws from the posterior we show from
-top to bottom, three components of the model: the mean cluster
-spectrum, the calibration vector, and the mean prediction of $\Delta$
-for the Gaussian process.  Right: From top to bottom, the full model
-({\it magenta}) compared to the observed, calibrated spectrum ({\it
-grey}), the ratio of the observed to the modeled spectrum, and the
-difference between the observed spectrum and the modeled spectrum
-normalized by the uncertainty.
-\label{fig:inferred_spectrum}}
-\end{figure*}
+\subsection{List of Experiments}
 
-\begin{figure*}[h!]
-\includegraphics[width=\textwidth]{figures/zfig_b192-g242_225_cal.png}
-\caption{Zoom-in on selected regions of the observed spectrum, showing
-also draws from the posterior model for the spectra in these regions
-and residulas of these draws from the observations.
-\label{fig:zoom_spectrum}}
-\end{figure*}
+\begin{enumerate}
 
-\subsection{Results}
+\item \sout{Mock perfectly calibrated data: inference using spectroscopy and one
+  photometric band, assuming no calibration uncertainty.  This is as
+  good as we could get given the data and its uncertainties.} 
+ Make sure this is run for the linear model.
 
+\item \sout{Mock perfectly calibrated data: inference using
+spectroscopy and one photometric band, with the full calibration
+model.  This is how much including additional calibration flexibility
+hurts the posterior PDFs compared to perfectly known calibration.}
+Make sure this is run for the linear model, make sure it is converged.
+
+\item \sout{Mock uncalibrated data:  inference using spectroscopy and one
+  photometric band, with full calibration model.  This is how well we
+  can get the calibration \emph{and} the physical parameters with
+  spectroscopy only.}
+ Make sure this is run for the linear model.
+
+\item \sout{Mock data: inference using photometry only.  This is how well we
+  can get the physical parameters using photometry only.}
+
+\item \sout{Mock uncalibrated data: inference using spectroscopy and all
+  photometry, full calibration model.  This is how well we
+  can get the calibration and physical parameters using spectroscopy
+  and photometry.}
+
+\item \sout{Do this for a bunch of ages, metallicities, and dust
+  attenuations, possibly compare to the ideal posteriors in each case.}
+
+\item \sout{Mock uncalibrated data:  vary the photometric bands to see how
+  much it changes the recovery of the parameters.}
+
+\item \sout{Mock uncalibrated data: do the inference with multiple noise
+  realizations to see how the recovered PDFs cover the true value.}
+
+\item Real calibrated spectrum:   \sout{Inference using spectroscopy and all
+  photometry, with full calibration model.} The calibration vector
+  inferred will highlight differences between the calibrated spectrum
+  and the model (which could either be due to calibration problems or
+  model problems)
+
+\item \sout{Real uncalibrated spectrum:   Inference using spectroscopy and all
+  photometry, with full calibration model. } Make sure this is
+converged, make sure priors and jitter make sense.
+
+\item \sout{Compare the physical parameters inferred from from the real
+  calibrated and uncalibrated spectrum with each other} and with CMD
+  based parameters.
+
+\item how parameter inference varies with photometric S/N.  Do for mag
+  uncertainties of 0.05.
+
+\end{enumerate}
+
+\section{Results}
+
+In this section we describe the results of our experiments with mock
+data and with real data.  For the mock data we investigate the
+dependence of the recovered parameters on the type of data used in the
+inference.
+
+\subsection{Mocks}
+We first present the results of our inference from a spectrum where we
+assume the calibration is known perfectly.  That is, we fix the
+calibration parameters $\alpha$ to the values used to construct the
+mock data.  This sets a baseline for the kind of posterior PDFs that
+could be obtained for the physical parameters given the
+signal-to-noise of the mock data, perfect models, and perfectly known
+calibration.
+
+The posterior parameter PDFs for the case of perfectly known
+calibration are shown in the bottom right panels of Figure
+\ref{fig:speconly_ideal}, along with the mock spectrum and posterior
+samples of the mock spectrum.  In this case the observed spectrum is
+the same as the intrinsic spectrum except for a distance dimming
+factor, as we have assumed that the calibration vector is one
+everywhere, wth no uncertainty. The PDF for stellar mass is extremely
+narrow since information about the overall normalization comes from all
+$\sim 3000$ spectral data points.  The uncertainty in stellar mass
+largely reflects uncertainty in the mass-to-light ratio due to the
+small uncertainties in dust, metallicity, and age given the
+spectroscopic data. The single photometric data point,
+with S/N of 10, adds essentially no information beyond what is
+obtained from the spectrum.
+
+Next we will \emph{not} assume that the calibration is perfectly known
+and we will therefore allow the calibration parameters $\alpha$ in our
+model to vary.  {\color{red} This is not converged.} In Figure
+\ref{fig:speconly_calibrated} we show the result of our inference from
+the spectrum and a single photometric measurement (SDSS $g$) for a
+perfectly calibrated mock spectrum. To demonstrate the quality of the
+fit we show both the mock input spectrum and predictions of the
+observed spectra that result from several draws of the model
+parameters $[\theta, \alpha]$ from posterior distribution.  We also
+show samples of the inferred calibration vector,
+\begin{eqnarray} \label{eq:calibration}
+\frac{d}{\mu(\theta)} & = & f(\alpha) + \frac{\tilde{\Delta}}{\mu(\theta)}
+\quad ,
+\end{eqnarray}
+where $\tilde{\Delta}$ is the Gaussian Process mean prediction for the
+residual between the data and the model \citep{RW},
+defined here as 
+\begin{eqnarray} \label{eq:calibration}
+\tilde{\Delta} & = & K \, C^{-1} \, \Delta
+\quad .
+\end{eqnarray}
+For the perfectly calibrated spectrum the true calibration vector
+(shown in black) is one everywhere.  The spread of the inferred
+calibration vectors approximately indicates our uncertainty in the
+spectrophotometric calibration when no additional calibration
+information is available and only a single photometric point is
+available.
+
+When the spectrophotometric calibration is assumed to be unknown and
+is explicitly modeled, as in Figure \ref{fig:speconly_calibrated}, the
+posterior PDFs for stellar mass and especially $A_v$ become extremely
+large.  There is now no information about the overall shape of the SED
+(and hence the dust attenuation), and the overall normalization is
+constrained entirely by the single photometric point.  The fractional
+uncertainty in the stellar mass is somewhat broader than the
+fractional uncertainty on the $g$-band flux because of the variation
+in mass-to-light ratio due to uncertainties in dust and, to a lesser
+extent, age.
+
+On the other hand, age and metallicity remain well-constrained.  These
+are the parameters that are constrained well by spectral lines and are
+not strongly sensitive to the overall shape of the spectral continuum.
+The posterior PDFs are only slightly broader than in the case of a
+perfectly known calibration. Such parameters can be reasonably well
+recovered by fitting continuum normalized spectra, though here we have
+propogated the uncertainty in this normalization into the
+uncertainties on the physical parameters, leading to slightly larger
+total uncertainties.
+
+In Figure \ref{fig:speconly_uncalibrated} we show the results of
+inference on an \emph{uncalibrated} mock spectrum.  The results are
+similar to the case of the \emph{calibrated} spectrum. An important
+difference is that the inferred calibration vector now contains
+numerous small scale wiggles, similar to the actual calibration vector
+used to generate the mock.  The overall shape of the spectrum is still
+unconstrained, leading to large degeneracies between the polynomial
+terms and the dust attenuation, and a poor constraint on the dust
+attenuation and stellar mass.
+
+
+\subsection{Real Data: \excluster} 
 We first infer the parameters of interest $\theta$ for a calibrated
-spectrum of one of the clusters, \excluster, using the full YY-band
-photometry. In Figure \ref{fig:inferred_spectrum} we show the spectra
+spectrum of one of the clusters, \excluster, using the $griz$-band
+photometry. In Figure \ref{fig:real_calibrated} we show the spectra
 that result from draws of the parameters $[\theta,\alpha]$ from the
 posterior distribution, as well as several of the individual
 components of the model constructed from each draw. Figure
-\ref{fig:inferred_spectrum} also shows the calibrated spectrum on
-which the priors were conditioned, and residuals between the posterior
-models and the observed data.  The agreement is quite good, though
-some lines are not accurately predicted.  For example, the observed
-Mg$b$ absorption appears stronger than the modeled
-absorption.
-
-In Figure \ref{fig:inferred_sed} we show the corresponding SED for the
-posterior parameter draws, compared to the observed SED. There is some
-tension between the modeled and observed SEDs, I'm not quite sure
-why. Finally, In Figure \ref{fig:inferred_params} we show the
-marginalized and joint PDFs for a subset of the full model parameters.
-
-
-\begin{figure}[h!]
-\includegraphics[width=0.5\textwidth]{figures/pfig_b192-g242_225_cal.png}
-\caption{ Model SEDs.  Top: The model photometric SED resulting from
-draws from the posterior parameter space conditioned ({\it cyan}) on
-the observed photometry ({\it magenta}) and spectra.  Bottom:
-uncertainty normalized residuals of the models from the observations.
-\label{fig:inferred_sed}}
-\end{figure}
-
-\begin{figure}[h!]
-\includegraphics[width=0.5\textwidth]{figures/ptri_b192-g242_225_cal.png}
-\caption{ Marginalized and joint PDFs of subset of the physical
-parameters $\theta$ inferred from the spectophotometrically calibrated
-spectrum of \excluster. The blue lines indicate the parameter values
-that resulted from the powell minimization.
-\label{fig:inferred_params}}
-\end{figure}
-
-The physical model parameters that we infer indicate that \excluster~
-has super-solar metallicity, an age of $\sim 225$ Myr, moderate dust
-extinction, and a stellar mass of $\sim 10^{4}$ M$_{sun}$ {\color{blue}
-check that this is current mass, not initial mass}.  We find a spectral
-broadening of $\sim 1.75$\AA~ (4.1\AA~ FWHM), which when combined in
-quadrature with the intrinsic resolution of the MILES library, 2.5\AA~
-FWHM \citep{beifiori11}, reproduces the typical line-spread function
-of the MMT Hectospec instrument, $\sim 5$\AA~ \citep{fabricant13}.
-We obtain strong constraints on the systemic velocity.
+\ref{fig:real_calibrated} also shows the marginalized PDFs for a
+subset of the full model parameters.
 
 It is possible to reconstruct the inferred total multiplicative
-calibration vector for each draw of the model parameters.  Rearranging
-equation \ref{eq:spectroscopicLF} yields
-\begin{eqnarray} 
-\frac{d}{\mu(\theta)} & = & exp(f(\alpha) + \tilde{\Delta})
-\quad ,
-\end{eqnarray}
-for the total effective multiplicative calibration, where
-$\tilde{\Delta}$ is now the Gaussian process mean prediction for the
-logarithmic residual between the data and the model. The inverse of
-this ratio is shown in the left panel of Figure
-\ref{fig:inferred_calib} as our inferred total multiplicative
-calibration function; if the spectrophotometric calibration were
+calibration vector for each draw of the model parameters (Equation
+\ref{eq:calibration}). If the spectrophotometric calibration were
 perfect and we had correctly inferred it, then we would expect this
 vector to be constant as a function of wavelength.
 
 
-\begin{figure*}[h!]
-\includegraphics[width=\textwidth]{figures/cfig_b192-g242_225.png}
-\caption{Left: Samples of the effective multiplicative calibration
-vector for the spectrophotometrically calibrated spectrum of
-\excluster~ ({\it cyan}) compared to that obtained from ancillary
-photometric data ({\it magenta}).  
-%Right: The same, but for the uncalibrated data.
- \label{fig:inferred_calib}}
-\end{figure*}
-
-
-\begin{figure}[h!]
-%\includegraphics[width =0.5\textwidth]{figures/B192_020_cratio.pdf}
-\caption{Money plot.  Show the difference between the parameters
-  inferred from the calibrated and uncalibrated spectra, for each
-  cluster. Tjis is a placeholder, since it only shows B192 for fixed
-  GP parameters. \label{fig:boom}}
-\end{figure}
-
-\subsection{Dependence on Photometric Data}
-In this section we examine how the constraints on physical (and
-calibration) parameters vary as a function of the number and type of
-photometric points available. {\color{red} BDJ DO THIS TEST.}
-
 \section{Discussion}
 
-We have demonstrated, using a sample of stellar clusters in M31, that
-we can combine photometric and spectroscopic data in a principled way
-to infer physical properties.  We do not resort to an arbitrary
-down-weighting or up-weighting of certain data. Instead, we explicitly
-model our uncertain knowledge of the spectral calibration and infer
-this calibration jointly with the physical properties. For a number of
-applications this combination of spectroscopy and photometry reduces
-the need for spectrophotometric calibration entirely, such that the less
-expensive photometric calibration is sufficient.  Additional calibration
+We have demonstrated, using using both mock and real spectra of
+galactic stellar clusters, that we can combine photometric and
+spectroscopic data in a principled way to infer physical properties.
+We do not resort to an arbitrary down-weighting or up-weighting of
+certain data. Instead, we explicitly and flexibly model our uncertain
+knowledge of the spectral calibration and infer this calibration
+jointly with the physical properties. For a number of applications
+this combination of spectroscopy and photometry reduces the need for
+spectrophotometric calibration entirely, such that the less expensive
+photometric calibration is sufficient.  Additional calibration
 information, if it exists, can be incorporated into informative priors
-on the calibration parameters of the model, inform the construction
-of the calibration model, or approximately remove gross features
-that are difficult to model parameterically or as a sum of Gaussians.
+on the calibration parameters of the model, inform the construction of
+the calibration model (including the form of the covariance kernel),
+or approximately remove gross features that are difficult to model
+parametrically or via a Gaussian Process. A Guassian Process can be
+used to model covaraint noise resulting from errors in an initial
+calibration (of an amplitude $a$) thus propogating calibration
+uncertainty into the model parameters $\theta$. 
 
-{\color{blue} BDJ words about the gains that might be made by
-including photometry over a large range in wavelngth with spectroscopy
-over relatively small ranges.}
+{\color{blue} Discuss more complicated covariance kernels, multiple
+kernels, combining fractional and absolute covariance amplitudes.}
+In the present study we have used a single, relatively simple kernel
+function to construct the covariance matrix.  It is possible to
+include multiple kernels by simply adding the resulting covariance
+kernels.  For example, one could add an additional kernel with a small
+amplitude and wavelength scale to account for model imperfections
+\citep[e.g.,][]{czekala15} or include covariance structure expected
+from the data reduction process \citep[e.g., ][]{bolton10} which
+would absolute (i.e. not a fraction of the mean model.)
+
+{\color{blue} BDJ words (and experiments?) about the gains that might
+be made by including photometry over a large range in wavelength with
+spectroscopy over relatively small ranges.}  In this case even with
+perfectly known spectrophotometric calibration, the photometry would
+in principle add information.  This would occur if models with very
+similar spectra in the observed range had widely differing SEDs
+outside that range.
+
+{\color{blue} BDJ discuss the relation of this technique to the typical use of
+continuum normalization when fitting spectroscopy.}
 
 Our strategy is easily extensible to more complicated models, which
-include for example night sky-line emission in the spectroscopy (or
-residuals from an intial sky-line subtraction), and uncertainties in
-wavelength calibration. Furthermore, more complex physical models may
-be considered for the mean object model, for example including SFH
-parameters so as to model galaxies.  {\color{blue} DISCUSS MORE
-COMPLICATED COVARIANCE KERNELS, MULTIPLE KERNELS, etc.  MODEL
-CHECKING. As I understand it, additional `bad lines' in the mean model
-could be accounted for using narrow quadratics in the covariance
-matrix, though their interpretation would be hellish. The best way is
-probably to explictly model them in the mean model}
+include for example nebular or night sky-line emission in the
+spectroscopy \citep[e.g.,][]{gullikson14} or residuals from an initial
+sky-line subtraction and uncertainties in wavelength calibration
+\citep[e.g.,][]{walker15}. Furthermore, more complex physical models
+may be considered for the mean object model, for example including SFH
+parameters so as to model galaxies. {\color{blue} Discuss background
+modeling}
 
 In a heirarchical modelling context it should be possible to use the
 inferred calibration parameters, along with additional information
 about the observations (e.g. airmass, instrument temperature), to in
 turn infer the parameters of a generative model for the calibration
-\citep[e.g.][]{spectrophot}. This generative model can then be used in
-the (probabilistic) calibration of objects where the spectra are
-difficult to model explicitly.
+parameters \citep[e.g.][]{spectrophot}. This generative model can then
+be used in the (probabilistic) calibration of objects where the
+spectra are difficult to model explicitly.  One aspect of such
+modelling might entail inferring the priors on the Gaussian Process
+parameters $a$ and $\ell$.
 
 Limitations.  The strategy we have advocated has several limitations.
 First, it requires a generative model for the spectrum of the object
 of interest, and is thus ill-suited to discovery projects.  Second,
 care must be taken to avoid absorbing interesting model deficiencies
-into the calibration model. For example, in the model we have
-described, it is possible that broad shallow features (for example due
-to molecular bands or absorption line complexes) will be absorbed into
-the Gaussian process. Third, we have made the assumption that the
-spectroscopy and the photometry are sampling the same populations.  In
-practice, differences between spectroscopic and photometric apertures
-often mean that the photometry and the spectroscopy are sampling
-slightly different physical regions.  The correct response to this
-situation is to explicitly model the differences, incorporating prior
-information about the spatial variation of physical properties.
-Fourth, the method will break down at very low S/N due to the
-logarithmic formulation of the residual in
-equation~(\ref{eq:spectroscopicLF}).  Finally, this method is
-computationally intensive and expensive, since we are constantly
-inverting largish matrices.
+into the calibration model, or interpreting features in the
+calibration vector as features of the mean model. For example, in the
+model we have described, it is possible that broad shallow features
+(for example due to molecular bands or absorption line complexes) will
+be absorbed into the Gaussian Process if not properly included in the
+mean model. The Gaussian process will also absorb incorrectly modeled
+attenuation curve shapes. On the other hand, the higher likelihood at
+zero residual means that calibration features that \emph{can} be
+mimicked by the mean model may influence the mean model
+parameters. Third, we have made the assumption that the spectroscopy
+and the photometry are sampling the same populations.  In practice,
+differences between spectroscopic and photometric apertures often mean
+that the photometry and the spectroscopy are sampling slightly
+different physical regions.  The correct response to this situation is
+to explicitly model the differences, incorporating prior information
+about the spatial variation of physical properties.  Finally, this
+method is computationally intensive and expensive, since we are
+constantly inverting largish matrices.
 
 {\color{blue} BDJ - This paragraph is probably too calibration
 focused. We want to focus more on spec + phot combinations.  At least,
@@ -658,23 +754,28 @@ with an instrument, and using that observation to infer the effects of
 the instrument.  However, we do not have knowledge of a single truth
 for any object, only relative probabilities for what might be true.
 In this sense, one should never use a single point estimate of the
-calibration, the full distribution of the possible calibrations should
-be inferred from our probabilistic knowledge of the calibration object
-and forward propogated \citep[e.g.][]{lee11}. Once this is done, the
-only distinction between 'calibration' objects and targets of interest
-is the complexity of the model for the object and the level of
-uncertainty in the calibration object spectrum.  If one is interested
-in inferring parameters of interest of spectral models of
-astrophysical objects, then there is often no reason not to use those
-objects themselves as calibration objects.
+spectrophotometric calibration, the full distribution of the possible
+calibrations should be inferred from our probabilistic knowledge of
+the calibration object and forward propogated
+\citep[e.g.][]{lee11}. Indeed, even if the calibration object is known
+perfectly, the observation of it will be noisy and thus so will the
+inferred calibration. Once this forward propogation of calibration
+uncertainty is done, the only distinction between 'calibration'
+objects and targets of interest is the uncertainty in the model for
+the object and the level of uncertainty in the observed object
+spectrum -- this is why calibration objects are typically bright and
+simple.  If one is interested in inferring parameters of interest of
+spectral models of astrophysical objects, then there is often no
+reason not to use those objects themselves as calibrators, especially
+if you expect your calibration to be spatially or temporally variable,
+or to change with the brightness or other properties of the object.
 
-BDJ misc issues, collected here in case we want to address them and to
-keep me from cluttering up the main text: Model resolution and
-instrument resolution.  How to interpret GP residuals, as a fn of S/N?
+{\color{blue} BDJ misc issues, collected here in case we want to
+address them and to keep me from cluttering up the main text:} Model
+resolution and instrument resolution, combinations of broadening in
+velocity space (physical) and in wavelength space (instrumental).
 Photometric upper limits? Infer the wavelength solution as well -
-stellar population (and telluric lines) as your arc. Combinations of
-broadening in velocity space (physical) and in wavelength space
-(instrumental)
+stellar population (and telluric lines) as your arc.
 
 HOGG COMPUTE TOTAL ANNUAL COST OF SPECTROPHOTOMETRY (to astronomical community).
 
@@ -685,11 +786,11 @@ This version of the paper was generated
   with git hash \texttt{\githash\,(\gitdate)}.
 
 \acknowledgements
-Thanks to X. for bringing us beer.
-DRW is supported by NASA through Hubble Fellowship grant
-  HST-HF-51331.01 awarded by the Space Telescope Science Institute.
-BDJ and DRW acknowledge the hospitality of Hans-Walter Rix and the MPIA. 
-CC is supported by Packard and Sloan Foundation Fellowships. 
+%Thanks to X. for bringing us beer.
+%DRW is supported by NASA through Hubble Fellowship grant
+%  HST-HF-51331.01 awarded by the Space Telescope Science Institute.
+%BDJ and DRW acknowledge the hospitality of Hans-Walter Rix and the MPIA. 
+%CC is supported by Packard and Sloan Foundation Fellowships. 
 This research made extensive use of NASA's Astrophysics Data System Bibliographic Services. 
 In large part, analysis and plots presented in this paper utilized
   iPython and packages from NumPy, SciPy, and Matplotlib
@@ -699,10 +800,17 @@ In large part, analysis and plots presented in this paper utilized
 \newcommand{\arxiv}[1]{\href{http://arxiv.org/abs/#1}{arXiv:#1}}
 \begin{thebibliography}{}\raggedright
 
+\bibitem[Becker et al.(2015)]{becker15} Becker, J.~C., Johnson, 
+J.~A., Vanderburg, A., \& Morton, T.~D.\ 2015, arXiv:1503.03874 
+
 \bibitem[Beifiori \etal(2011)]{beifiori11} 
 Beifiori, A., Maraston, C., Thomas, D., \& Johansson, J.\ 2011, \aap, 531, A109 
 
-\bibitem[Bertelli et al.(1994)]{bertelli94} Bertelli, G., Bressan, A., Chiosi, C., Fagotto, F., \& Nasi, E.\ 1994, \aaps, 106, 275 
+\bibitem[Bertelli et al.(1994)]{bertelli94} Bertelli, G., Bressan, A., 
+Chiosi, C., Fagotto, F., \& Nasi, E.\ 1994, \aaps, 106, 275 
+
+\bibitem[Bolton \& Schlegel(2010)]{bolton10} Bolton, A.~S., \& 
+Schlegel, D.~J.\ 2010, \pasp, 122, 248 
 
 \bibitem[Cardelli \etal(1989)]{CCM89} 
 Cardelli, J.~A., Clayton, G.~C., \& Mathis, J.~S.\ 1989, \apj, 345, 245 
@@ -711,14 +819,17 @@ Cardelli, J.~A., Clayton, G.~C., \& Mathis, J.~S.\ 1989, \apj, 345, 245
 Cenarro, A.~J., Peletier, R.~F., S{\'a}nchez-Bl{\'a}zquez, P., et al.\ 2007, \mnras, 374, 
 664 
 
+\bibitem[Cohen et al.(2007)]{cohen07} Cohen, J.~G., Hsieh, S., 
+Metchev, S., Djorgovski, S.~G., \& Malkan, M.\ 2007, \aj, 133, 99 
+
 \bibitem[Conroy \etal(2009)]{fsps} 
 Conroy, C., Gunn, J.~E., \& White, M.\ 2009, \apj, 699, 486 
 
 \bibitem[Conroy \& Gunn(2010)]{fsps_cal} 
 Conroy, C., \& Gunn, J.~E.\ 2010, \apj, 712, 833 
 
-\bibitem[Fabricant \etal(2013)]{fabricant13} 
-Fabricant, D., Chilingarian, I., Hwang, H.~S., et al.\ 2013, \pasp, 125, 1362 
+%\bibitem[Fabricant \etal(2013)]{fabricant13} 
+%Fabricant, D., Chilingarian, I., Hwang, H.~S., et al.\ 2013, \pasp, 125, 1362 
 
 \bibitem[Falc{\'o}n-Barroso \etal(2011)]{miles_III} 
 Falc{\'o}n-Barroso, J., S{\'a}nchez-Bl{\'a}zquez, P., Vazdekis, A., et al.\ 2011, \aap, 532, A95 
@@ -733,7 +844,18 @@ Girardi, L., Bressan, A., Bertelli, G., \& Chiosi, C.\ 2000, \aaps, 141, 371
 \bibitem[Goodman~\&\ Weare(2010)]{goodman}
 Goodman,~J. \& Weare,\ J., 2010, Comm.\ App.\ Math.\ Comp.\ Sci., 5, 65
 
-\bibitem[Lee et al.(2011)]{xray_calunc} Lee, H., Kashyap, V.~L., 
+\bibitem[Gullikson et al.(2014)]{gullikson14} Gullikson, K., 
+Dodson-Robinson, S., \& Kraus, A.\ 2014, \aj, 148, 53 
+
+\bibitem[Harris(1996)]{harris96} Harris, W.~E.\ 1996, \aj, 112, 
+1487 
+
+\bibitem[King(1962)]{king62} King, I.\ 1962, \aj, 67, 471 
+
+\bibitem[Koleva et al.(2009)]{koleva09} Koleva, M., 
+Prugniel, P., Bouchard, A., \& Wu, Y.\ 2009, \aap, 501, 1269 
+
+\bibitem[Lee et al.(2011)]{lee11} Lee, H., Kashyap, V.~L., 
 van Dyk, D.~A., et al.\ 2011, \apj, 731, 126 
 
 \bibitem[Marigo \& Girardi(2007)]{marigo07} 
@@ -743,7 +865,22 @@ Marigo, P., \& Girardi, L.\ 2007, \aap, 469, 239
 S{\'a}nchez-Bl{\'a}zquez, P., Peletier, R.~F., Jim{\'e}nez-Vicente,
 J., et  al.\ 2006, \mnras, 371, 703 
 
+\bibitem[Schiavon et al.(2005)]{schiavon05} Schiavon, R.~P., Rose, 
+J.~A., Courteau, S., \& MacArthur, L.~A.\ 2005, \apjs, 160, 163 
+
+\bibitem[Sch{\"o}nrich \& Bergemann(2014)]{schonrich14} Sch{\"o}nrich,
+  R., \& Bergemann, M.\ 2014, \mnras, 443, 698 
+
+\bibitem[Vanderbeke et al.(2014)]{vanderbeke14} Vanderbeke, J., 
+West, M.~J., De Propris, R., et al.\ 2014, \mnras, 437, 1725 
+
+\bibitem[Walker et al.(2015)]{walker15} Walker, M.~G., 
+Olszewski, E.~W., \& Mateo, M.\ 2015, \mnras, 448, 2717 
+
 
 \end{thebibliography}
+
+
+\input{figures.tex}
 
 \end{document}

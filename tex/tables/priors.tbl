@@ -4,17 +4,20 @@
 \tablehead{
 \colhead{Parameter} & \colhead{Units} & \colhead{Min.} & \colhead{Max.}}
 \startdata
-$m_*$       & M$_\odot$  & $10^{2}$ & $10^{6}$ \\ 
-$Z$        & $\log (Z/Z_\odot) $    &  -1.000 &   0.190 \\ 
-$t$        & Gyr        &   0.025 &   2.50 \\ 
-$A_V$      & \nodata    &   0.0 &   2.5 \\ 
+$m_*$      & M$_\odot$         & $10^{2}$ & $10^{6}$ \\ 
+$Z$        & $\log (Z/Z_\odot) $    &  -2.000 &   0.190 \\ 
+$t$        & Gyr               &   3.0 &   14.0 \\ 
+$A_V$      & mag               &   0.0 &   2.5 \\ 
+$\sigma$   & \AA               &   1.0 &   3.0 \\ 
+$z$        & \nodata           &  -0.001 &   0.001 \\ 
 $s$	   & $F_\lambda \,\times\, C$ &   0 &   0.1 \\
-$a$        & $F_\lambda \,\times\, C$ &   0 &   3 \\ 
-$l$        & \AA      &  20 & 200 \\ 
-$\sigma$   & \AA      &   1.0 &   6.0 \\ 
-$z$        & \nodata    &  -0.001 &   0.001 \\ 
-
+$a$        & \%                &   0  &   20 \\ 
+$l$        & \AA               &  100 & 1000 \\ 
+$c_0$      & \nodata           &  -1  & 1 \\ 
+$c_1$      & \nodata           &  -10 & 10 \\ 
+$c_2$      & \nodata           &  -10 & 10 \\ 
+$s_p$      & \%                &  0   & 5 \\ 
 \enddata
-\tablecomments{There are more parameters...}
+\tablecomments{}
 \vspace{0.1cm}
 \end{deluxetable}

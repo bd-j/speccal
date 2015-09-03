@@ -1,4 +1,7 @@
-import diagnostics
+import diagnostics, os
+
+#The speccal directory
+sdir = os.path.join.(os.environ['PROJECTS'], 'speccal')
 
 pardict = {}
 pardict[r'$m_*$']='mass'
@@ -55,7 +58,7 @@ def write_prior_table(plist, pardict, dir = './'):
 if __name__ == '__main__':
 
     results = []
-    rdir = '/Users/bjohnson/Projects/cetus/results/'
+    rdir = os.path.join(sdir, '../cetus/results/')
     res = [rdir+'b192-g242.020.cal_1405648278.sampler01',
            rdir+'b192-g242.020.nocal_1405677518.sampler01']
     name = ['B192 cal.', 'B192 no cal.']
