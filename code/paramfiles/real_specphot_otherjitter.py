@@ -188,8 +188,8 @@ model_params.append({'name': 'max_wave_smooth', 'N': 1,
 
 polyorder = 2
 polymin = [-5e1, -1e2]
-polymax = [5e1, 1e2]
-polyinit = [0.01, 0.01]
+polymax = [5e1, 1]
+polyinit = [0.1, -0.1]
 
 model_params.append({'name': 'poly_coeffs', 'N': polyorder,
                         'isfree': True,
@@ -203,7 +203,7 @@ model_params.append({'name': 'spec_norm', 'N':1,
                         'init':0.0001,
                         'units': None,
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':-1.0, 'maxi':1.0}})
+                        'prior_args': {'mini':-2.0, 'maxi':2.0}})
 
 # This is for use with the matern branch for bsfh, where sqrt(jitter)
 # now multiplies the noise (instead of adding to it)
@@ -212,14 +212,14 @@ model_params.append({'name': 'gp_jitter', 'N':1,
                         'init': 1.0,
                         'units': 'fractional noise squared',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.01, 'maxi':100}})
+                        'prior_args': {'mini':0.1, 'maxi':10}})
 
 model_params.append({'name': 'gp_amplitude', 'N':1,
                         'isfree': True,
                         'init': 0.04,
                         'units': 'fractional spec units',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.02, 'maxi':0.2}})
+                        'prior_args': {'mini':0.01, 'maxi':0.2}})
 
 model_params.append({'name': 'gp_length', 'N':1,
                         'isfree': True,
@@ -235,4 +235,4 @@ model_params.append({'name': 'phot_jitter', 'N':1,
                         'init': 0.01,
                         'units': 'mags',
                         'prior_function': priors.logarithmic,
-                        'prior_args': {'mini':0.0, 'maxi':0.05}})
+                        'prior_args': {'mini':0.0001, 'maxi':0.05}})

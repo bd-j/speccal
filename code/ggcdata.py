@@ -342,7 +342,9 @@ def ggc_mask(obs, minwave=3602, maxwave=1e4, pad=10.0, **kwargs):
     inline = (wave > 6050.0) & (wave < 6075.0)
     inline = inline | ((wave > 5036) & (wave < 5055.0))
     inline = inline | ((wave > 4536) & (wave < 4556.0))
-    inline = inline | ((wave > 6212) & (wave < 6227.0))
+    inline = inline | ((wave > 5878) & (wave < 5890.0))
+    inline = inline | ((wave > 6212) & (wave < 6232.0))
+    inline = inline | ((wave > 6266) & (wave < 6300.0))
     mask = mask & ~inline
     
     obs['mask'] = obs.get('mask', True) & mask
