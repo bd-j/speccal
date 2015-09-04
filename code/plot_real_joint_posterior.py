@@ -61,8 +61,11 @@ if __name__ == "__main__":
                         'dust2': ["Cassisi et al. (2008)"]}
     real_cal="results/ggc_ngc1851_1432787257_mcmc"
     real_uncal="results/ggc_ngc1851_uncal_tightprior_1433448554_mcmc"
-    resfiles = [real_cal, real_uncal]
-    clr = ['green', 'orange']
+    real_cal = "results/real_specphot_otherjitter.NGC1851.calTrue_5699610_1441238007_mcmc"
+    real_uncal = "results/real_specphot_otherjitter.NGC1851.calFalse_5699625_1441238175_mcmc"
+    real_phot = "results/real_photonly.NGC1851.calTrue_1441258499_mcmc"
+    resfiles = [real_cal, real_uncal, real_phot]
+    clr = ['green', 'orange', 'red']
     results = [bread.read_pickles(rfile, model_file=rfile.replace('mcmc','model'))[0]
                for rfile in resfiles]
     obsdat = results[0]['obs']

@@ -42,7 +42,7 @@ def make_mock_job(ncpu=8, niter=1024, nwalkers=32, do_powell=True,
     return jobname, scriptname
 
 
-def make_real_job(ncpu=8, niter=1024, nwalkers=32, do_powell=True,
+def make_real_job(ncpu=8, niter=1024, nwalkers=32, do_powell=False,
                   paramfile='real_specphot_otherjitter',
                   objname='NGC1851', calibrated=True,
                   noisefactor=5.0,

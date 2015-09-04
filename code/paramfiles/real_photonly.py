@@ -173,4 +173,4 @@ model_params.append({'name': 'phot_jitter', 'N':1,
                         'init': 0.01,
                         'units': 'mags',
                         'prior_function': priors.logarithmic,
-                        'prior_args': {'mini':0.0, 'maxi':0.05}})
+                        'prior_args': {'mini':0.001, 'maxi':0.05}})
