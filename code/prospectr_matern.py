@@ -8,7 +8,7 @@ import pickle
 from bsfh import model_setup, write_results
 import bsfh.fitterutils as utils
 from bsfh.likelihood import LikelihoodFunction
-from bsfh.gp import PhotOutlier
+from bsfh.gp import PhotOutlier, Matern
 
 #########
 # Read command line arguments
@@ -28,7 +28,8 @@ run_params = model_setup.get_run_params(argv = sargv, **clargs)
 # SPS Model instance as global
 sps = model_setup.load_sps(**run_params)
 # GP instance as global
-gp_spec = model_setup.load_gp(**run_params)
+gp_spec = Matern()
+run_params['gp_type'] = 'Matern'
 gp_phot = PhotOutlier()
 # Model as global
 global_model = model_setup.load_model(param_file=clargs['param_file'])
@@ -78,13 +79,14 @@ def lnprobfn(theta, model=None, obs=None, verbose=run_params['verbose']):
     if np.isfinite(lnp_prior):
         # Generate mean model and GP kernel(s)
         t1 = time.time()        
-        mu, phot, x = model.mean_model(theta, obs, sps = sps)
+        mu, phot, x = model.mean_model(theta, obs, sps=sps)
         if not bool(obs.get('logify_spectrum', False)):
             spec = mu / model.spec_calibration(obs=obs)
         else:
             spec = None
         try:
-            gp_spec.kernel[:] = model.spec_gp_params()
+            s, a, l = model.spec_gp_params()
+            gp_spec.kernel[:] = np.log(np.array([s[0],a[0]**2,l[0]**2]))
         except(AttributeError, KeyError):
             #There was no spec_gp_params method
             pass
