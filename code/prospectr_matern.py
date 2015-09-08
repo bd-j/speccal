@@ -28,7 +28,7 @@ run_params = model_setup.get_run_params(argv = sargv, **clargs)
 # SPS Model instance as global
 sps = model_setup.load_sps(**run_params)
 # GP instance as global
-gp_spec = Matern()
+gp_spec = Matern(None, None)
 run_params['gp_type'] = 'Matern'
 gp_phot = PhotOutlier()
 # Model as global
@@ -85,8 +85,7 @@ def lnprobfn(theta, model=None, obs=None, verbose=run_params['verbose']):
         else:
             spec = None
         try:
-            s, a, l = model.spec_gp_params()
-            gp_spec.kernel[:] = np.log(np.array([s[0],a[0]**2,l[0]**2]))
+            gp_spec.kernel[:] = model.spec_gp_params()
         except(AttributeError, KeyError):
             #There was no spec_gp_params method
             pass

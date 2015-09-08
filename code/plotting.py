@@ -21,15 +21,28 @@ def comp_samples(thetas, model, obs, sps=None, gp=None):
     :param thetas:
         A list or iterable of theta vectors for which model components
         are desired.
+
     :returns wave:
         The full wavelength array
+
     :returns mospec:
         The observed spectrum, linear units
+
     :returns mounc:
         The observational errors, linear units
+
     :returns specvecs:
         A list length len(theta) where each element is a list of model
         components corresponding to theta.  The model components are:
+
+        * ``mu`` the intrinsic physical model
+        * ``full_cal`` The full calibration vector including the GP component
+        * ``delta`` The GP component of the calibration vector,
+          consisting of the poster prediction of the residual
+        * ``mod`` Full model: ``mu`` \times ``full_cal``
+        * ``residual``: mospec - ``mod``
+        * ``chi``: ``residual`` / ``mounc``
+        * ``cal`` The calibration vector *not* including the GP.
     """
     logarithmic = obs.get('logify_spectrum', True)
     specvecs = []
@@ -63,7 +76,7 @@ def comp_samples(thetas, model, obs, sps=None, gp=None):
 
 def comp_samples_phot(thetas, model, obs, sps=None):
     """Different components of the model for a given set of thetas,
-    for the photometry """
+    for the photometry."""
     specvecs = []
     wave = np.array([f.wave_effective for f in obs['filters']])
     mask = obs['phot_mask']
@@ -112,7 +125,8 @@ def true_sed(model, obs, sps=None, fullspec=False):
     return mu, phot, theta
         
 def theta_samples(res, samples=[1.0], start=0.0, thin=1):
-
+    """Draw samples from the posterior for \theta.
+    """
     nw, niter = res['chain'].shape[:-1]
     start_index = np.floor(start * (niter-1)).astype(int)
     flatchain = res['chain'][:,start_index::thin,:]
@@ -185,7 +199,7 @@ def obsfig(wave, obsvec, specvecs, unc=None,
     return ofig, oax
 
 def residualfig(wave, obsvec, specvecs, unc=None, chi=False,
-                basecolor=None, fax=None):
+                basecolor=None, fax=None, withGP=True):
     if fax is None:
         rfig, rax = pl.subplots()
     else:
@@ -202,7 +216,11 @@ def residualfig(wave, obsvec, specvecs, unc=None, chi=False,
     # Plot posterior samples of the observed spectrum as a residual
     label = 'Posterior samples'
     for specs in specvecs:
-        rax.plot(wave, (specs[3] - obsvec) / chi_unc, linewidth=0.5,
+        if withGP:
+            resid = (specs[3] - obsvec)
+        else:
+            resid = (specs[0] * specs[6] - obsvec)
+        rax.plot(wave,  resid / chi_unc, linewidth=0.5,
                  color=basecolor, alpha=0.3, label=label)
         label = ''
     rax.axhline(0.0, linestyle=':', color='k')
