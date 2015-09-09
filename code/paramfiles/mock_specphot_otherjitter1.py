@@ -2,58 +2,38 @@ import numpy as np
 import pickle, os
 from bsfh import priors, sedmodel
 from sedpy import attenuation
-from ggcdata import *
 
 #The speccal directory
 sdir = os.path.join(os.environ['PROJECTS'], 'speccal')
 
 run_params = {'verbose':True,
-              'outfile':'results/ggc_ngc1851',
+              'outfile':'results/ggc_mock_u0_t9.0_z0.0_a0.5',
               'do_powell': False,
               'ftol':0.5e-4, 'maxfev':5000,
-              'nwalkers':64,
+              'nwalkers':64, 
               'nburn':[64, 64, 128, 128, 256], 'niter':512,
-              'initial_disp':0.3,
+              'initial_disp':0.1,
               'debug':False,
               'logify_spectrum':False,
               'normalize_spectrum':True,
               'norm_band_name':'sdss_g0',
               'rescale':True,
-              'objname':'NGC1851',
+              'filename':os.path.join(sdir, 'data/ggclib/mocks/miles/ggc_mock.u0.t9.0_z0.0_a0.5.pkl'),
               'wlo':3350.,
               'whi':6500.,
-              'noisefactor':1.0,
-              'mask':True,
-              'broaden_obs':True,
-              'calibrated':True
+              'noisefactor':10
               }
 
 ##### OBSERVATIONAL DATA ######
 
-def load_obs(objname=None, noisefactor=1.0, calibrated=True,
-             mask=True, broaden_obs=False, **extras):
-    # get the spectrum
-    if calibrated:
-        fluxtype=None
-    else:
-        fluxtype=1
-    obs = ggc_spec(objname, 'a', '1', fluxtype=fluxtype,
-                   datadir=os.path.join(sdir, 'data/ggclib/spectra'), **extras)
-    #mask the spectrum
-    if mask:
-        obs = ggc_mask(obs, lsf=6, pad=6, thresh=3, width=20)
-    #broaden to constant FWHM in wave space.
-    if broaden_obs:
-        smask = obs.get('mask', np.ones(len(obs['wavelength']), dtype=bool))
-        bflux = broaden_ggcspec(obs['wavelength'][smask], obs['spectrum'][smask])
-        obs['spectrum'][smask] = bflux
-    #add the photometric data
-    obs.update(ggc_phot(objname, datadir=os.path.join(sdir, 'data/ggclib/photometry')))
-    obs['phot_mask'] = np.array(['sdss' in filt.name for filt in obs['filters']])
-    #adjust uncertainties
+def load_obs(filename=None, noisefactor=1.0, **extras):
+    with open(filename) as f:
+        obs = pickle.load(f)
+    #obs['phot_mask'] = np.array(['sdss' in filt.name for filt in obs['filters']])
     obs['unc'] *= noisefactor
+    if obs['added_noise'] is not None:
+        obs['spectrum'] += (noisefactor - 1) * obs['added_noise'] 
     obs['noisefactor'] = noisefactor
-    obs['spec_calibrated'] = calibrated
     return obs
 
 obs = load_obs(**run_params)
@@ -66,11 +46,11 @@ model_params = []
 ###### Distance ##########
 model_params.append({'name': 'lumdist', 'N': 1,
                      'isfree': False,
-                     'init': 0.011,
+                     'init': 0.01,
                      'units': 'Mpc',
                      'prior_function': None,
                      'prior_args': None})
-
+                         
 ###### SFH ################
 
 model_params.append({'name': 'mass', 'N': 1,
@@ -78,14 +58,14 @@ model_params.append({'name': 'mass', 'N': 1,
                      'init': 2e5,
                      'units': r'M$_\odot$',
                      'prior_function': priors.tophat,
-                     'prior_args': {'mini':1e4, 'maxi': 1e7}})
+                     'prior_args': {'mini':1e4, 'maxi': 1e6}})
 
 model_params.append({'name': 'tage', 'N': 1,
                         'isfree': True,
-                        'init': 10.0,
+                        'init': 5.0,
                         'units': 'Gyr',
                         'prior_function': priors.tophat,
-                        'prior_args':{'mini':5.0, 'maxi':15.0}})
+                        'prior_args':{'mini':0.1, 'maxi':15.0}})
 
 model_params.append({'name': 'zmet', 'N': 1,
                         'isfree': True,
@@ -189,7 +169,7 @@ model_params.append({'name': 'max_wave_smooth', 'N': 1,
 polyorder = 2
 polymin = [-5e1, -1e2]
 polymax = [5e1, 1e2]
-polyinit = [0.1, -0.1]
+polyinit = [0.01, 0.01]
 
 model_params.append({'name': 'poly_coeffs', 'N': polyorder,
                         'isfree': True,
@@ -203,43 +183,41 @@ model_params.append({'name': 'spec_norm', 'N':1,
                         'init':0.0001,
                         'units': None,
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':-2.0, 'maxi':2.0}})
+                        'prior_args': {'mini':-1.0, 'maxi':1.0}})
 
-# This is for use with the matern branch for bsfh, where sqrt(jitter)
-# now multiplies the noise (instead of adding to it)
 model_params.append({'name': 'gp_jitter', 'N':1,
                         'isfree': True,
-                        'init': 1.0,
+                        'init': 2.0,
                         'units': 'fractional noise squared',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.01, 'maxi':10}})
+                        'prior_args': {'mini':1.0, 'maxi':10.0}})
 
 model_params.append({'name': 'gp_jitter_add', 'N':1,
                         'isfree': True,
-                        'init': 1e-4,
+                        'init': 1e-2,
                         'units': 'noise squared',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':1e-6, 'maxi':2.5e-3}})
+                        'prior_args': {'mini':1e-4, 'maxi':2.5e-3}})
 
 model_params.append({'name': 'gp_amplitude', 'N':1,
                         'isfree': True,
-                        'init': 0.10,
-                        'units': 'fractional spec units',
+                        'init': 0.0001,
+                        'units': 'spec units',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.01, 'maxi':1.0}})
+                        'prior_args': {'mini':0.0, 'maxi':0.25}})
 
 model_params.append({'name': 'gp_length', 'N':1,
                         'isfree': True,
-                        'init': 300.0,
+                        'init': 100.0,
                         'units': r'$\AA$',
-#                        'prior_function': priors.lognormal,
-#                        'prior_args': {'log_mean':np.log(300.0)+0.5**2, 'sigma':0.5}})
-                        'prior_function': priors.tophat,
-                        'prior_args': {'mini':100.0, 'maxi':2000.0}})
+                        'prior_function': priors.lognormal,
+                        'prior_args': {'log_mean':np.log(100.0)+0.75**2, 'sigma':0.75}})
+                        #'prior_function':priors.tophat,
+                        #'prior_args': {'mini':10.0, 'maxi':1000}})
 
 model_params.append({'name': 'phot_jitter', 'N':1,
-                        'isfree': True,
-                        'init': 0.01,
+                        'isfree': False,
+                        'init': 0.0,
                         'units': 'mags',
-                        'prior_function': priors.logarithmic,
-                        'prior_args': {'mini':0.001, 'maxi':0.05}})
+                        'prior_function': priors.tophat,
+                        'prior_args': {'mini':0.0, 'maxi':0.1}})

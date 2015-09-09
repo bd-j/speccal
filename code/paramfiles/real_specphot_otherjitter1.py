@@ -188,7 +188,7 @@ model_params.append({'name': 'max_wave_smooth', 'N': 1,
 
 polyorder = 2
 polymin = [-5e1, -1e2]
-polymax = [5e1, 1e2]
+polymax = [5e1, 1e1]
 polyinit = [0.1, -0.1]
 
 model_params.append({'name': 'poly_coeffs', 'N': polyorder,
@@ -212,21 +212,21 @@ model_params.append({'name': 'gp_jitter', 'N':1,
                         'init': 1.0,
                         'units': 'fractional noise squared',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.01, 'maxi':10}})
+                        'prior_args': {'mini':1.0, 'maxi':10}})
 
 model_params.append({'name': 'gp_jitter_add', 'N':1,
                         'isfree': True,
-                        'init': 1e-4,
+                        'init': 1e-2,
                         'units': 'noise squared',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':1e-6, 'maxi':2.5e-3}})
+                        'prior_args': {'mini':1e-4, 'maxi':2.5e-3}})
 
 model_params.append({'name': 'gp_amplitude', 'N':1,
                         'isfree': True,
-                        'init': 0.10,
+                        'init': 0.04,
                         'units': 'fractional spec units',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.01, 'maxi':1.0}})
+                        'prior_args': {'mini':0.01, 'maxi':0.4}})
 
 model_params.append({'name': 'gp_length', 'N':1,
                         'isfree': True,
@@ -235,7 +235,7 @@ model_params.append({'name': 'gp_length', 'N':1,
 #                        'prior_function': priors.lognormal,
 #                        'prior_args': {'log_mean':np.log(300.0)+0.5**2, 'sigma':0.5}})
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':100.0, 'maxi':2000.0}})
+                        'prior_args': {'mini':250.0, 'maxi':2000.0}})
 
 model_params.append({'name': 'phot_jitter', 'N':1,
                         'isfree': True,

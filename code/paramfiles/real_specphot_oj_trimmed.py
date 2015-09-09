@@ -42,6 +42,8 @@ def load_obs(objname=None, noisefactor=1.0, calibrated=True,
     #mask the spectrum
     if mask:
         obs = ggc_mask(obs, lsf=6, pad=6, thresh=3, width=20)
+        obs['mask'] = obs['mask'] & (obs['wavelength'] < 6150)
+        obs['mask'] = obs['mask'] & (obs['wavelength'] > 3800)
     #broaden to constant FWHM in wave space.
     if broaden_obs:
         smask = obs.get('mask', np.ones(len(obs['wavelength']), dtype=bool))
