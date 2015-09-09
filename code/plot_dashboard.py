@@ -5,13 +5,13 @@ from matplotlib import gridspec
 
 from bsfh import read_results as bread
 from bsfh import sps_basis
-from bsfh.gp import ExpSquared
+import bsfh.gp
 
 from plotting import *
 matplotlib.colors.cnames.update(newcolors)
 
 sps = sps_basis.StellarPopBasis()
-gp = ExpSquared(None, None)
+gp = bsfh.gp.ExpSquared(None, None)
 
 param_name_map = {'tage':'Age (Gyr)',
                   'mass': '$M_*$ $(M_\odot/10^{5})$',
@@ -42,8 +42,12 @@ if __name__ == "__main__":
     nsample = 10
     
     res, pr, mod = bread.read_pickles(resfile, model_file=model_file)
+    mod._has_parameter_dependencies = False
     obsdat = res['obs']
-    
+    obsdat['mock_params'].update({'gp_jitter_add': np.array([0.0])})
+    if res['run_params'].get('gp_type', 'ExpSquared') == 'Matern':
+        gp = bsfh.gp.Matern(None, None)
+
     # Get samples and component spectra
     fsamples = np.random.uniform(0,1,nsample)
     thetas, start, samples = theta_samples(res, samples=fsamples, start=0.95, thin=1)
@@ -102,7 +106,7 @@ if __name__ == "__main__":
                             fax=(None,oax), chi=True, basecolor=bcolor)
     oax.set_ylabel(r'$\chi$')
     oax.legend(loc=0, prop={'size':8})
-    oax.set_ylim(-1,1)
+    oax.set_ylim(-3,3)
     oax.set_xticklabels([''])
 
     # Posterior parameter histograms

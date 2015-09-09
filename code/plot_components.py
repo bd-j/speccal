@@ -30,7 +30,11 @@ if __name__ == "__main__":
     nsample = 10
     
     res, pr, mod = bread.read_pickles(resfile, model_file=model_file)
+    mod._has_parameter_dependencies = False
     obsdat = res['obs']
+    obsdat['mock_params'].update({'gp_jitter_add': np.array([0.0])})
+    if res['run_params'].get('gp_type', 'ExpSquared') == 'Matern':
+        gp = bsfh.gp.Matern(None, None)
     
     # Get samples and component spectra
     fsamples = np.random.uniform(0,1,nsample)

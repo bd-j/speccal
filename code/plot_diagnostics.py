@@ -20,7 +20,8 @@ if __name__ == '__main__':
 
     showpars_phys = ['mass', 'tage', 'zmet', 'dust2', 'zred', 'sigma_smooth']
     showpars_cal = ['poly_coeffs_1', 'poly_coeffs_2', 'spec_norm',
-                    'gp_length', 'gp_amplitude', 'gp_jitter', 'phot_jitter']
+                    'gp_length', 'gp_amplitude', 'gp_jitter', 'gp_jitter_add',
+                    'phot_jitter']
 
     showpars_pc = ['mass', 'tage', 'dust2', 'zmet',
                    'spec_norm', 'poly_coeffs_1', 'poly_coeffs_2']
