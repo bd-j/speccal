@@ -5,13 +5,13 @@ from matplotlib import gridspec
 
 from bsfh import read_results as bread
 from bsfh import sps_basis
-from bsfh.gp import ExpSquared
+import bsfh.gp
 
 from plotting import *
 matplotlib.colors.cnames.update(newcolors)
 
 sps = sps_basis.StellarPopBasis()
-gp = ExpSquared(None, None)
+gp = bsfh.gp.ExpSquared(None, None)
 
 
 if __name__ == "__main__":
@@ -32,7 +32,8 @@ if __name__ == "__main__":
     res, pr, mod = bread.read_pickles(resfile, model_file=model_file)
     mod._has_parameter_dependencies = False
     obsdat = res['obs']
-    obsdat['mock_params'].update({'gp_jitter_add': np.array([0.0])})
+    if 'gp_jitter_add' not in obsdat['mock_params']:
+        obsdat['mock_params'].update({'gp_jitter_add': np.array([0.0])})
     if res['run_params'].get('gp_type', 'ExpSquared') == 'Matern':
         gp = bsfh.gp.Matern(None, None)
     

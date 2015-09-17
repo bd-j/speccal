@@ -65,7 +65,7 @@ def comp_samples(thetas, model, obs, sps=None, gp=None):
             residual = np.exp(np.log(mospec) - np.log(mod))
             chi =  (np.log(mospec)-np.log(mod)) / mounc
         else:
-            full_cal = cal + delta/mu
+            full_cal = cal + delta / mu
             mod = cal * mu + delta
             residual  = mospec - mod
             chi = residual / mounc
