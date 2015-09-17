@@ -228,7 +228,7 @@ model_params.append({'name': 'gp_amplitude', 'N':1,
                         'isfree': True,
                         'init': 0.05,
                         'units': 'fractional spec units',
-                        'prior_function': priors.tophat,
+                        'prior_function': priors.logarithmic,
                         'prior_args': {'mini':0.01, 'maxi':0.3}})
 
 model_params.append({'name': 'gp_length', 'N':1,
