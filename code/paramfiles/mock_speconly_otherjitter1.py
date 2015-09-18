@@ -201,7 +201,7 @@ model_params.append({'name': 'gp_jitter_add', 'N':1,
 
 model_params.append({'name': 'gp_amplitude', 'N':1,
                         'isfree': True,
-                        'init': 0.0001,
+                        'init': 0.01,
                         'units': 'spec units',
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':0.0, 'maxi':0.25}})
