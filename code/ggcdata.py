@@ -114,7 +114,7 @@ def ggc_phot(objname, datadir=ggcdir+'/photometry/', **extras):
     maggies, mags_unc, tel = optical_maggies(name, datadir=datadir, bands=bands)
     obs['maggies'] = maggies
     obs['maggies_unc'] =  mags_unc * maggies / 1.086
-    obs['maggies_unc'] = np.sqrt(obs['maggies_unc']**2 + (0.05*maggies)**2)
+    obs['maggies_unc'] = np.sqrt(obs['maggies_unc']**2 + (0.025*maggies)**2)
     obs['optical_telescope'] = tel
     
     # NIR.  These are in Vega!!!
