@@ -6,30 +6,22 @@ datadir= "$PROJECTS/speccal/data/ggclib/mocks/miles/"
 jobscriptdir = os.path.join(sdir, 'code','jobscripts')
 accounts = {'PHAT': 'TG-AST130057'}
 
+
 def make_mock_job(ncpu=8, niter=1024, nwalkers=32, do_powell=True,
                   paramfile='mock_specphot_linear',
                   params='u0.t12.z0.0.a0.5', noisefactor=10.0,
                   machine='stampede', account='TG-AST130057',
-                  partition='normal', walltime=5.0,
+                  partition=None, walltime=5.0,
                   jobscriptdir=jobscriptdir):
 
     jobname = '{0}.{1}'.format(paramfile, params)
     scriptname = os.path.join(jobscriptdir, '{0}.sh'.format(jobname))
     out = open(scriptname, 'w')
 
-    if machine =='stampede':
-        hdr, outfile, nwalkers = stampede_header(ncpu=ncpu, account=account,
-                                                 partition=partition,
-                                                 walltime=walltime,
-                                                 jobname=jobname)
-    elif machine == 'mac':
-        assert ncpu <= 8
-        nwalkers -= np.mod(nwalkers, (ncpu-1) * 2)
-        hdr = ("#!/bin/bash\n\n"
-               "mpirun -np {0} python $PROJECTS/speccal/code/prospectr.py \\\n".format(ncpu))
-        outfile = "$PROJECTS/speccal/code/results/{}".format(jobname)
+    hdr, outfile, nwalkers = make_header(machine=machine, ncpu=ncpu,
+                                         account=account, partition=partition,
+                                         walltime=walltime, jobname=jobname)
 
-    
     out.write(hdr)
     out.write(" --param_file=$PROJECTS/speccal/code/paramfiles/{0}.py \\\n".format(paramfile))
     out.write(" --filename=$PROJECTS/speccal/data/ggclib/mocks/miles/ggc_mock.{0}.pkl \\\n".format(params))
@@ -55,17 +47,10 @@ def make_real_job(ncpu=8, niter=1024, nwalkers=32, do_powell=False,
     jobname = '{0}.{1}.cal{2}'.format(paramfile, objname, calibrated)
     scriptname = os.path.join(jobscriptdir, '{0}.sh'.format(jobname))
     out = open(scriptname, 'w')
-    if machine =='stampede':
-        hdr, outfile, nwalkers = stampede_header(ncpu=ncpu, account=account,
-                                                 partition=partition,
-                                                 walltime=walltime,
-                                                 jobname=jobname)
-    elif machine == 'mac':
-        assert ncpu <= 8
-        nwalkers -= np.mod(nwalkers, (ncpu-1) * 2)
-        hdr = ("#!/bin/bash\n\n"
-               "mpirun -np {0} python $PROJECTS/speccal/code/prospectr.py \\\n".format(ncpu))
-        outfile = "$PROJECTS/speccal/code/results/{}".format(jobname)
+
+    hdr, outfile, nwalkers = make_header(machine=machine, ncpu=ncpu,
+                                         account=account, partition=partition,
+                                         walltime=walltime, jobname=jobname)
 
     out.write(hdr)
     out.write(" --param_file=$PROJECTS/speccal/code/paramfiles/{0}.py \\\n".format(paramfile))
@@ -77,6 +62,63 @@ def make_real_job(ncpu=8, niter=1024, nwalkers=32, do_powell=False,
               " --noisefactor={3}".format(nwalkers, niter, str(do_powell), noisefactor))
     out.close()
     return jobname, scriptname
+
+
+def make_header(machine='stampede', ncpu=16, account='TG-AST130057',
+                partition='workq', walltime=5.0, jobname=None)
+    
+    if machine == 'stampede':
+        hdr, outfile, nwalkers = stampede_header(ncpu=ncpu, account=account,
+                                                 partition=partition,
+                                                 walltime=walltime,
+                                                 jobname=jobname)
+
+    elif machine == 'supermic':
+        hdr, outfile, nwalkers = supermic_header(ncpu=ncpu, account=account,
+                                                 partition=partition,
+                                                 walltime=walltime,
+                                                 jobname=jobname)
+
+    elif machine == 'mac':
+        assert ncpu <= 8
+        nwalkers -= np.mod(nwalkers, (ncpu-1) * 2)
+        hdr = ("#!/bin/bash\n\n"
+               "mpirun -np {0} python $PROJECTS/speccal/code/prospectr.py \\\n".format(ncpu))
+        outfile = "$PROJECTS/speccal/code/results/{}".format(jobname)
+
+    return header, outfile, nwalkers
+
+
+def supermic_header(ncpu=16, account='TG-AST130057',
+                    partition='workq', walltime=5.0,
+                    jobname=None):
+
+    nnode = int(ncpu / 20.)
+    ncpu_act = nnode * 20
+    nwalkers = (ncpu_act - 1) * 2
+
+    wt = '{0:02.0f}:{1:02.0f}:00'.format(walltime, np.mod(walltime, 1) * 60)
+    outfile = "$PROJECTS/speccal/code/results/{0}_$PBS_JOBID".format(jobname)
+
+    hdr = ''
+    hdr += "#!/bin/bash\n\n"
+    hdr += ("###queue\n"
+            "#PBS -q {}\n\n").format(partition)
+    hdr += ("### Requested number of nodes\n"
+            "#PBS -l nodes={0}:ppn=20\n\n").format(nnode)
+    hdr += ("### Requested computing time\n"
+            "#PBS -l walltime={0}\n\n").format(wt)
+    hdr += ("### Account\n"
+            "#PBS -A {0}\n\n").format(account)
+    hdr += ("### Job name\n"
+            "#PBS -N '{0}'\n\n").format(jobname)
+    hdr += ("### output and error logs\n"
+            "#PBS -o {0}_$PBS_JOBID.out\n"
+            "#PBS -e {0}_$PBS_JOBID.err\n\n").format(jobname)
+    hdr += "\n mpirun -np {} -machinefile $PBS_NODEFILE \\\n".format(ncpu_act)
+    hdr += " python-mpi $PROJECTS/speccal/code/prospectr.py \\\n"
+
+    return hdr, outfile, nwalkers
 
 
 def stampede_header(ncpu=16, account='TG-AST130057',
