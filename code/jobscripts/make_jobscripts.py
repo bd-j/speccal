@@ -4,7 +4,8 @@ import numpy as np
 sdir = os.path.join(os.environ.get('PROJECTS'), 'speccal')
 datadir= "$PROJECTS/speccal/data/ggclib/mocks/miles/"
 jobscriptdir = os.path.join(sdir, 'code','jobscripts')
-accounts = {'PHAT': 'TG-AST130057'}
+accounts = {'PHAT': 'TG-AST130057',
+            'IMF': 'TG-AST150015'}
 
 
 def make_mock_job(ncpu=8, niter=1024, nwalkers=32, do_powell=True,
@@ -39,7 +40,7 @@ def make_real_job(ncpu=8, niter=1024, nwalkers=32, do_powell=False,
                   objname='NGC1851', calibrated=True,
                   noisefactor=5.0,
                   machine='stampede', account='TG-AST130057',
-                  partition='normal', walltime=5.0,
+                  partition=None, walltime=5.0,
                   jobscriptdir=jobscriptdir):
     """Make a jobscript for real spectra.
     """
@@ -65,7 +66,7 @@ def make_real_job(ncpu=8, niter=1024, nwalkers=32, do_powell=False,
 
 
 def make_header(machine='stampede', ncpu=16, account='TG-AST130057',
-                partition='workq', walltime=5.0, jobname=None)
+                partition=None, walltime=5.0, jobname=None):
     
     if machine == 'stampede':
         hdr, outfile, nwalkers = stampede_header(ncpu=ncpu, account=account,
@@ -86,7 +87,7 @@ def make_header(machine='stampede', ncpu=16, account='TG-AST130057',
                "mpirun -np {0} python $PROJECTS/speccal/code/prospectr.py \\\n".format(ncpu))
         outfile = "$PROJECTS/speccal/code/results/{}".format(jobname)
 
-    return header, outfile, nwalkers
+    return hdr, outfile, nwalkers
 
 
 def supermic_header(ncpu=16, account='TG-AST130057',
@@ -102,6 +103,7 @@ def supermic_header(ncpu=16, account='TG-AST130057',
 
     hdr = ''
     hdr += "#!/bin/bash\n\n"
+    hdr += "#cd $PBS_O_WORKDIR\n"
     hdr += ("###queue\n"
             "#PBS -q {}\n\n").format(partition)
     hdr += ("### Requested number of nodes\n"
@@ -115,8 +117,8 @@ def supermic_header(ncpu=16, account='TG-AST130057',
     hdr += ("### output and error logs\n"
             "#PBS -o {0}_$PBS_JOBID.out\n"
             "#PBS -e {0}_$PBS_JOBID.err\n\n").format(jobname)
-    hdr += "\n mpirun -np {} -machinefile $PBS_NODEFILE \\\n".format(ncpu_act)
-    hdr += " python-mpi $PROJECTS/speccal/code/prospectr.py \\\n"
+    hdr += "\nmpirun -np {} -machinefile $PBS_NODEFILE \\\n".format(ncpu_act)
+    hdr += "python-mpi $PROJECTS/speccal/code/prospectr.py \\\n"
 
     return hdr, outfile, nwalkers
 
