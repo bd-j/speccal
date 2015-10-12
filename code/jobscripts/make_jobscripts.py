@@ -103,7 +103,7 @@ def supermic_header(ncpu=16, account='TG-AST130057',
 
     hdr = ''
     hdr += "#!/bin/bash\n\n"
-    hdr += "#cd $PBS_O_WORKDIR\n"
+    
     hdr += ("###queue\n"
             "#PBS -q {}\n\n").format(partition)
     hdr += ("### Requested number of nodes\n"
@@ -117,6 +117,7 @@ def supermic_header(ncpu=16, account='TG-AST130057',
     hdr += ("### output and error logs\n"
             "#PBS -o {0}_$PBS_JOBID.out\n"
             "#PBS -e {0}_$PBS_JOBID.err\n\n").format(jobname)
+    hdr += "cd $PBS_O_WORKDIR\n"
     hdr += "\nmpirun -np {} -machinefile $PBS_NODEFILE \\\n".format(ncpu_act)
     hdr += "python-mpi $PROJECTS/speccal/code/prospectr.py \\\n"
 

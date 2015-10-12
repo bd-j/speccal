@@ -89,6 +89,12 @@ def lnprobfn(theta, model=None, obs=None, verbose=run_params['verbose']):
             #There was no spec_gp_params method
             pass
         try:
+            a, ell = model.params['low_level_amplitude'], model.params['low_level_length']
+            gp_spec.low_level_noise_params = [a[0]**2, ell[0]**2]
+        except(AttributeError, KeyError):
+            #There was no low level noise
+            pass            
+        try:
             s, a, l = model.phot_gp_params(obs=obs)
             gp_phot.kernel = np.array( list(a) + list(l) + [s])
         except(AttributeError):
