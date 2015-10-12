@@ -241,11 +241,11 @@ model_params.append({'name': 'gp_length', 'N':1,
                         'prior_args': {'mini':50.0, 'maxi':2000.0}})
 
 model_params.append({'name': 'low_level_amplitude', 'N':1,
-                        'isfree': False,
+                        'isfree': True,
                         'init': 0.01,
                         'units': 'fractional spec units',
                         'prior_function': priors.logarithmic,
-                        'prior_args': {'mini':0.001, 'maxi':0.05}})
+                        'prior_args': {'mini':0.0005, 'maxi':0.02}})
 
 model_params.append({'name': 'low_level_length', 'N':1,
                         'isfree': False,
@@ -260,5 +260,5 @@ model_params.append({'name': 'phot_jitter', 'N':1,
                         'isfree': True,
                         'init': 0.01,
                         'units': 'mags',
-                        'prior_function': priors.lognormal,
-                        'prior_args': {'log_mean':np.log(0.05) + 0.5**2, 'sigma': 0.5}})
+                        'prior_function': priors.tophat,
+                        'prior_args': {'mini':0.0, 'maxi': 0.05}})
