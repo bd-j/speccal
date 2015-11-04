@@ -61,19 +61,27 @@ if __name__ == "__main__":
                         'dust2': ["Cassisi et al. (2008)"]}
     real_cal="results/ggc_ngc1851_1432787257_mcmc"
     real_uncal="results/ggc_ngc1851_uncal_tightprior_1433448554_mcmc"
+
     real_cal = "results/real_specphot_otherjitter.NGC1851.calTrue_5699610_1441238007_mcmc"
     real_uncal = "results/real_specphot_otherjitter.NGC1851.calFalse_5699625_1441238175_mcmc"
+
+    real_cal = "results/real_specphot_mtrim_llnoise_v2.NGC1851.calTrue_5912384_1445132251_mcmc"
+    real_uncal = "results/real_specphot_mtrim_llnoise_v2.NGC1851.calFalse_5912391_1445132211_mcmc"
+    
     real_phot = "results/real_photonly.NGC1851.calTrue_1441258499_mcmc"
-    resfiles = [real_cal, real_uncal, real_phot]
+
+    
+    resfiles = [real_cal, real_uncal]#, real_phot]
     clr = ['green', 'orange', 'red']
     results = [bread.read_pickles(rfile, model_file=rfile.replace('mcmc','model'))[0]
                for rfile in resfiles]
     obsdat = results[0]['obs']
     showpars = np.array(['mass', 'tage', 'zmet', 'dust2'])
     parlims = np.array([[0.4, 4],
-                        [None, None],
-                        [-2.0, 0.19],
-                        [0, 1.5]])
+                        [5, 11],
+                        [-1.3, -0.75],
+                        [0, 0.5]])
+    parlims = np.array(4 * [[None, None]])
     npar = len(showpars)
 
     fig = pl.figure()
@@ -82,7 +90,7 @@ if __name__ == "__main__":
     for i, p1 in enumerate(showpars):
         dax = pl.subplot(gs[i,i])
         for n, res in enumerate(results):
-            trace, p = hist_samples(res, res['model'], [p1], start=0.5)
+            trace, p = hist_samples(res, res['model'], [p1], start=0.75)
             if p1 == 'mass':
                 trace /= 1e5
             dax.hist(trace, bins = 30, color=clr[n], normed=True,
@@ -119,8 +127,8 @@ if __name__ == "__main__":
             # Axis range foo
             xcur = ax.get_xlim()
             ycur = ax.get_ylim()
-            xlims = max([parlims[i,0], xcur[0]]), min([parlims[i,1], xcur[1]])
-            ylims = max([parlims[j+i+1,0], ycur[0]]), min([parlims[j+i+1,1], ycur[1]])
+            xlims = min([parlims[i,0], xcur[0]]), max([parlims[i,1], xcur[1]])
+            ylims = min([parlims[k,0], ycur[0]]), max([parlims[k,1], ycur[1]])
             
             ax.set_xlim(*xlims)
             ax.set_ylim(*ylims)
