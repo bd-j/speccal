@@ -39,7 +39,7 @@ def load_obs(objname=None, noisefactor=1.0, calibrated=False,
     vmag = 6.1
     obs = {}
     dat = np.loadtxt(os.path.join(sdir, 'data/m67_nobs.dat'))
-    obs['wavelength'] = dat[:, 0]
+    obs['wavelength'] = observate.vac2air(dat[:, 0])
     obs['spectrum'] = dat[:, 1]
     obs['unc'] = dat[:, 2]
     
@@ -81,10 +81,10 @@ model_params.append({'name': 'mass', 'N': 1,
 
 model_params.append({'name': 'tage', 'N': 1,
                         'isfree': True,
-                        'init': 10.0,
+                        'init': 5.0,
                         'units': 'Gyr',
                         'prior_function': priors.tophat,
-                        'prior_args':{'mini':5.0, 'maxi':13.5}})
+                        'prior_args':{'mini':1.0, 'maxi':13.5}})
 
 model_params.append({'name': 'zmet', 'N': 1,
                         'isfree': True,
@@ -156,10 +156,10 @@ model_params.append({'name': 'zred', 'N':1,
 
 model_params.append({'name': 'sigma_smooth', 'N': 1,
                         'isfree': True,
-                        'init': 1.0,
+                        'init': 2.0,
                         'units': r'$\AA$',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.0, 'maxi':3}})
+                        'prior_args': {'mini':0.0, 'maxi':3.5}})
                         #'prior_function': priors.lognormal,
                         #'prior_args': {'log_mean':np.log(2.2)+0.05**2, 'sigma':0.05}})
 
