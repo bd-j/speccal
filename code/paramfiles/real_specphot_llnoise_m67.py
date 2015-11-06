@@ -211,7 +211,7 @@ model_params.append({'name': 'gp_jitter', 'N':1,
                         'init': 1.0,
                         'units': 'fractional noise squared',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':5e-3, 'maxi':10}})
+                        'prior_args': {'mini':1e-3, 'maxi':10}})
 
 model_params.append({'name': 'gp_jitter_add', 'N':1,
                         'isfree': True,
@@ -253,8 +253,8 @@ model_params.append({'name': 'low_level_length', 'N':1,
                         'prior_args': {'mini':1.0, 'maxi':15}})
 
 model_params.append({'name': 'phot_jitter', 'N':1,
-                        'isfree': True,
-                        'init': 0.01,
+                        'isfree': False,
+                        'init': 0.00,
                         'units': 'mags',
                         'prior_function': priors.tophat,
                         'prior_args': {'mini':0.0, 'maxi': 0.005}})
