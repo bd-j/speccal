@@ -241,7 +241,7 @@ model_params.append({'name': 'low_level_amplitude', 'N':1,
                         'init': 0.01,
                         'units': 'fractional spec units',
                         'prior_function': priors.logarithmic,
-                        'prior_args': {'mini':0.0005, 'maxi':0.02}})
+                        'prior_args': {'mini':0.0005, 'maxi':0.04}})
 
 model_params.append({'name': 'low_level_length', 'N':1,
                         'isfree': True,
