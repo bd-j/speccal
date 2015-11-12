@@ -21,7 +21,7 @@ run_params = {'verbose':True,
               'rescale':True,
               'objname':'M67',
               'wlo':3990.,
-              'whi':5394.,
+              'whi':5380.,
               'noisefactor':1.0,
               'mask':True,
               'broaden_obs':True,
@@ -110,7 +110,7 @@ model_params.append({'name': 'dust2', 'N': 1,
                         'init': 1.0,
                         'units': r'$\tau_V$',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.0, 'maxi':2.5}})
+                        'prior_args': {'mini':0.0, 'maxi':1.0}})
 
 model_params.append({'name': 'dust1', 'N': 1,
                         'isfree': False,
@@ -211,7 +211,7 @@ model_params.append({'name': 'gp_jitter', 'N':1,
                         'init': 1.0,
                         'units': 'fractional noise squared',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':1e-3, 'maxi':10}})
+                        'prior_args': {'mini':1e-5, 'maxi':10}})
 
 model_params.append({'name': 'gp_jitter_add', 'N':1,
                         'isfree': True,
@@ -244,13 +244,13 @@ model_params.append({'name': 'low_level_amplitude', 'N':1,
                         'prior_args': {'mini':0.0005, 'maxi':0.02}})
 
 model_params.append({'name': 'low_level_length', 'N':1,
-                        'isfree': False,
-                        'init': 2.0,
+                        'isfree': True,
+                        'init': 3.0,
                         'units': r'$\AA$',
 #                        'prior_function': priors.lognormal,
 #                        'prior_args': {'log_mean':np.log(300.0)+0.5**2, 'sigma':0.5}})
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':1.0, 'maxi':15}})
+                        'prior_args': {'mini':1.0, 'maxi':20}})
 
 model_params.append({'name': 'phot_jitter', 'N':1,
                         'isfree': False,
