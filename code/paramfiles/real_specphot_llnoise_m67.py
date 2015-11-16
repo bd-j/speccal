@@ -156,10 +156,10 @@ model_params.append({'name': 'zred', 'N':1,
 
 model_params.append({'name': 'sigma_smooth', 'N': 1,
                         'isfree': True,
-                        'init': 2.0,
+                        'init': 2.3,
                         'units': r'$\AA$',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':0.0, 'maxi':3.5}})
+                        'prior_args': {'mini':2.0, 'maxi':2.7}})
                         #'prior_function': priors.lognormal,
                         #'prior_args': {'log_mean':np.log(2.2)+0.05**2, 'sigma':0.05}})
 
@@ -202,7 +202,7 @@ model_params.append({'name': 'spec_norm', 'N':1,
                         'init':0.001,
                         'units': None,
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':-0.2, 'maxi':0.2}})
+                        'prior_args': {'mini':-0.15, 'maxi':0.15}})
 
 # This is for use with the matern branch for bsfh, where sqrt(jitter)
 # now multiplies the noise (instead of adding to it)
@@ -211,7 +211,7 @@ model_params.append({'name': 'gp_jitter', 'N':1,
                         'init': 1.0,
                         'units': 'fractional noise squared',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':1e-5, 'maxi':10}})
+                        'prior_args': {'mini':1e-6, 'maxi':10}})
 
 model_params.append({'name': 'gp_jitter_add', 'N':1,
                         'isfree': True,
@@ -234,18 +234,18 @@ model_params.append({'name': 'gp_length', 'N':1,
 #                        'prior_function': priors.lognormal,
 #                        'prior_args': {'log_mean':np.log(300.0)+0.5**2, 'sigma':0.5}})
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':50.0, 'maxi':2000.0}})
+                        'prior_args': {'mini':100.0, 'maxi':2000.0}})
 
 model_params.append({'name': 'low_level_amplitude', 'N':1,
                         'isfree': True,
                         'init': 0.01,
                         'units': 'fractional spec units',
                         'prior_function': priors.logarithmic,
-                        'prior_args': {'mini':0.0005, 'maxi':0.04}})
+                        'prior_args': {'mini':0.0005, 'maxi':0.025}})
 
 model_params.append({'name': 'low_level_length', 'N':1,
-                        'isfree': True,
-                        'init': 3.0,
+                        'isfree': False,
+                        'init': 2.5,
                         'units': r'$\AA$',
 #                        'prior_function': priors.lognormal,
 #                        'prior_args': {'log_mean':np.log(300.0)+0.5**2, 'sigma':0.5}})
