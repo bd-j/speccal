@@ -36,15 +36,15 @@ def load_obs(objname=None, noisefactor=1.0, calibrated=False,
 
     assert objname == 'M67'
     
-    vmag = 6.1
+    bmag = 7.5
     obs = {}
     dat = np.loadtxt(os.path.join(sdir, 'data/m67_nobs.dat'))
     obs['wavelength'] = observate.vac2air(dat[:, 0])
     obs['spectrum'] = dat[:, 1]
     obs['unc'] = dat[:, 2]
     
-    obs['filters'] = observate.load_filters(['bessell_V'])
-    obs['maggies'] = np.array([10**(-0.4 * vmag)])
+    obs['filters'] = observate.load_filters(['bessell_B'])
+    obs['maggies'] = np.array([10**(-0.4 * bmag)])
     obs['maggies_unc'] = 0.05 * obs['maggies']
 
     # mask
@@ -65,7 +65,7 @@ model_params = []
 ###### Distance ##########
 model_params.append({'name': 'lumdist', 'N': 1,
                      'isfree': False,
-                     'init': 0.001,
+                     'init': 0.8e-3,
                      'units': 'Mpc',
                      'prior_function': None,
                      'prior_args': None})
@@ -74,10 +74,10 @@ model_params.append({'name': 'lumdist', 'N': 1,
 
 model_params.append({'name': 'mass', 'N': 1,
                      'isfree': True,
-                     'init': 2e5,
+                     'init': 1e4,
                      'units': r'M$_\odot$',
                      'prior_function': priors.tophat,
-                     'prior_args': {'mini':1e4, 'maxi': 1e7}})
+                     'prior_args': {'mini':0.5e3, 'maxi': 1e6}})
 
 model_params.append({'name': 'tage', 'N': 1,
                         'isfree': True,
@@ -159,7 +159,7 @@ model_params.append({'name': 'sigma_smooth', 'N': 1,
                         'init': 2.3,
                         'units': r'$\AA$',
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':2.0, 'maxi':2.5}})
+                        'prior_args': {'mini':2.0, 'maxi':3.0}})
                         #'prior_function': priors.lognormal,
                         #'prior_args': {'log_mean':np.log(2.2)+0.05**2, 'sigma':0.05}})
 
@@ -203,7 +203,7 @@ model_params.append({'name': 'spec_norm', 'N':1,
                         'init':0.001,
                         'units': None,
                         'prior_function': priors.tophat,
-                        'prior_args': {'mini':-0.05, 'maxi':0.05}})
+                        'prior_args': {'mini':-0.15, 'maxi':0.15}})
 
 # This is for use with the matern branch for bsfh, where sqrt(jitter)
 # now multiplies the noise (instead of adding to it)
@@ -226,7 +226,7 @@ model_params.append({'name': 'gp_amplitude', 'N':1,
                         'init': 0.00,
                         'units': 'fractional spec units',
                         'prior_function': priors.logarithmic,
-                        'prior_args': {'mini':0.000, 'maxi':0.10}})
+                        'prior_args': {'mini':1e-8, 'maxi':0.10}})
 
 model_params.append({'name': 'gp_length', 'N':1,
                         'isfree': False,
@@ -242,7 +242,7 @@ model_params.append({'name': 'low_level_amplitude', 'N':1,
                         'init': 0.00,
                         'units': 'fractional spec units',
                         'prior_function': priors.logarithmic,
-                        'prior_args': {'mini':0.0005, 'maxi':0.02}})
+                        'prior_args': {'mini':1e-8, 'maxi':0.02}})
 
 model_params.append({'name': 'low_level_length', 'N':1,
                         'isfree': False,
