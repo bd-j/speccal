@@ -17,7 +17,7 @@ run_params = {'verbose':True,
               'debug':False,
               'logify_spectrum':False,
               'normalize_spectrum':True,
-              'norm_band_name':'bessell_V',
+              'norm_band_name':'sdss_g0',
               'rescale':True,
               'objname':'M67',
               'wlo':3990.,
@@ -36,14 +36,14 @@ def load_obs(objname=None, noisefactor=1.0, calibrated=False,
 
     assert objname == 'M67'
     
-    bmag = 7.5
+    bmag = 7.5 #hack
     obs = {}
     dat = np.loadtxt(os.path.join(sdir, 'data/m67_nobs.dat'))
     obs['wavelength'] = observate.vac2air(dat[:, 0])
     obs['spectrum'] = dat[:, 1]
     obs['unc'] = dat[:, 2]
     
-    obs['filters'] = observate.load_filters(['bessell_B'])
+    obs['filters'] = observate.load_filters(['sdss_g0'])
     obs['maggies'] = np.array([10**(-0.4 * bmag)])
     obs['maggies_unc'] = 0.05 * obs['maggies']
 
