@@ -5,22 +5,18 @@ import numpy as np
 np.errstate(invalid='ignore')
 import pickle
 
-from bsfh import model_setup, write_results
-import bsfh.fitterutils as utils
+from bsfh.models import model_setup
+from bsfh.io import write_results
+from bsfh import fitting
 from bsfh.likelihood import LikelihoodFunction
-from bsfh.gp import PhotOutlier, Matern
 
 #########
 # Read command line arguments
 #########
 sargv = sys.argv
-argdict={'param_file':None, 'sptype':'sps_basis',
-         'custom_filter_keys':None,
-         'compute_vega_mags':False,
-         'zcontinuous':1,
-         'gptype': ''}
+argdict={'param_file':''}
 clargs = model_setup.parse_args(sargv, argdict=argdict)
-run_params = model_setup.get_run_params(argv = sargv, **clargs)
+run_params = model_setup.get_run_params(argv=sargv, **clargs)
 
 #########
 # Globals
@@ -28,11 +24,9 @@ run_params = model_setup.get_run_params(argv = sargv, **clargs)
 # SPS Model instance as global
 sps = model_setup.load_sps(**run_params)
 # GP instance as global
-gp_spec = Matern(None, None)
-run_params['gp_type'] = 'Matern'
-gp_phot = PhotOutlier()
+gp_spec, gp_phot = model_setup.load_gp(**run_params)
 # Model as global
-global_model = model_setup.load_model(param_file=clargs['param_file'])
+global_model = model_setup.load_model(**run_params)
 # Obs as global
 global_obs = model_setup.load_obs(**run_params)
 
@@ -40,6 +34,15 @@ global_obs = model_setup.load_obs(**run_params)
 #LnP function as global
 ########
 likefn = LikelihoodFunction()
+
+# the simple but obscuring way.  Difficult for users to change
+def obscured_lnprobfn(theta, model = None, obs = None):
+    if model is None:
+        model = global_model
+    if obs is None:
+        obs = global_obs
+    return likefn.lnpostfn(theta, model=model, obs=obs,
+                           sps=sps, gp=gp_spec)
 
 # the more explicit way
 def lnprobfn(theta, model=None, obs=None, verbose=run_params['verbose']):
@@ -78,17 +81,22 @@ def lnprobfn(theta, model=None, obs=None, verbose=run_params['verbose']):
     lnp_prior = model.prior_product(theta)
     if np.isfinite(lnp_prior):
         # Generate mean model and GP kernel(s)
-        t1 = time.time()        
-        mu, phot, x = model.mean_model(theta, obs, sps=sps)
-        if not bool(obs.get('logify_spectrum', False)):
-            spec = mu / model.spec_calibration(obs=obs)
-        else:
-            spec = None
+        t1 = time.time()
+        try:
+            mu, phot, x = model.mean_model(theta, obs, sps=sps)
+        except(ValueError):
+            return -np.infty
         try:
             gp_spec.kernel[:] = model.spec_gp_params()
-        except(AttributeError, KeyError):
+        except(AttributeError):
             #There was no spec_gp_params method
             pass
+        try:
+            a, ell = model.params['low_level_amplitude'], model.params['low_level_length']
+            gp_spec.low_level_noise_params = [a[0]**2, ell[0]**2]
+        except(AttributeError, KeyError):
+            #There was no low level noise
+            pass            
         try:
             s, a, l = model.phot_gp_params(obs=obs)
             gp_phot.kernel = np.array( list(a) + list(l) + [s])
@@ -99,7 +107,7 @@ def lnprobfn(theta, model=None, obs=None, verbose=run_params['verbose']):
 
         #calculate likelihoods
         t2 = time.time()
-        lnp_spec = likefn.lnlike_spec(mu, obs=obs, gp=gp_spec, flux=spec)
+        lnp_spec = likefn.lnlike_spec(mu, obs=obs, gp=gp_spec)
         lnp_phot = likefn.lnlike_phot(phot, obs=obs, gp=gp_phot)
         d2 = time.time() - t2
         if verbose:
@@ -173,8 +181,9 @@ if __name__ == "__main__":
     obsdat = global_obs
     chi2args = [None, None]
     postkwargs = {}
-    
-    initial_theta = model.initial_theta
+
+    #make zeros into tiny numbers
+    initial_theta = model.rectify_theta(model.initial_theta)
     if rp.get('debug', False):
         halt()
 
@@ -186,32 +195,34 @@ if __name__ == "__main__":
             print('minimizing chi-square...')
         ts = time.time()
         powell_opt = {'ftol': rp['ftol'], 'xtol':1e-6, 'maxfev':rp['maxfev']}
-        powell_guesses, pinit = utils.pminimize(chisqfn, initial_theta,
-                                                args=chi2args, model=model,
-                                                method='powell', opts=powell_opt,
-                                                pool=pool, nthreads=rp.get('nthreads',1))
-        print('check1')
+        powell_guesses, pinit = fitting.pminimize(chisqfn, initial_theta,
+                                                  args=chi2args, model=model,
+                                                  method='powell', opts=powell_opt,
+                                                  pool=pool, nthreads=rp.get('nthreads',1))
         best = np.argmin([p.fun for p in powell_guesses])
-        initial_center = utils.reinitialize(powell_guesses[best].x, model,
-                                            edge_trunc=rp.get('edge_trunc',0.1))
-
+        initial_center = fitting.reinitialize(powell_guesses[best].x, model,
+                                              edge_trunc=rp.get('edge_trunc',0.1))
+        initial_prob = -1 * powell_guesses[best]['fun']
+        
         pdur = time.time() - ts
         if rp['verbose']:
             print('done Powell in {0}s'.format(pdur))
+            print('best Powell guess:{0}'.format(initial_center))
     else:
         powell_guesses = None
         pdur = 0.0
         initial_center = initial_theta.copy()
-        
+        initial_prob = None
+
     ###################
     # Sample
     ####################
     if rp['verbose']:
-        print('emcee sampling from a ball around {}...'.format(initial_center))
-
+        print('emcee sampling...')
     tstart = time.time()
-    esampler = utils.run_emcee_sampler(lnprobfn, initial_center, model,
-                                       postkwargs=postkwargs, pool = pool, **rp)
+    esampler, burn_p0, burn_prob0 = fitting.run_emcee_sampler(lnprobfn, initial_center, model,
+                                       postkwargs=postkwargs, pool=pool, initial_prob=initial_prob,
+                                       **rp)
     edur = time.time() - tstart
     if rp['verbose']:
         print('done emcee in {0}s'.format(edur))
@@ -222,7 +233,9 @@ if __name__ == "__main__":
     write_results.write_pickles(rp, model, obsdat,
                                 esampler, powell_guesses,
                                 toptimize=pdur, tsample=edur,
-                                sampling_initial_center=initial_center)
+                                sampling_initial_center=initial_center,
+                                post_burnin_center=burn_p0, post_burnin_prob=burn_prob0)
+
     
     try:
         pool.close()
